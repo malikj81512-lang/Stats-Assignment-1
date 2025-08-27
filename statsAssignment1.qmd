@@ -4,13 +4,178 @@ format: html
 editor: visual
 ---
 
+SECTION 2:
+
 ```{r}
-1 + 1
-# Hopefully this actually works let's see
-# change on amara laptop
+#| echo: false
+if (!requireNamespace("remotes", quietly = TRUE)) {
+install.packages("remotes")
+}
+remotes::install_github("MiguelRodo/DataTidyRodoSTA2005S")
+data("data_tidy_energy_use", package = "DataTidyRodoSTA2005S")
+
+library(dplyr)
+library(ggplot2)
 ```
 
 ```{r}
-air <- 2*(2+2)
-air
+glimpse(data_tidy_energy_use)
+```
+
+1.  Density plots
+
+```{r}
+
+hist(consumption_kwh, data = data_tidy_energy_use, freq = FALSE, main = "Histogram of Consumption", xlab = "Consumption (kW)")
+# Overlaying normal curve
+x_fit <- seq(min(consumption_kwh), max(consumption_kwh), length = 35) 
+y_fit <- dnorm(x_fit, mean = mean(consumption_kwh), sd = sd(consumption_kwh))
+lines(x_fit, y_fit, col = "red3")
+
+solar <- data_tidy_energy_use$solar_installed == "Yes"
+hist(consumption_kwh[solar], ddata = data_tidy_energy_use, freq = FALSE, main = "Histogram of Consumption with Solar Installed", xlab = "Consumption (kW)")
+x_fit <- seq(min(consumption_kwh[solar]), max(consumption_kwh[solar]), length = 35)
+y_fit <- dnorm(x_fit, mean = mean(consumption_kwh[solar]), sd = sd(consumption_kwh[solar]))
+lines(x_fit, y_fit, col = "red3")
+
+
+```
+
+2.  Pairwise plots
+
+```{r}
+pairs(data_tidy_energy_use[1:6])
+
+```
+
+3.  Categorical variable plots
+
+```{r}
+str(data_tidy_energy_use$holiday)
+table(data_tidy_energy_use$holiday)
+table(data_tidy_energy_use$energy_efficiency)
+
+#Converting holiday into correct categorical form
+data_tidy_energy_use <- data_tidy_energy_use %>%
+mutate(
+  holiday = factor(holiday, 
+                   labels = c("No", "Yes"))
+)
+
+ggplot(data = data_tidy_energy_use, aes(x = energy_efficiency, y = consumption_kwh)) +
+  geom_boxplot(fill = "pink")+
+  labs(x = "Energy efficiency", y = "Consumption(kW")
+
+ggplot(data = data_tidy_energy_use, aes(x = solar_installed, y = consumption_kwh))+
+  geom_boxplot(fill = "green3")+
+  labs(x = "Solar Installed", y = "Consumption(kW")
+
+ggplot(data = data_tidy_energy_use, aes(x = day_of_week, y = consumption_kwh))+
+  geom_boxplot(fill = "purple2")+
+  labs(x = "Day of Week", y = "Consumption(kW")
+
+ggplot(data = data_tidy_energy_use, aes(x = holiday, y = consumption_kwh))+
+  geom_boxplot(fill = "lightblue")+
+  labs(x = "Holiday", y = "Consumption(kW")
+
+```
+
+4.  
+
+```{r}
+plot_data_a <- data_tidy_energy_use %>%
+  count(solar_installed, energy_efficiency)
+  
+ggplot(plot_data_a, aes(x = solar_installed, y = n, fill = energy_efficiency))+
+  geom_col()+
+  labs(x = "Solar Installed", y = "Frequency", fill = "Energy efficiency")
+
+plot_data_b <- data_tidy_energy_use %>% 
+  count(day_of_week, holiday)
+plot_data_b
+
+ggplot(plot_data, aes(x = day_of_week, y = n, fill = holiday))+
+  geom_col()+
+  labs(x = "Day of Week", y = "Frequency", fill = "Holiday")+
+  theme(axis.text = element_text(angle = 90))
+
+
+```
+
+5.  Comments
+
+    Observed relationships
+
+
+SECTION 3:
+
+1. Model Fitting: 
+
+```{r}
+#| echo: false
+
+# consumption_kwh vs outside_temperature 
+
+b_hat_cheat <- lm(consumption_kwh ~ outside_temperature, data_tidy_energy_use)
+summary(b_hat_cheat)
+
+X <- model.matrix(consumption_kwh ~ outside_temperature)
+
+#X <- cbind(1, data_tidy_energy_use$outside_temperature)
+
+Y <- data_tidy_energy_use$consumption_kwh
+
+bhat <- solve((t(X) %*% X)) %*% t(X) %*% Y
+rownames(bhat) <- c("Intercept (b0)", "b1")
+colnames(bhat) <- ("Coefficient")
+print(b_hat)
+
+#Calculating std. errors
+
+y_fitted <- X %*% bhat
+y_resid <- Y - y_fitted
+
+n <- length(Y)
+p <- ncol(X)
+
+sig_hat <- as.numeric(1/(n-p) * t(y_resid) %*% y_resid)
+sig_hat 
+
+var_bhat <- sig_hat * solve((t(X) %*% X))
+se_bhat <- sqrt(diag(var_bhat))
+se_bhat |> signif(5)
+
+# Calculating t-values
+
+t_vals <- bhat / se_bhat
+t_vals |> signif(3)
+
+# Calculating p-vals
+df <- n-p
+p_vals <- 2 * pt(-abs(t_vals), df)
+
+results <- data.frame(
+  Estimate = as.vector(bhat),
+  StdError = se_bhat,
+  t_vals = as.vector(t_vals),
+  p_vals = as.vector(p_vals)
+)
+results
+
+```
+
+
+SECTION 4:
+
+1. Fit Model
+
+```{r}
+
+b_hat <- lm(consumption_kwh ~ outside_temperature + humidity + wind_speed + household_size + appliance_index + energy_efficiency + solar_installed + day_of_week + holiday, data_tidy_energy_use)
+
+summary(b_hat)
+
+#rownames(b_hat) <- c("Outside temp.", "Humidity", "Wind speed", "Household size", "Appliance index", "Energy efficiency: Excellent", "Energy efficiency: Good", "Energy efficiency: Poor", "Solar installed: Yes", "Day of week: Monday", "Day of week: Saturday", "Day of week: Sunday", "Day of week: Tuesday", "Day of week: Thursday", "Day of week: Wednesday")
+
+
 ```
