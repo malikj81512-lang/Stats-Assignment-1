@@ -32,12 +32,15 @@ x_fit <- seq(min(consumption_kwh), max(consumption_kwh), length = 35)
 y_fit <- dnorm(x_fit, mean = mean(consumption_kwh), sd = sd(consumption_kwh))
 lines(x_fit, y_fit, col = "red3")
 
+```
+
+```{r}
+
 solar <- data_tidy_energy_use$solar_installed == "Yes"
 hist(consumption_kwh[solar], ddata = data_tidy_energy_use, freq = FALSE, main = "Histogram of Consumption with Solar Installed", xlab = "Consumption (kW)")
 x_fit <- seq(min(consumption_kwh[solar]), max(consumption_kwh[solar]), length = 35)
 y_fit <- dnorm(x_fit, mean = mean(consumption_kwh[solar]), sd = sd(consumption_kwh[solar]))
 lines(x_fit, y_fit, col = "red3")
-
 
 ```
 
@@ -99,17 +102,15 @@ ggplot(plot_data, aes(x = day_of_week, y = n, fill = holiday))+
   labs(x = "Day of Week", y = "Frequency", fill = "Holiday")+
   theme(axis.text = element_text(angle = 90))
 
-
 ```
 
 5.  Comments
 
     Observed relationships
 
-
 SECTION 3:
 
-1. Model Fitting: 
+1.  Model Fitting:
 
 ```{r}
 #| echo: false
@@ -122,32 +123,37 @@ summary(b_hat_cheat)
 X <- model.matrix(consumption_kwh ~ outside_temperature)
 
 #X <- cbind(1, data_tidy_energy_use$outside_temperature)
+#X[1:10]
 
 Y <- data_tidy_energy_use$consumption_kwh
 
-bhat <- solve((t(X) %*% X)) %*% t(X) %*% Y
-rownames(bhat) <- c("Intercept (b0)", "b1")
-colnames(bhat) <- ("Coefficient")
-print(b_hat)
+bhat_c <- solve((t(X) %*% X)) %*% t(X) %*% Y
+rownames(bhat_c) <- c("Intercept (b0)", "b1")
+colnames(bhat_c) <- ("Coefficient")
+```
 
+```{r}
 #Calculating std. errors
 
-y_fitted <- X %*% bhat
+bhat_c
+y_fitted <- X %*% bhat_c
 y_resid <- Y - y_fitted
 
 n <- length(Y)
 p <- ncol(X)
 
 sig_hat <- as.numeric(1/(n-p) * t(y_resid) %*% y_resid)
-sig_hat 
+sig_hat |> signif(5)
 
-var_bhat <- sig_hat * solve((t(X) %*% X))
-se_bhat <- sqrt(diag(var_bhat))
-se_bhat |> signif(5)
+var_bhat_c <- sig_hat * solve((t(X) %*% X))
+se_bhat_c <- sqrt(diag(var_bhat_c))
+se_bhat_c |> signif(3)
+```
 
+```{r}
 # Calculating t-values
 
-t_vals <- bhat / se_bhat
+t_vals <- bhat_c / se_bhat_c
 t_vals |> signif(3)
 
 # Calculating p-vals
@@ -155,19 +161,95 @@ df <- n-p
 p_vals <- 2 * pt(-abs(t_vals), df)
 
 results <- data.frame(
-  Estimate = as.vector(bhat),
-  StdError = se_bhat,
-  t_vals = as.vector(t_vals),
-  p_vals = as.vector(p_vals)
+  Estimate = as.vector(bhat_c) |> signif(3),
+  StdError = se_bhat_c |> signif(3),
+  t_vals = as.vector(t_vals) |> signif(5),
+  p_vals = as.vector(p_vals) |> signif(3)
 )
 results
 
 ```
 
+2.  Simultaneous hypothesis test
+
+```{r}
+# consumption_kw ~ energy_efficiency
+# Test at 5% significance 
+# H0: b_energy = 0
+# H1: b_energy /= 0
+
+Y <- data_tidy_energy_use$consumption_kwh
+n <- length(Y)
+k <- 4 # no. energy efficiency groups
+
+energy_efficiency <- sample(c("Poor", "Average", "Good", "Excellent"), n, replace = TRUE)
+
+y_bar <- mean(Y)
+
+# Between group sum-sqrs
+
+grp_poor <- data_tidy_energy_use$energy_efficiency == "Poor"
+#grp_poor[1:10]
+y_poor <- mean(Y[grp_poor])
+#y_poor
+n_poor <- sum(grp_poor)
+ss_poor <- n_poor * (y_poor - y_bar)^2
+#ss_poor
+
+grp_ave <- data_tidy_energy_use$energy_efficiency == "Average"
+y_ave <- mean(Y[grp_ave])
+n_ave <- sum(grp_ave)
+ss_ave <- n_ave * (y_ave - y_bar)^2
+#ss_ave
+
+grp_good <- data_tidy_energy_use$energy_efficiency == "Good"
+y_good <- mean(Y[grp_good])
+n_good <- sum(grp_good)
+ss_good <- n_good * (y_good - y_bar)^2
+#ss_good
+
+grp_exc <- data_tidy_energy_use$energy_efficiency == "Excellent"
+y_exc <- mean(Y[grp_exc])
+n_exc <- sum(grp_exc)
+ss_exc <- n_exc * (y_exc - y_bar)^2
+#ss_exc
+
+#n_poor + n_ave + n_good + n_exc
+ss_between <- ss_poor + ss_ave + ss_good + ss_exc
+ss_between |> signif(3)
+
+```
+
+```{r}
+# Within-group sum sqrs
+
+ss_within_poor <- sum((Y[grp_poor] - y_poor)^2)
+ss_within_ave <- sum((grp_ave - y_ave)^2)
+ss_within_good <- sum((Y[grp_good] - y_good)^2)
+ss_within_exc <- sum((Y[grp_exc] - y_exc)^2)
+ss_within <- ss_within_poor + ss_within_ave + ss_within_good + ss_within_exc
+ss_within |> signif(3)
+```
+
+```{r}
+# Test stat
+df_b <- k-1
+df_w <- n-k
+
+f_stat <- (ss_between/df_b) / (ss_within/df_w)
+f_stat |> signif(5)
+
+p_val <- 1 - pf(f_stat, df_b, df_w)
+p_val |> signif(5)
+
+# HUGE p-val because ss_within is huge and ss_between very small + group means very close -> basically no variation explained by energy_efficiency
+# DEFINITELY can't reject H0
+
+```
 
 SECTION 4:
 
-1. Fit Model
+1.  Fit Model
 
 ```{r}
 
