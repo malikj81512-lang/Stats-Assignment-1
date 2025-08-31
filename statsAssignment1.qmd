@@ -110,15 +110,10 @@ ggplot(plot_data, aes(x = day_of_week, y = n, fill = holiday))+
 Observed relationships
 ```
 
-<<<<<<< HEAD
 # SECTION 3:
 
 ## 1. Model Fitting:
-=======
-SECTION 3:
 
-1.  Model Fitting:
->>>>>>> 9d92b69009966104afef81708cd3a4d72be84732
 
 ```{r}
 #| echo: false
@@ -178,11 +173,7 @@ results
 
 ```
 
-<<<<<<< HEAD
-# SECTION 4:
 
-## 1. Fit Model
-=======
 2.  Simultaneous hypothesis test
 
 ```{r}
@@ -263,7 +254,7 @@ p_val |> signif(5)
 SECTION 4:
 
 1.  Fit Model
->>>>>>> 9d92b69009966104afef81708cd3a4d72be84732
+
 
 ```{r}
 
