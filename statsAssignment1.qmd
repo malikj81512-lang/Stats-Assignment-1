@@ -4,7 +4,7 @@ format: html
 editor: visual
 ---
 
-SECTION 2:
+# SECTION 2:
 
 ```{r}
 #| echo: false
@@ -22,7 +22,7 @@ library(ggplot2)
 glimpse(data_tidy_energy_use)
 ```
 
-1.  Density plots
+## 1. Density plots
 
 ```{r}
 
@@ -41,14 +41,14 @@ lines(x_fit, y_fit, col = "red3")
 
 ```
 
-2.  Pairwise plots
+## 2. Pairwise plots
 
 ```{r}
 pairs(data_tidy_energy_use[1:6])
 
 ```
 
-3.  Categorical variable plots
+## 3. Categorical variable plots
 
 ```{r}
 str(data_tidy_energy_use$holiday)
@@ -80,7 +80,7 @@ ggplot(data = data_tidy_energy_use, aes(x = holiday, y = consumption_kwh))+
 
 ```
 
-4.  
+## 4.
 
 ```{r}
 plot_data_a <- data_tidy_energy_use %>%
@@ -102,14 +102,15 @@ ggplot(plot_data, aes(x = day_of_week, y = n, fill = holiday))+
 
 ```
 
-5.  Comments
+## 5. Comments
 
-    Observed relationships
+```         
+Observed relationships
+```
 
+# SECTION 3:
 
-SECTION 3:
-
-1. Model Fitting: 
+## 1. Model Fitting:
 
 ```{r}
 #| echo: false
@@ -164,10 +165,9 @@ results
 
 ```
 
+# SECTION 4:
 
-SECTION 4:
-
-1. Fit Model
+## 1. Fit Model
 
 ```{r}
 
