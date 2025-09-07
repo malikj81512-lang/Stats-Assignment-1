@@ -9,7 +9,7 @@ format: pdf
 # Part One
 ## Section 1:
 
-1.  Household consumption of electricity is a major stressor on the South African power grid. The aim of this statistical analysis is to determine whether there are statistically significant effects of various variables including temperature, humidity, wind, household size, appliance intensity, energy efficiency rating, whether the household has solar power, the day of the week and whether the day is a public holiday on the daily household electricity consumption. This is to hopefully draw meaningful conclusions about what the major influences on household electricity consumption are and to prompt efficient policy-making.
+1.  Household consumption of electricity is a major stressor on the South African power grid. The aim of this statistical analysis is to determine whether there are statistically significant effects of various variables including temperature, humidity, wind, household size, appliance intensity, energy efficiency rating, whether the household has solar power, the day of the week and whether the day is a public holiday on the daily household electricity consumption and the size of these effects. This is to hopefully draw meaningful conclusions about what the major influences on household electricity consumption are and to prompt efficient policy-making.
 
 2.  The analytical approach this assignment will take is that of simple and multiple linear regression to determine relationships between explanatory variables and the response variable as well as various graphical analyses of the data.
 
@@ -28,10 +28,14 @@ data("data_tidy_energy_use", package = "DataTidyRodoSTA2005S")
 library(dplyr)
 library(ggplot2)
 library(tinytex)
+library(tidyr)
+library(knitr)
 ```
 
 ```{r Checking out the data, include = FALSE}
 glimpse(data_tidy_energy_use)
+en_dat <- data_tidy_energy_use
+
 ```
 
 ### 1. Density plots
@@ -43,48 +47,101 @@ glimpse(data_tidy_energy_use)
 #| fig-align: center
 #| fig-height: 5
 
-attach(data_tidy_energy_use)
-hist(consumption_kwh, freq = FALSE, main = "", xlab = "Consumption (kW)")
+hist(en_dat$consumption_kwh, freq = FALSE, main = "", xlab = "Consumption (kW)")
 # Overlaying normal curve
-x_fit <- seq(min(consumption_kwh), max(consumption_kwh), length = 35) 
-y_fit <- dnorm(x_fit, mean = mean(consumption_kwh), sd = sd(consumption_kwh))
+x_fit <- seq(min(en_dat$consumption_kwh), max(en_dat$consumption_kwh), length = 35) 
+y_fit <- dnorm(x_fit, mean = mean(en_dat$consumption_kwh), sd = sd(en_dat$consumption_kwh))
 lines(x_fit, y_fit, col = "red3")
-detach(data_tidy_energy_use)
+
 
 ```
+The unstratified histogram does not mimic the shape of the overlaid normal curve which suggests that some households consume less electricity and some households consume more, hence the two peaks of the histogram.
 
 ```{r Histogram with solar installed, echo = FALSE}
-#| fig-cap: "Histogram of electricity consumption in households with solar installed overlaid with normal curve"
-#| fig.top: 0 pt
+#| fig-cap: "Histograms of electricity consumption in households with a) solar installed and b) solar not installed"
+#| fig.top: 30 pt
 #| fig.bottom: 0 pt
 #| fig-align: center
 #| fig-height: 5
+#| fig-width: 7
+par(mfrow = c(1, 2))
 
-attach(data_tidy_energy_use)
 solar <- data_tidy_energy_use$solar_installed == "Yes"
-hist(consumption_kwh[solar], freq = FALSE, main = "", xlab = "Consumption (kW)")
-x_fit <- seq(min(consumption_kwh[solar]), max(consumption_kwh[solar]), length = 35)
-y_fit <- dnorm(x_fit, mean = mean(consumption_kwh[solar]), sd = sd(consumption_kwh[solar]))
+h_solar <- hist(en_dat$consumption_kwh[solar],
+                plot = FALSE)
+hist(en_dat$consumption_kwh[solar], 
+                freq = FALSE, main = "", 
+                xlab = "Consumption (kWh)", ylim = c(0, max(h_solar$density) * 1.2)
+     )
+# overlaying normal curve
+x_fit <- seq(min(en_dat$consumption_kwh[solar]), max(en_dat$consumption_kwh[solar]), length = 35)
+y_fit <- dnorm(x_fit, mean = mean(en_dat$consumption_kwh[solar]), sd = sd(en_dat$consumption_kwh[solar]))
 lines(x_fit, y_fit, col = "red3")
-detach(data_tidy_energy_use)
+# adding a legend 
+legend("topleft", 
+  legend = c("Histogram Density", "Normal Density"),
+       fill = c("black", "red3"))
+
+# no solar histogram 
+no_solar <- en_dat$solar_installed == "No"
+
+no_solar_hist <- hist(en_dat$consumption_kwh[no_solar], plot = FALSE)
+hist(en_dat$consumption_kwh[no_solar], freq = FALSE, main = "", xlab = "Consumption (kWh)", ylim = c(0, max(no_solar_hist$density * 1.1)))
+
+# overlaying normal curve
+x_fit2 <- seq(min(en_dat$consumption_kwh[no_solar]), max(en_dat$consumption_kwh[no_solar]), length = 35)
+y_fit2 <- dnorm(x_fit2, mean(en_dat$consumption_kwh[no_solar]), sd(en_dat$consumption_kwh[no_solar]))
+lines(x_fit2, y_fit2, col = "red3")
+
 
 ```
+
+ When the histogram is stratified with solar installation being true, the histogram follows the normal curve more closely which suggests that solar installation results in lower mean consumption and a more left skewed distribution. 
 
 ### 2. Pairwise plots
 
 ```{r Pairs, echo = FALSE}
-#| fig.cap: "Pairwise plots of continuous variables (consumption, outside temperature, humidity, wind speed, household size and appliance index) against each other"
-pairs(data_tidy_energy_use[1:6])
+#| fig.cap: "Pairwise plots of continuous variables (consumption, outside temperature, humidity and wind speed) against each other"
+pairs(data_tidy_energy_use[1:4],
+      labels = c("Consumption", "Outside Temperature", "Humidity", "Wind Speed")
+)
 
 ```
 
 ### 3. Categorical variable plots
 
-```{r boxplots, echo = FALSE}
-str(data_tidy_energy_use$holiday)
-table(data_tidy_energy_use$holiday)
-table(data_tidy_energy_use$energy_efficiency)
+```{r boxplot of energy efficiency}
+#| fig.cap: "Boxplots of categorical variables: a) Energy Efficiency"
+#| echo: false 
 
+ggplot(data = data_tidy_energy_use, aes(x = energy_efficiency, y = consumption_kwh)) +
+  geom_boxplot(fill = "pink")+
+  scale_x_discrete(limits = c("Poor", "Average", "Good", "Excellent")) +
+  labs(x = "Energy efficiency", y = "Consumption (kWh)")
+```
+
+```{r boxplot of solar installed}
+#| fig.cap: "Boxplots of categorical variables: b) Solar Installed"
+#| echo: false
+ggplot(data = data_tidy_energy_use, aes(x = solar_installed, y = consumption_kwh))+
+  geom_boxplot(fill = "green3")+
+  labs(x = "Solar Installed", y = "Consumption (kWh)")
+
+``` 
+
+```{r boxplot of day of week}
+#| fig.cap: "Boxplots of categorical variables: c) Day of the Week"
+#| echo: false
+ggplot(data = data_tidy_energy_use, aes(x = day_of_week, y = consumption_kwh))+
+  geom_boxplot(fill = "purple2")+
+  scale_x_discrete(limits = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")) +
+  labs(x = "Day of Week", y = "Consumption (kWh)")
+
+``` 
+
+```{r boxplot of holiday}
+#| fig.cap: "Boxplots of categorical variables: d) Public Holiday"
+#| echo: false 
 #Converting holiday into correct categorical form
 data_tidy_energy_use <- data_tidy_energy_use %>%
 mutate(
@@ -92,27 +149,37 @@ mutate(
                    labels = c("No", "Yes"))
 )
 
-ggplot(data = data_tidy_energy_use, aes(x = energy_efficiency, y = consumption_kwh)) +
-  geom_boxplot(fill = "pink")+
-  labs(x = "Energy efficiency", y = "Consumption(kW")
-
-ggplot(data = data_tidy_energy_use, aes(x = solar_installed, y = consumption_kwh))+
-  geom_boxplot(fill = "green3")+
-  labs(x = "Solar Installed", y = "Consumption(kW")
-
-ggplot(data = data_tidy_energy_use, aes(x = day_of_week, y = consumption_kwh))+
-  geom_boxplot(fill = "purple2")+
-  labs(x = "Day of Week", y = "Consumption(kW")
-
 ggplot(data = data_tidy_energy_use, aes(x = holiday, y = consumption_kwh))+
   geom_boxplot(fill = "lightblue")+
-  labs(x = "Holiday", y = "Consumption(kW")
+  labs(x = "Holiday", y = "Consumption (kWh)")
 
 ```
 
 ### 4. Categorical Relationships
 
-```{r more graphs, echo = FALSE}
+```{r tables}
+#| echo: false
+# Ensuring order is correct
+en_dat$day_of_week <- factor(en_dat$day_of_week,
+                             levels = c("Monday", "Tuesday", "Wednesday", "Thursday",
+                                        "Friday", "Saturday", "Sunday"),
+                             ordered = TRUE)
+en_dat$energy_efficiency <- factor(en_dat$energy_efficiency, 
+                                   levels = c("Poor", "Average", "Good", "Excellent"), 
+                                   ordered = TRUE)
+
+# Tabulating energy efficiency against solar installation
+eff_solar_table <- table(en_dat$energy_efficiency, en_dat$solar_installed)
+
+# Printing the table with kable so it looks nice 
+kable(eff_solar_table, caption = "Energy Efficiency vs Solar Installation")
+  
+# Tabulating day of the week against holiday
+dow_holiday_table <- table(en_dat$day_of_week, en_dat$holiday)
+
+# Print with kable
+kable(dow_holiday_table, caption = "Day of the Week vs Public Holiday", col.names = c("No", "Yes"))
+
 plot_data_a <- data_tidy_energy_use %>%
   count(solar_installed, energy_efficiency)
   
@@ -122,7 +189,7 @@ ggplot(plot_data_a, aes(x = solar_installed, y = n, fill = energy_efficiency))+
 
 plot_data_b <- data_tidy_energy_use %>% 
   count(day_of_week, holiday)
-plot_data_b
+
 
 ggplot(plot_data_b, aes(x = day_of_week, y = n, fill = holiday))+
   geom_col()+
@@ -143,23 +210,22 @@ Observed relationships
 
 ```{r model fitting}
 
-attach(data_tidy_energy_use)
 # consumption_kwh vs outside_temperature 
 
-b_hat_cheat <- lm(consumption_kwh ~ outside_temperature, data = data_tidy_energy_use)
+b_hat_cheat <- lm(en_dat$consumption_kwh ~ en_dat$outside_temperature)
 summary(b_hat_cheat)
 
-X <- model.matrix(consumption_kwh ~ outside_temperature)
+X <- model.matrix(en_dat$consumption_kwh ~ en_dat$outside_temperature)
 
-#X <- cbind(1, data_tidy_energy_use$outside_temperature)
+#X <- cbind(1, en_dat$outside_temperature)
 #X[1:10]
 
-Y <- data_tidy_energy_use$consumption_kwh
+Y <- en_dat$consumption_kwh
 
 bhat_c <- solve((t(X) %*% X)) %*% t(X) %*% Y
 rownames(bhat_c) <- c("Intercept (b0)", "b1")
 colnames(bhat_c) <- ("Coefficient")
-detach(data_tidy_energy_use)
+
 ```
 
 ```{r Calculating standard errors}
