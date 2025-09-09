@@ -422,6 +422,7 @@ anova(lm_household, b_hat)
 ```
 
 ### Interpretation
+
 Variables with a coefficient that was statistically significant at the 5% level were: Household Size
 
 ##Section 5
@@ -456,89 +457,9 @@ power_est[j] <- mean(rejections)
 cat("\nEstimated power for β1 =", b1, "is", power_est[j], "\n")
 }
 
-set.seed(25)
-
-# True b1 = 0.5
-b1 <- 0.5
-rejections_0.5 <- numeric(n_sim)
-
-for (i in 1:n_sim){
-  err <- rnorm(25, mean = 0, sd = sig)
-  y <- b0 + b1*x_vec + err
-  model <- lm(y ~ x_vec)
-  p_val <- summary(model)$coefficients[2, 4]
-  rejections_0.5[i] <- as.integer(p_val < 0.05)
-}
-
-power_est_0.5 <- mean(rejections_0.5)
-cat("\nEstimated power for β1 =", b1, "is", power_est_0.5, "\n")
-
-# True b1 = 1
-b1 <- 1
-rejections_1 <- numeric(n_sim)
-
-for (i in 1:n_sim) {
-  err <- rnorm(25, mean = 0, sd = sig)
-  y <- b0 + b1*x_vec + err
-  model <- lm(y ~ x_vec)
-  p_val <- summary(model)$coefficients[2, 4]
-  rejections_1[i] <- as.integer(p_val < 0.05)
-}
-
-power_est_1 <- mean(rejections_1)
-cat("Estimated power for β1 =", b1, "is", power_est_1, "\n")
-
-#True b1 = 2
-b1 <- 2
-rejections_2 <- numeric(n_sim)
-
-for (i in 1:n_sim) {
-  err <- rnorm(25, mean = 0, sd = sig)
-  y <- b0 + b1*x_vec + err
-  model <- lm(y ~ x_vec)
-  p_val <- summary(model)$coefficients[2, 4]
-  rejections_2[i] <- as.integer(p_val < 0.05)
-}
-
-power_est_2 <- mean(rejections_2)
-cat("Estimated power for β1 =", b1, "is", power_est_2, "\n")
-
-
-#True b1 = 5
-b1 <- 5
-rejections_5 <- numeric(n_sim)
-
-for (i in 1:n_sim) {
-  err <- rnorm(25, mean = 0, sd = sig)
-  y <- b0 + b1*x_vec + err
-  model <- lm(y ~ x_vec)
-  p_val <- summary(model)$coefficients[2, 4]
-  rejections_5[i] <- as.integer(p_val < 0.05)
-}
-
-power_est_5 <- mean(rejections_5)
-cat("Estimated power for β1 =", b1, "is", power_est_5, "\n")
-
-#True b1 = 10
-b1 <- 10
-rejections_10 <- numeric(n_sim)
-
-for (i in 1:n_sim) {
-  err <- rnorm(25, mean = 0, sd = sig)
-  y <- b0 + b1*x_vec + err
-  model <- lm(y ~ x_vec)
-  p_val <- summary(model)$coefficients[2, 4]
-  rejections_10[i] <- as.integer(p_val < 0.05)
-}
-
-power_est_10 <- mean(rejections_10)
-cat("Estimated power for β1 =", b1, "is", power_est_10, "\n")
-
-
 ```
 
 ## Scenario B
-
 
 ```{r}
 b0 <- 12
