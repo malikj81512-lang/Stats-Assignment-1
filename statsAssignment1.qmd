@@ -11,7 +11,7 @@ format: pdf
 
 ## Section 1:
 
-1.  Household consumption of electricity is a major stressor on the South African power grid. The aim of this statistical analysis is to determine whether there are statistically significant effects of various variables including temperature, humidity, wind, household size, appliance intensity, energy efficiency rating, whether the household has solar power, the day of the week and whether the day is a public holiday on the daily household electricity consumption. This is to hopefully draw meaningful conclusions about what the major influences on household electricity consumption are and to prompt efficient policy-making.
+1.  Household consumption of electricity is a major stressor on the South African power grid. The aim of this statistical analysis is to determine whether there are statistically significant effects of various variables including temperature, humidity, wind, household size, appliance intensity, energy efficiency rating, whether the household has solar power, the day of the week and whether the day is a public holiday on the daily household electricity consumption and the size of these effects. This is to hopefully draw meaningful conclusions about what the major influences on household electricity consumption are and to prompt efficient policy-making.
 
 2.  The analytical approach this assignment will take is that of simple and multiple linear regression to determine relationships between explanatory variables and the response variable as well as various graphical analyses of the data.
 
@@ -30,10 +30,14 @@ data("data_tidy_energy_use", package = "DataTidyRodoSTA2005S")
 library(dplyr)
 library(ggplot2)
 library(tinytex)
+library(tidyr)
+library(knitr)
 ```
 
 ```{r Checking out the data, include = FALSE}
 glimpse(data_tidy_energy_use)
+en_dat <- data_tidy_energy_use
+
 ```
 
 ### 1. Density plots
@@ -45,48 +49,102 @@ glimpse(data_tidy_energy_use)
 #| fig-align: center
 #| fig-height: 5
 
-attach(data_tidy_energy_use)
-hist(consumption_kwh, freq = FALSE, main = "", xlab = "Consumption (kW)")
+hist(en_dat$consumption_kwh, freq = FALSE, main = "", xlab = "Consumption (kW)")
 # Overlaying normal curve
-x_fit <- seq(min(consumption_kwh), max(consumption_kwh), length = 35) 
-y_fit <- dnorm(x_fit, mean = mean(consumption_kwh), sd = sd(consumption_kwh))
+x_fit <- seq(min(en_dat$consumption_kwh), max(en_dat$consumption_kwh), length = 35) 
+y_fit <- dnorm(x_fit, mean = mean(en_dat$consumption_kwh), sd = sd(en_dat$consumption_kwh))
 lines(x_fit, y_fit, col = "red3")
-detach(data_tidy_energy_use)
+
 
 ```
+The unstratified histogram does not mimic the shape of the overlaid normal curve which suggests that some households consume less electricity and some households consume more, hence the two peaks of the histogram. 
 
 ```{r Histogram with solar installed, echo = FALSE}
-#| fig-cap: "Histogram of electricity consumption in households with solar installed overlaid with normal curve"
-#| fig.top: 0 pt
+#| fig-cap: "Histograms of electricity consumption in households with a) solar installed and b) solar not installed"
+#| fig.top: 30 pt
 #| fig.bottom: 0 pt
 #| fig-align: center
 #| fig-height: 5
+#| fig-width: 9
+par(mfrow = c(1, 2))
 
-attach(data_tidy_energy_use)
 solar <- data_tidy_energy_use$solar_installed == "Yes"
-hist(consumption_kwh[solar], freq = FALSE, main = "", xlab = "Consumption (kW)")
-x_fit <- seq(min(consumption_kwh[solar]), max(consumption_kwh[solar]), length = 35)
-y_fit <- dnorm(x_fit, mean = mean(consumption_kwh[solar]), sd = sd(consumption_kwh[solar]))
+h_solar <- hist(en_dat$consumption_kwh[solar],
+                plot = FALSE)
+hist(en_dat$consumption_kwh[solar], 
+                freq = FALSE, main = "", 
+                xlab = "Consumption (kWh)", ylim = c(0, max(h_solar$density) * 1.2)
+     )
+# overlaying normal curve
+x_fit <- seq(min(en_dat$consumption_kwh[solar]), max(en_dat$consumption_kwh[solar]), length = 35)
+y_fit <- dnorm(x_fit, mean = mean(en_dat$consumption_kwh[solar]), sd = sd(en_dat$consumption_kwh[solar]))
 lines(x_fit, y_fit, col = "red3")
-detach(data_tidy_energy_use)
+# adding a legend 
+legend("topleft", 
+  legend = c("Histogram", "Normal"),
+       fill = c("black", "red3"))
+
+# no solar histogram 
+no_solar <- en_dat$solar_installed == "No"
+
+no_solar_hist <- hist(en_dat$consumption_kwh[no_solar], plot = FALSE)
+hist(en_dat$consumption_kwh[no_solar], freq = FALSE, main = "", xlab = "Consumption (kWh)", ylim = c(0, max(no_solar_hist$density * 1.1)))
+
+# overlaying normal curve
+x_fit2 <- seq(min(en_dat$consumption_kwh[no_solar]), max(en_dat$consumption_kwh[no_solar]), length = 35)
+y_fit2 <- dnorm(x_fit2, mean(en_dat$consumption_kwh[no_solar]), sd(en_dat$consumption_kwh[no_solar]))
+lines(x_fit2, y_fit2, col = "red3")
+
 
 ```
+
+When the histogram is stratified with solar installation being true, the histogram follows the normal curve more closely which suggests that solar installation results in lower mean consumption and a more left skewed distribution. When the histogram is stratified with solar installation being false, the histogram follows the normal density curve more closely with a right skewed distribution showing higher mean consumption than when solar is installed. Clearly, stratifying the histogram of consumption with solar installation gives a clearer picture of the effect of solar on consumption and explains the shape of the unstratified histogram. 
 
 ### 2. Pairwise plots
 
 ```{r Pairs, echo = FALSE}
-#| fig.cap: "Pairwise plots of continuous variables (consumption, outside temperature, humidity, wind speed, household size and appliance index) against each other"
-pairs(data_tidy_energy_use[1:6])
+#| fig.cap: "Pairwise plots of quantitative variables (consumption, outside temperature, humidity, wind speed, household size and appliance index) against each other"
+#| fig-height: 7
+#| fig-width: 10
+pairs(data_tidy_energy_use[1:6], 
+      labels = c("Consumption (kWh)", "Outside Temperature", "Humidity", "Wind Speed", "Household Size", "Appliance Index"), col = "blue4")
 
 ```
 
 ### 3. Categorical variable plots
 
-```{r boxplots, echo = FALSE}
-str(data_tidy_energy_use$holiday)
-table(data_tidy_energy_use$holiday)
-table(data_tidy_energy_use$energy_efficiency)
+```{r boxplot of energy efficiency}
+#| fig.cap: "Boxplots of categorical variables: a) Energy Efficiency"
+#| echo: false 
 
+ggplot(data = data_tidy_energy_use, aes(x = energy_efficiency, y = consumption_kwh)) +
+  geom_boxplot(fill = "pink")+
+  scale_x_discrete(limits = c("Poor", "Average", "Good", "Excellent")) +
+  labs(x = "Energy efficiency", y = "Consumption (kWh)")
+```
+
+```{r boxplot of solar installed}
+#| fig.cap: "Boxplots of categorical variables: b) Solar Installed"
+#| echo: false
+ggplot(data = data_tidy_energy_use, aes(x = solar_installed, y = consumption_kwh))+
+  geom_boxplot(fill = "green3")+
+  labs(x = "Solar Installed", y = "Consumption (kWh)")
+
+``` 
+
+```{r boxplot of day of week}
+#| fig.cap: "Boxplots of categorical variables: c) Day of the Week"
+#| echo: false
+ggplot(data = data_tidy_energy_use, aes(x = day_of_week, y = consumption_kwh))+
+  geom_boxplot(fill = "purple2")+
+  scale_x_discrete(limits = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")) +
+  labs(x = "Day of Week", y = "Consumption (kWh)")
+
+``` 
+
+```{r boxplot of holiday}
+#| fig.cap: "Boxplots of categorical variables: d) Public Holiday"
+#| echo: false 
 #Converting holiday into correct categorical form
 data_tidy_energy_use <- data_tidy_energy_use %>%
 mutate(
@@ -94,50 +152,63 @@ mutate(
                    labels = c("No", "Yes"))
 )
 
-ggplot(data = data_tidy_energy_use, aes(x = energy_efficiency, y = consumption_kwh)) +
-  geom_boxplot(fill = "pink")+
-  labs(x = "Energy efficiency", y = "Consumption(kW")
-
-ggplot(data = data_tidy_energy_use, aes(x = solar_installed, y = consumption_kwh))+
-  geom_boxplot(fill = "green3")+
-  labs(x = "Solar Installed", y = "Consumption(kW")
-
-ggplot(data = data_tidy_energy_use, aes(x = day_of_week, y = consumption_kwh))+
-  geom_boxplot(fill = "purple2")+
-  labs(x = "Day of Week", y = "Consumption(kW")
-
 ggplot(data = data_tidy_energy_use, aes(x = holiday, y = consumption_kwh))+
   geom_boxplot(fill = "lightblue")+
-  labs(x = "Holiday", y = "Consumption(kW")
+  labs(x = "Holiday", y = "Consumption (kWh)")
 
 ```
 
 ### 4. Categorical Relationships
 
-```{r more graphs, echo = FALSE}
-plot_data_a <- data_tidy_energy_use %>%
-  count(solar_installed, energy_efficiency)
+```{r tables}
+#| echo: false
+# Ensuring order is correct
+en_dat$day_of_week <- factor(en_dat$day_of_week,
+                             levels = c("Monday", "Tuesday", "Wednesday", "Thursday",
+                                        "Friday", "Saturday", "Sunday"),
+                             ordered = TRUE)
+en_dat$energy_efficiency <- factor(en_dat$energy_efficiency, 
+                                   levels = c("Poor", "Average", "Good", "Excellent"), 
+                                   ordered = TRUE)
+
+# Tabulating energy efficiency against solar installation
+eff_solar_table <- table(en_dat$energy_efficiency, en_dat$solar_installed)
+
+# Printing the table with kable so it looks nice 
+kable(eff_solar_table, caption = "Energy Efficiency vs Solar Installation")
   
-ggplot(plot_data_a, aes(x = solar_installed, y = n, fill = energy_efficiency))+
-  geom_col()+
-  labs(x = "Solar Installed", y = "Frequency", fill = "Energy efficiency")
+# Tabulating day of the week against holiday
+dow_holiday_table <- table(en_dat$day_of_week, en_dat$holiday)
 
-plot_data_b <- data_tidy_energy_use %>% 
-  count(day_of_week, holiday)
-plot_data_b
+# Print with kable
+kable(dow_holiday_table, caption = "Day of the Week vs Public Holiday", col.names = c("No", "Yes"))
 
-ggplot(plot_data_b, aes(x = day_of_week, y = n, fill = holiday))+
-  geom_col()+
-  labs(x = "Day of Week", y = "Frequency", fill = "Holiday")+
-  theme(axis.text = element_text(angle = 90))
+#plot_data_a <- data_tidy_energy_use %>%
+  #count(solar_installed, energy_efficiency)
+  
+#ggplot(plot_data_a, aes(x = solar_installed, y = n, fill = energy_efficiency))+
+  #geom_col()+
+  #labs(x = "Solar Installed", y = "Frequency", fill = "Energy efficiency")
+
+#plot_data_b <- data_tidy_energy_use %>% 
+  #count(day_of_week, holiday)
+
+
+#ggplot(plot_data_b, aes(x = day_of_week, y = n, fill = holiday))+
+  #geom_col()+
+  #labs(x = "Day of Week", y = "Frequency", fill = "Holiday")+
+  #theme(axis.text = element_text(angle = 90))
 
 ```
 
 ### 5. Comments
 
-```         
-Observed relationships
-```
+1. Observed relationships:
+There appears to be negative relationships between electricity consumption and solar installation with solar installation decreasing average electricity consumption. There also appears to be a negative relationship between consumption and energy efficiency as improved energy efficiency is associated with lower average consumption. The categorical variable boxplot of the day of the week against consumption indicates that median electricity consumption is higher on weekends. 
+2. Potential co-linearity of explanatory variables:
+There is potential co-linearity between outside temperature and humidity, humidity and wind speed, as well as between household size and appliance index. 
+3. Outliers: 
+There are two apparent outlying observations of low consumption on Saturdays as well as an outlying observation of high consumption in a household without solar installed. 
 
 ## Section 3:
 
@@ -145,29 +216,25 @@ Observed relationships
 
 ```{r model fitting}
 
-attach(data_tidy_energy_use)
-# consumption_kwh vs outside_temperature 
-
-b_hat_cheat <- lm(consumption_kwh ~ outside_temperature, data = data_tidy_energy_use)
+# Fitting linear model of consumption_kwh against outside_temperature from first principles
+b_hat_cheat <- lm(en_dat$consumption_kwh ~ en_dat$outside_temperature)
 summary(b_hat_cheat)
 
-X <- model.matrix(consumption_kwh ~ outside_temperature)
+# Constructing design matrix and Y matrix of observations 
+X <- model.matrix(en_dat$consumption_kwh ~ en_dat$outside_temperature)
 
-#X <- cbind(1, data_tidy_energy_use$outside_temperature)
+#X <- cbind(1, en_dat$outside_temperature)
 #X[1:10]
 
-Y <- data_tidy_energy_use$consumption_kwh
+Y <- en_dat$consumption_kwh
 
+# MLE of Beta
 bhat_c <- solve((t(X) %*% X)) %*% t(X) %*% Y
-rownames(bhat_c) <- c("Intercept (b0)", "b1")
-colnames(bhat_c) <- ("Coefficient")
-detach(data_tidy_energy_use)
+
 ```
 
 ```{r Calculating standard errors}
 #Calculating std. errors
-
-bhat_c
 y_fitted <- X %*% bhat_c
 y_resid <- Y - y_fitted
 
@@ -175,31 +242,57 @@ n <- length(Y)
 p <- ncol(X)
 
 sig_hat <- as.numeric(1/(n-p) * t(y_resid) %*% y_resid)
-sig_hat |> signif(5)
 
 var_bhat_c <- sig_hat * solve((t(X) %*% X))
 se_bhat_c <- sqrt(diag(var_bhat_c))
-se_bhat_c |> signif(3)
 ```
 
 ```{r Calculating test stats and p-values}
 # Calculating t-values
-
 t_vals <- bhat_c / se_bhat_c
-t_vals |> signif(3)
 
 # Calculating p-vals
 df <- n-p
 p_vals <- 2 * pt(-abs(t_vals), df)
 
-results <- data.frame(
-  Estimate = as.vector(bhat_c) |> signif(3),
-  StdError = se_bhat_c |> signif(3),
-  t_vals = as.vector(t_vals) |> signif(5),
-  p_vals = as.vector(p_vals) |> signif(3)
-)
-results
+# Residual Standard Error
+sse <- sum((y_resid)^2)
+mse <- sse/(n-2)
+residual_std_error <- sqrt(mse) |> signif(3)
 
+
+# R squared 
+sst <- sum((Y-mean(Y))^2)
+r_squared <- 1 - (sse/sst)
+
+# Adjusted R squared
+adj_r_squared <- 1 - ((1-r_squared)*(n-1)/(n-2))
+
+# F Statistic
+f_stat <- (sst-sse/(1))/(sse/(n-2))
+
+# p-value 
+f_p_val <- pf(f_stat, 1, n-2, lower.tail = FALSE) |> signif(4)
+
+
+# Collecting all results into data frames
+results1 <- tibble(
+  Coefficients = c("(Intercept)", "Outside Temperature"),
+  Estimate = as.vector(bhat_c) |> signif(3),
+  Std_Error = se_bhat_c |> signif(3),
+  t_vals = as.vector(t_vals) |> signif(5),
+  p_vals = as.vector(p_vals) |> signif(3))
+
+results2 <- tibble(
+  results = c("Residual Standard Error", "R squared", "Adjusted R squared", "F statistic"),
+  value = c(residual_std_error, r_squared, adj_r_squared, f_stat) |> signif(4),
+  d_o_f = c(n, "N/A", "N/A", "1 and 148"),
+  p_val = c( "N/A", "N/A", "N/A", f_p_val),
+)
+
+# Displaying the results
+kable(results1, caption = "Linear Model of consumption (kWh) against outside temperature from first principles", rownames = FALSE, col.names = c("Coefficients", "Estimate", "Standard Error", "t values", "Pr(>|t|)"))
+kable(results2, rownames = FALSE, col.names = c("Results", "Value", "Degrees of Freedom", "p-value"))
 ```
 
 ### 2. Simultaneous hypothesis test
@@ -210,55 +303,53 @@ results
 # H0: b_energy = 0
 # H1: b_energy /= 0
 
-Y <- data_tidy_energy_use$consumption_kwh
+Y <- en_dat$consumption_kwh
 n <- length(Y)
 k <- 4 # no. energy efficiency groups
-
-energy_efficiency <- sample(c("Poor", "Average", "Good", "Excellent"), n, replace = TRUE)
 
 y_bar <- mean(Y)
 
 # Between group sum-sqrs
 
-grp_poor <- data_tidy_energy_use$energy_efficiency == "Poor"
+ind_poor <- en_dat$energy_efficiency == "Poor"
 #grp_poor[1:10]
-y_poor <- mean(Y[grp_poor])
+y_poor <- mean(Y[ind_poor])
 #y_poor
-n_poor <- sum(grp_poor)
+n_poor <- sum(ind_poor)
 ss_poor <- n_poor * (y_poor - y_bar)^2
 #ss_poor
 
-grp_ave <- data_tidy_energy_use$energy_efficiency == "Average"
-y_ave <- mean(Y[grp_ave])
-n_ave <- sum(grp_ave)
+ind_ave <- en_dat$energy_efficiency == "Average"
+y_ave <- mean(Y[ind_ave])
+n_ave <- sum(ind_ave)
 ss_ave <- n_ave * (y_ave - y_bar)^2
 #ss_ave
 
-grp_good <- data_tidy_energy_use$energy_efficiency == "Good"
-y_good <- mean(Y[grp_good])
-n_good <- sum(grp_good)
+ind_good <- en_dat$energy_efficiency == "Good"
+y_good <- mean(Y[ind_good])
+n_good <- sum(ind_good)
 ss_good <- n_good * (y_good - y_bar)^2
 #ss_good
 
-grp_exc <- data_tidy_energy_use$energy_efficiency == "Excellent"
-y_exc <- mean(Y[grp_exc])
-n_exc <- sum(grp_exc)
+ind_exc <- en_dat$energy_efficiency == "Excellent"
+y_exc <- mean(Y[ind_exc])
+n_exc <- sum(ind_exc)
 ss_exc <- n_exc * (y_exc - y_bar)^2
 #ss_exc
 
 #n_poor + n_ave + n_good + n_exc
 ss_between <- ss_poor + ss_ave + ss_good + ss_exc
 ss_between |> signif(3)
-
 ```
+
 
 ```{r}
 # Within-group sum sqrs
 
-ss_within_poor <- sum((Y[grp_poor] - y_poor)^2)
-ss_within_ave <- sum((grp_ave - y_ave)^2)
-ss_within_good <- sum((Y[grp_good] - y_good)^2)
-ss_within_exc <- sum((Y[grp_exc] - y_exc)^2)
+ss_within_poor <- sum((Y[ind_poor] - y_poor)^2)
+ss_within_ave <- sum((Y[ind_ave] - y_ave)^2)
+ss_within_good <- sum((Y[ind_good] - y_good)^2)
+ss_within_exc <- sum((Y[ind_exc] - y_exc)^2)
 ss_within <- ss_within_poor + ss_within_ave + ss_within_good + ss_within_exc
 ss_within |> signif(3)
 ```
@@ -268,14 +359,19 @@ ss_within |> signif(3)
 df_b <- k-1
 df_w <- n-k
 
-f_stat <- (ss_between/df_b) / (ss_within/df_w)
+f_stat <- (ss_between/(k-1)) / (ss_within/(n-k))
 f_stat |> signif(5)
 
-p_val <- 1 - pf(f_stat, df_b, df_w)
+p_val <- pf(f_stat, df_b, df_w, lower.tail = FALSE)
 p_val |> signif(5)
+
+summary(lm(en_dat$consumption_kwh~energy_efficiency))
+
 
 # HUGE p-val because ss_within is huge and ss_between very small + group means very close -> basically no variation explained by energy_efficiency
 # DEFINITELY can't reject H0
+# problem possibly because the anova output and the first principles output don't match... i'm not sure why and cannot figure it out. please try figure it out. i asked ethan for their answers to corroborate but he's being a little bitch 
+hyp_test <- tibble()
 
 ```
 
@@ -283,13 +379,14 @@ p_val |> signif(5)
 
 ### 1. Fit Model
 
-```{r}
+```{r Full model}
 
-b_hat <- lm(consumption_kwh ~ outside_temperature + humidity + wind_speed + household_size + appliance_index + energy_efficiency + solar_installed + day_of_week + holiday, data_tidy_energy_use)
+b_hat <- lm(consumption_kwh ~ outside_temperature + humidity + wind_speed + household_size + appliance_index + energy_efficiency + solar_installed + day_of_week + holiday + outside_temperature:humidity, data_tidy_energy_use)
 
 summary(b_hat)
 
 #rownames(b_hat) <- c("Outside temp.", "Humidity", "Wind speed", "Household size", "Appliance index", "Energy efficiency: Excellent", "Energy efficiency: Good", "Energy efficiency: Poor", "Solar installed: Yes", "Day of week: Monday", "Day of week: Saturday", "Day of week: Sunday", "Day of week: Tuesday", "Day of week: Thursday", "Day of week: Wednesday")
 
-
 ```
+
+```{r Hypothesis testing}
