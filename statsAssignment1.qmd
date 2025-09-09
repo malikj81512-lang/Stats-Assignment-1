@@ -406,7 +406,7 @@ p_val_out_temp <- sum$coefficients[2, 4]
 p_val_out_temp
 # p_val_out_temp > 0.05 -> do not reject
 
-# consumpomption_kw ~ humidity 
+# consumption_kw ~ humidity 
 # Test at 5% significance
 
 p_val_out_hum <- sum$coefficients[3, 4]
@@ -429,3 +429,171 @@ Variables with a coefficient that was statistically significant at the 5% level 
 # Part Two
 
 ## Scenario A
+
+```{r}
+set.seed(25)
+x_vec <- runif(25, 0, 1)
+
+n_sim <- 1000
+b0 <- 12
+sig <- 2.5
+
+bs <- c(0.5, 1, 2, 5, 10)
+
+for (j in seq_along(bs)) {
+  b1 <- bs[j]
+  rejections <- numeric(n_sim)
+  
+  for (i in 1:n_sim){
+  err <- rnorm(25, mean = 0, sd = sig)
+  y <- b0 + b1*x_vec + err
+  model <- lm(y ~ x_vec)
+  p_val <- summary(model)$coefficients[2, 4]
+  rejections[i] <- as.integer(p_val < 0.05)
+}
+
+power_est[j] <- mean(rejections)
+cat("\nEstimated power for β1 =", b1, "is", power_est[j], "\n")
+}
+
+set.seed(25)
+
+# True b1 = 0.5
+b1 <- 0.5
+rejections_0.5 <- numeric(n_sim)
+
+for (i in 1:n_sim){
+  err <- rnorm(25, mean = 0, sd = sig)
+  y <- b0 + b1*x_vec + err
+  model <- lm(y ~ x_vec)
+  p_val <- summary(model)$coefficients[2, 4]
+  rejections_0.5[i] <- as.integer(p_val < 0.05)
+}
+
+power_est_0.5 <- mean(rejections_0.5)
+cat("\nEstimated power for β1 =", b1, "is", power_est_0.5, "\n")
+
+# True b1 = 1
+b1 <- 1
+rejections_1 <- numeric(n_sim)
+
+for (i in 1:n_sim) {
+  err <- rnorm(25, mean = 0, sd = sig)
+  y <- b0 + b1*x_vec + err
+  model <- lm(y ~ x_vec)
+  p_val <- summary(model)$coefficients[2, 4]
+  rejections_1[i] <- as.integer(p_val < 0.05)
+}
+
+power_est_1 <- mean(rejections_1)
+cat("Estimated power for β1 =", b1, "is", power_est_1, "\n")
+
+#True b1 = 2
+b1 <- 2
+rejections_2 <- numeric(n_sim)
+
+for (i in 1:n_sim) {
+  err <- rnorm(25, mean = 0, sd = sig)
+  y <- b0 + b1*x_vec + err
+  model <- lm(y ~ x_vec)
+  p_val <- summary(model)$coefficients[2, 4]
+  rejections_2[i] <- as.integer(p_val < 0.05)
+}
+
+power_est_2 <- mean(rejections_2)
+cat("Estimated power for β1 =", b1, "is", power_est_2, "\n")
+
+
+#True b1 = 5
+b1 <- 5
+rejections_5 <- numeric(n_sim)
+
+for (i in 1:n_sim) {
+  err <- rnorm(25, mean = 0, sd = sig)
+  y <- b0 + b1*x_vec + err
+  model <- lm(y ~ x_vec)
+  p_val <- summary(model)$coefficients[2, 4]
+  rejections_5[i] <- as.integer(p_val < 0.05)
+}
+
+power_est_5 <- mean(rejections_5)
+cat("Estimated power for β1 =", b1, "is", power_est_5, "\n")
+
+#True b1 = 10
+b1 <- 10
+rejections_10 <- numeric(n_sim)
+
+for (i in 1:n_sim) {
+  err <- rnorm(25, mean = 0, sd = sig)
+  y <- b0 + b1*x_vec + err
+  model <- lm(y ~ x_vec)
+  p_val <- summary(model)$coefficients[2, 4]
+  rejections_10[i] <- as.integer(p_val < 0.05)
+}
+
+power_est_10 <- mean(rejections_10)
+cat("Estimated power for β1 =", b1, "is", power_est_10, "\n")
+
+
+```
+
+## Scenario B
+
+
+```{r}
+b0 <- 12
+n_sim <- 1000
+sig <- 2.5
+ns <- c(5, 10, 20, 50)
+est_power_lin <- numeric(length(ns))
+est_power_exp <- numeric(length(ns))
+
+for (j in seq_along(ns)) {
+  n <- ns[j]
+  cat("\nn =", n, "\n")
+set.seed(n)
+x_vec <- seq(0, 7, length.out = n)
+
+
+# Calculating with linear model 
+rejections_lin <- rep(0, n_sim)
+
+for (i in 1:n_sim) {
+  err <- rnorm(n, 0 , sig)
+y <- b0 + 0.01*exp(x_vec) + err
+model <- lm(y ~ x_vec)
+p_val <- summary(model)$coefficients[2, 4]
+  rejections_lin[i] <- as.integer(p_val < 0.05)
+}
+
+est_power_lin[j] <- mean(rejections_lin)
+cat("Estimated power for n  =", n, ", assuming incorrect linear model = ", est_power_lin[j], "\n")
+
+
+# Calculating with exponential model
+rejections_exp <- numeric(n_sim)
+exp_x <- exp(x_vec)
+
+for (i in 1:n_sim) {
+   err <- rnorm(n, 0 , sig)
+y <- b0 + 0.01*exp(x_vec) + err
+model <- lm(y ~ exp_x)
+p_val <- summary(model)$coefficients[2, 4]
+  rejections_exp[i] <- as.integer(p_val < 0.05)
+}
+
+est_power_exp[j] <- mean(rejections_exp)
+cat("Estimated power for n  =", n, ", assuming correct exponential model = ", est_power_exp[j], "\n")
+
+}
+
+
+```
+
+```{r plot for scenario B}
+plot(ns, est_power_lin, type="b", col = "red3", ylim = c(0,1), xlab = "Sample size (n", ylab ="Estimated power", main = "Estimated power with different models vs sample size")
+lines(ns, est_power_exp, type = "b", col = "lightblue2")
+legend("bottomright", legend = c("Linear", "Exponential"), fill = c("red3", "lightblue2"))
+
+
+```
