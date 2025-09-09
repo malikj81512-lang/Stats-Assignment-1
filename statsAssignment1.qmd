@@ -56,7 +56,7 @@ lines(x_fit, y_fit, col = "red3")
 
 ```
 
-The unstratified histogram does not mimic the shape of the overlaid normal curve which suggests that some households consume less electricity and some households consume more, hence the two peaks of the histogram.
+The unstratified histogram does not mimic the shape of the overlaid normal curve which suggests that some households consume less electricity and some households consume more. The histogram appears to be almost bimodal in shape, with two peaks that are spaced quite far apart, suggesting that if stratified under a certain binomial condition, the distribution could more closely resemble the shape of the normal curve.
 
 ```{r Histogram with solar installed, echo = FALSE}
 #| fig-cap: "Histograms of electricity consumption in households with a) solar installed and b) solar not installed"
@@ -97,7 +97,9 @@ lines(x_fit2, y_fit2, col = "red3")
 
 ```
 
-When the histogram is stratified with solar installation being true, the histogram follows the normal curve more closely which suggests that solar installation results in lower mean consumption and a more left skewed distribution. When the histogram is stratified with solar installation being false, the histogram follows the normal density curve more closely with a right skewed distribution showing higher mean consumption than when solar is installed. Clearly, stratifying the histogram of consumption with solar installation gives a clearer picture of the effect of solar on consumption and explains the shape of the unstratified histogram.
+When the histogram is stratified with solar installation being true, the histogram follows the normal curve more closely. The distribution is left skewed and shows that solar installation results in lower mean consumption, explaining the first peak of the unstratified histogram. When the histogram is stratified with solar installation being false, the histogram follows the normal density curve more closely than the unstratified histogram. The distribution is right skewed, showing higher mean consumption than when solar is installed and explaining the second peak. Clearly, stratifying the histogram of consumption with solar installation shows that households with solar had a significantly lower energy consumption on average than those without, and explains the shape of the unstratified histogram.
+
+gives a clearer picture of the effect of solar on consumption and explains the shape of the unstratified histogram.
 
 ### 2. Pairwise plots
 
@@ -387,20 +389,23 @@ A full model was fitted and various results are tabulated below.
 #| code-fold: true 
 #| results: "hide"
 #| code-summary: "Click to display code"
+
+en_dat$household_size <- factor(en_dat$household_size,    levels = 1:6,                  labels = c("1", "2", "3", "4", "5", "6"))
+
 full_model <- lm(consumption_kwh ~ outside_temperature + humidity + wind_speed + household_size + appliance_index + energy_efficiency + solar_installed + day_of_week + holiday + outside_temperature:humidity, en_dat)
 
 full_model_summary <- summary(full_model)
 
 confidence_ints <- confint(full_model)
-lbs <- confidence_ints[1:18] |> signif(4)
-ubs <- confidence_ints[19:36] |> signif(4)
+lbs <- confidence_ints[1:22] |> signif(4)
+ubs <- confidence_ints[23:44] |> signif(4)
 
 ```
 
 ```{r Displaying results}
 #| echo: false
 fit_results <- tibble(
-  coeffs = c("(Intercept)", "Outside temperature", "Humidity", "Wind speed", "Household size", "Appliance index", "Energy efficiency (Average)", "Energy efficiency (Good)", "Energy efficiency (Excellent)", "Solar installed (Yes)", "Day of week (Tuesday)", "Day of week (Wednesday)", "Day of week (Thursday)", "Day of week (Friday)", "Day of week (Saturday)", "Day of week (Sunday)", "Holiday", "Interaction term (outside temperature against humidity)"),
+  coeffs = c("(Intercept)", "Outside temperature", "Humidity", "Wind speed", "Household size (2)", "Household size (3)", "Household size (4)", "Household size (5)", "Household size (6)", "Appliance index", "Energy efficiency (Average)", "Energy efficiency (Good)", "Energy efficiency (Excellent)", "Solar installed (Yes)", "Day of week (Tuesday)", "Day of week (Wednesday)", "Day of week (Thursday)", "Day of week (Friday)", "Day of week (Saturday)", "Day of week (Sunday)", "Holiday", "Interaction term (outside temperature against humidity)"),
   estimates = full_model$coefficients |> signif(4),
   lb = lbs |> signif(3),
   ub = ubs |> signif(3),
@@ -439,6 +444,11 @@ anova(red_model_hol, full_model)
 # Solar Installed
 red_model_sol <- update(full_model, .~. - solar_installed, data = en_dat)
 anova(red_model_sol, full_model)
+
+# Household size
+red_model_household <- update(full_model, .~. - household_size, data = en_dat)
+anova(red_model_household, full_model)
+
 ```
 
 ### Interpretation
@@ -533,7 +543,7 @@ cat("Estimated power for n  =", n, ", assuming correct exponential model = ", es
 ```
 
 ```{r plot for scenario B}
-plot(ns, est_power_lin, type="b", col = "red3", ylim = c(0,1), xlab = "Sample size (n", ylab ="Estimated power", main = "Estimated power with different models vs sample size")
+plot(ns, est_power_lin, type="b", col = "red3", ylim = c(0,1), xlab = "Sample size (n)", ylab ="Estimated power", main = "Estimated power with different models vs sample size")
 lines(ns, est_power_exp, type = "b", col = "lightblue2")
 legend("bottomright", legend = c("Linear", "Exponential"), fill = c("red3", "lightblue2"))
 
