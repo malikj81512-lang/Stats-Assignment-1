@@ -105,13 +105,20 @@ When the histogram is stratified with solar installation being true, the histogr
 #| fig.cap: "Pairwise plots of quantitative variables (consumption, outside temperature, humidity, wind speed, household size and appliance index) against each other"
 #| fig-height: 7
 #| fig-width: 10
-pairs(data_tidy_energy_use[1:6], 
-      labels = c("Consumption (kWh)", "Outside Temperature", "Humidity", "Wind Speed", "Household Size", "Appliance Index"), col = "blue4")
+
+quant_vars <- tibble(
+  en_dat$consumption_kwh,
+  en_dat$outside_temperature,
+  en_dat$humidity,
+  en_dat$wind_speed, 
+  en_dat$appliance_index
+    )
+pairs(quant_vars, 
+      labels = c("Consumption (kWh)", "Outside Temperature", "Humidity", "Wind Speed", "Appliance Index"), col = "blue4")
 
 ```
 
 ### 3. Categorical variable plots
-
 ```{r boxplot of energy efficiency}
 #| fig.cap: "Boxplots of categorical variables: a) Energy Efficiency"
 #| echo: false 
@@ -157,6 +164,7 @@ ggplot(data = data_tidy_energy_use, aes(x = holiday, y = consumption_kwh))+
 
 ```
 
+For analysis purposes, household size has been treated as a categorical variable by grouping numbers of people within the household into 6 levels, 1 person, 2 person, 3 person, 4 person, 5 person, and 6 person households respectively. This is to detect outlying observations that the pairs plot made difficult to analyse. 
 ```{r}
 #| fig.cap: "Boxplots of categorical variables: e) Household size"
 #| echo: false
@@ -221,7 +229,7 @@ kable(dow_holiday_table, caption = "Day of the Week vs Public Holiday", col.name
 
 1.  Observed relationships: There appears to be negative relationships between electricity consumption and solar installation with solar installation decreasing average electricity consumption. There also appears to be a negative relationship between consumption and energy efficiency as improved energy efficiency is associated with lower average consumption. The categorical variable boxplot of the day of the week against consumption indicates that median electricity consumption is higher on weekends.
 2.  Potential co-linearity of explanatory variables: There is potential co-linearity between outside temperature and humidity, humidity and wind speed, as well as between household size and appliance index.
-3.  Outliers: There are two apparent outlying observations of low consumption on Saturdays as well as an outlying observation of high consumption in a household without solar installed.
+3.  Outliers: There are two apparent outlying observations of low consumption on Saturdays as well as an outlying observation of high consumption in a household without solar installed. There are also two outlying observations of low consumption in 1 person households and four outlying observations of high consumption in 5 person households. 
 
 ## Section 3:
 
@@ -302,10 +310,9 @@ kable(results2, rownames = FALSE, col.names = c("Results", "Value", "Degrees of 
 
 ### 2. Simultaneous hypothesis test
 A simultaneous hypothesis test will be performed of the effect of energy efficiency on electricity consumption with the following hypotheses. 
-$$ 
-H_0: \mu_{poor} = \mu_{average} = \mu_{good} = \mu_{excellent}
-$$
-$$H_1:$$ at least one $$\mu$$ is different
+
+$H_0: \mu_{poor} = \mu_{average} = \mu_{good} = \mu_{excellent}$
+$H_1:$ at least one $\mu_{i}$ is different
 
 ```{r Simultaneous hypothesis test}
 #| code-fold: true 
@@ -439,19 +446,23 @@ anova(red_model_hol, full_model)
 # Solar Installed
 red_model_sol <- update(full_model, .~. - solar_installed, data = en_dat)
 anova(red_model_sol, full_model)
+
+
 ```
 
 ### Interpretation
 
 Variables with a coefficient that was statistically significant at the 5% level were: Household Size
 
-##Section 5
+## Section 5
 
 # Part Two
 
 ## Scenario A
 
 ```{r}
+#| code-fold: true 
+#| code-summary: "Click to display code"
 set.seed(25)
 x_vec <- runif(25, 0, 1)
 
@@ -475,14 +486,22 @@ for (j in seq_along(bs)) {
 }
 
 power_est[j] <- mean(rejections)
-cat("\nEstimated power for β1 =", b1, "is", power_est[j], "\n")
 }
+
+# Displaying results 
+powers <- tibble(
+  bs,
+  power_est
+)
+kable(powers, row.names = FALSE, col.names = c("$\\beta_{1}$", "Estimated power"), caption = "Estimated power against varying true values of $\\beta_{1}$")
 
 ```
 
 ## Scenario B
 
 ```{r}
+#| code-fold: true 
+#| code-summary: "Click to display code"
 b0 <- 12
 n_sim <- 1000
 sig <- 2.5
@@ -509,7 +528,6 @@ p_val <- summary(model)$coefficients[2, 4]
 }
 
 est_power_lin[j] <- mean(rejections_lin)
-cat("Estimated power for n  =", n, ", assuming incorrect linear model = ", est_power_lin[j], "\n")
 
 
 # Calculating with exponential model
@@ -525,14 +543,19 @@ p_val <- summary(model)$coefficients[2, 4]
 }
 
 est_power_exp[j] <- mean(rejections_exp)
-cat("Estimated power for n  =", n, ", assuming correct exponential model = ", est_power_exp[j], "\n")
-
 }
 
+# Displaying results 
+exp_powers <- tibble(
+  ns, 
+  est_power_lin, est_power_exp
+)
+kable(exp_powers, row.names = FALSE, col.names = c("Sample size (n)", "Estimated power of linear model", "Estimated power of exponential model"), caption = "Estimated power of mis-specified linear model and correctly specified exponential model against varying sample size (n)")
 
 ```
 
 ```{r plot for scenario B}
+#| echo: false
 plot(ns, est_power_lin, type="b", col = "red3", ylim = c(0,1), xlab = "Sample size (n", ylab ="Estimated power", main = "Estimated power with different models vs sample size")
 lines(ns, est_power_exp, type = "b", col = "lightblue2")
 legend("bottomright", legend = c("Linear", "Exponential"), fill = c("red3", "lightblue2"))
