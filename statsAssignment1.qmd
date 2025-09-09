@@ -2,7 +2,7 @@
 title: "STA2005S Assignment 1"
 author: "Malik Jamie (JMXMAL003) and Amara Patel (PTLAMA005)"
 date: "10 September 2025"
-format: pdf
+format: html
 ---
 
 \newpage
@@ -26,6 +26,8 @@ install.packages("remotes")
 }
 remotes::install_github("MiguelRodo/DataTidyRodoSTA2005S")
 data("data_tidy_energy_use", package = "DataTidyRodoSTA2005S")
+
+#install.packages("tinytex")
 
 library(dplyr)
 library(ggplot2)
@@ -57,7 +59,8 @@ lines(x_fit, y_fit, col = "red3")
 
 
 ```
-The unstratified histogram does not mimic the shape of the overlaid normal curve which suggests that some households consume less electricity and some households consume more, hence the two peaks of the histogram. 
+
+The unstratified histogram does not mimic the shape of the overlaid normal curve which suggests that some households consume less electricity and some households consume more, hence the two peaks of the histogram.
 
 ```{r Histogram with solar installed, echo = FALSE}
 #| fig-cap: "Histograms of electricity consumption in households with a) solar installed and b) solar not installed"
@@ -98,7 +101,7 @@ lines(x_fit2, y_fit2, col = "red3")
 
 ```
 
-When the histogram is stratified with solar installation being true, the histogram follows the normal curve more closely which suggests that solar installation results in lower mean consumption and a more left skewed distribution. When the histogram is stratified with solar installation being false, the histogram follows the normal density curve more closely with a right skewed distribution showing higher mean consumption than when solar is installed. Clearly, stratifying the histogram of consumption with solar installation gives a clearer picture of the effect of solar on consumption and explains the shape of the unstratified histogram. 
+When the histogram is stratified with solar installation being true, the histogram follows the normal curve more closely which suggests that solar installation results in lower mean consumption and a more left skewed distribution. When the histogram is stratified with solar installation being false, the histogram follows the normal density curve more closely with a right skewed distribution showing higher mean consumption than when solar is installed. Clearly, stratifying the histogram of consumption with solar installation gives a clearer picture of the effect of solar on consumption and explains the shape of the unstratified histogram.
 
 ### 2. Pairwise plots
 
@@ -130,7 +133,7 @@ ggplot(data = data_tidy_energy_use, aes(x = solar_installed, y = consumption_kwh
   geom_boxplot(fill = "green3")+
   labs(x = "Solar Installed", y = "Consumption (kWh)")
 
-``` 
+```
 
 ```{r boxplot of day of week}
 #| fig.cap: "Boxplots of categorical variables: c) Day of the Week"
@@ -140,7 +143,7 @@ ggplot(data = data_tidy_energy_use, aes(x = day_of_week, y = consumption_kwh))+
   scale_x_discrete(limits = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")) +
   labs(x = "Day of Week", y = "Consumption (kWh)")
 
-``` 
+```
 
 ```{r boxplot of holiday}
 #| fig.cap: "Boxplots of categorical variables: d) Public Holiday"
@@ -155,6 +158,23 @@ mutate(
 ggplot(data = data_tidy_energy_use, aes(x = holiday, y = consumption_kwh))+
   geom_boxplot(fill = "lightblue")+
   labs(x = "Holiday", y = "Consumption (kWh)")
+
+```
+
+```{r}
+#| fig.cap: "Boxplots of categorical variables: e) Household size"
+#| echo: false
+#Converting household size into correct categorical form
+data_tidy_energy_use <- data_tidy_energy_use %>%
+ 
+mutate(
+  household_size = factor(household_size, 
+                   labels = c("1", "2",  "3", "4", "5", "6"))
+)
+
+ggplot(data = data_tidy_energy_use, aes(x = household_size, y = consumption_kwh))+
+  geom_boxplot(fill = "red3") +
+  labs(x = "Size of Household (No. People)", y = "Consumption (kWh)")
 
 ```
 
@@ -203,12 +223,9 @@ kable(dow_holiday_table, caption = "Day of the Week vs Public Holiday", col.name
 
 ### 5. Comments
 
-1. Observed relationships:
-There appears to be negative relationships between electricity consumption and solar installation with solar installation decreasing average electricity consumption. There also appears to be a negative relationship between consumption and energy efficiency as improved energy efficiency is associated with lower average consumption. The categorical variable boxplot of the day of the week against consumption indicates that median electricity consumption is higher on weekends. 
-2. Potential co-linearity of explanatory variables:
-There is potential co-linearity between outside temperature and humidity, humidity and wind speed, as well as between household size and appliance index. 
-3. Outliers: 
-There are two apparent outlying observations of low consumption on Saturdays as well as an outlying observation of high consumption in a household without solar installed. 
+1.  Observed relationships: There appears to be negative relationships between electricity consumption and solar installation with solar installation decreasing average electricity consumption. There also appears to be a negative relationship between consumption and energy efficiency as improved energy efficiency is associated with lower average consumption. The categorical variable boxplot of the day of the week against consumption indicates that median electricity consumption is higher on weekends.
+2.  Potential co-linearity of explanatory variables: There is potential co-linearity between outside temperature and humidity, humidity and wind speed, as well as between household size and appliance index.
+3.  Outliers: There are two apparent outlying observations of low consumption on Saturdays as well as an outlying observation of high consumption in a household without solar installed.
 
 ## Section 3:
 
@@ -217,14 +234,9 @@ There are two apparent outlying observations of low consumption on Saturdays as 
 ```{r model fitting}
 
 # Fitting linear model of consumption_kwh against outside_temperature from first principles
-b_hat_cheat <- lm(en_dat$consumption_kwh ~ en_dat$outside_temperature)
-summary(b_hat_cheat)
 
 # Constructing design matrix and Y matrix of observations 
 X <- model.matrix(en_dat$consumption_kwh ~ en_dat$outside_temperature)
-
-#X <- cbind(1, en_dat$outside_temperature)
-#X[1:10]
 
 Y <- en_dat$consumption_kwh
 
@@ -312,9 +324,7 @@ y_bar <- mean(Y)
 # Between group sum-sqrs
 
 ind_poor <- en_dat$energy_efficiency == "Poor"
-#grp_poor[1:10]
 y_poor <- mean(Y[ind_poor])
-#y_poor
 n_poor <- sum(ind_poor)
 ss_poor <- n_poor * (y_poor - y_bar)^2
 #ss_poor
@@ -342,7 +352,6 @@ ss_between <- ss_poor + ss_ave + ss_good + ss_exc
 ss_between |> signif(3)
 ```
 
-
 ```{r}
 # Within-group sum sqrs
 
@@ -365,12 +374,12 @@ f_stat |> signif(5)
 p_val <- pf(f_stat, df_b, df_w, lower.tail = FALSE)
 p_val |> signif(5)
 
-summary(lm(en_dat$consumption_kwh~energy_efficiency))
+summary(lm(consumption_kwh~energy_efficiency, data = en_dat))
 
 
 # HUGE p-val because ss_within is huge and ss_between very small + group means very close -> basically no variation explained by energy_efficiency
 # DEFINITELY can't reject H0
-# problem possibly because the anova output and the first principles output don't match... i'm not sure why and cannot figure it out. please try figure it out. i asked ethan for their answers to corroborate but he's being a little bitch 
+
 hyp_test <- tibble()
 
 ```
@@ -383,10 +392,40 @@ hyp_test <- tibble()
 
 b_hat <- lm(consumption_kwh ~ outside_temperature + humidity + wind_speed + household_size + appliance_index + energy_efficiency + solar_installed + day_of_week + holiday + outside_temperature:humidity, data_tidy_energy_use)
 
-summary(b_hat)
-
-#rownames(b_hat) <- c("Outside temp.", "Humidity", "Wind speed", "Household size", "Appliance index", "Energy efficiency: Excellent", "Energy efficiency: Good", "Energy efficiency: Poor", "Solar installed: Yes", "Day of week: Monday", "Day of week: Saturday", "Day of week: Sunday", "Day of week: Tuesday", "Day of week: Thursday", "Day of week: Wednesday")
+sum <- summary(b_hat)
+sum
 
 ```
 
 ```{r Hypothesis testing}
+
+# consumption_kw ~ outside_temperature
+# Test at 5% significance 
+
+p_val_out_temp <- sum$coefficients[2, 4]
+p_val_out_temp
+# p_val_out_temp > 0.05 -> do not reject
+
+# consumpomption_kw ~ humidity 
+# Test at 5% significance
+
+p_val_out_hum <- sum$coefficients[3, 4]
+p_val_out_hum
+# p_val_out_hum > 0.05 -> do not reject
+
+# size of household?
+#summary(data_tidy_energy_use$consumption_kwh)
+#summary(data_tidy_energy_use$household_size)
+lm_household <- (lm(consumption_kwh~outside_temperature + humidity + wind_speed + appliance_index + energy_efficiency + solar_installed + day_of_week + holiday + outside_temperature:humidity, data_tidy_energy_use))
+anova(lm_household, b_hat)
+
+```
+
+### Interpretation
+Variables with a coefficient that was statistically significant at the 5% level were: Household Size
+
+##Section 5
+
+# Part Two
+
+## Scenario A
