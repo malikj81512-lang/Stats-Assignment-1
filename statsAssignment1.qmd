@@ -440,6 +440,7 @@ b0 <- 12
 sig <- 2.5
 
 bs <- c(0.5, 1, 2, 5, 10)
+power_est <- numeric(length(bs))
 
 for (j in seq_along(bs)) {
   b1 <- bs[j]
