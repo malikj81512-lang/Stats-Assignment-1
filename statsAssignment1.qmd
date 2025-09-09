@@ -450,6 +450,7 @@ anova(red_model_hol, full_model)
 red_model_sol <- update(full_model, .~. - solar_installed, data = en_dat)
 anova(red_model_sol, full_model)
 
+
 ```
 
 ### Interpretation
