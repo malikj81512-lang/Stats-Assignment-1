@@ -5,8 +5,6 @@ date: "10 September 2025"
 format: html
 ---
 
-\newpage
-
 # Part One
 
 ## Section 1:
@@ -27,11 +25,9 @@ install.packages("remotes")
 remotes::install_github("MiguelRodo/DataTidyRodoSTA2005S")
 data("data_tidy_energy_use", package = "DataTidyRodoSTA2005S")
 
-#install.packages("tinytex")
-
+library(scales)
 library(dplyr)
 library(ggplot2)
-library(tinytex)
 library(tidyr)
 library(knitr)
 ```
@@ -230,9 +226,10 @@ kable(dow_holiday_table, caption = "Day of the Week vs Public Holiday", col.name
 ## Section 3:
 
 ### 1. Model Fitting:
-
+A linear model will be fit of consumption against outside temperature from first principles. The results are displayed below. 
 ```{r model fitting}
-
+#| code-fold: true
+#| code-summary: "Click here to display calculations"
 # Fitting linear model of consumption_kwh against outside_temperature from first principles
 
 # Constructing design matrix and Y matrix of observations 
@@ -243,9 +240,6 @@ Y <- en_dat$consumption_kwh
 # MLE of Beta
 bhat_c <- solve((t(X) %*% X)) %*% t(X) %*% Y
 
-```
-
-```{r Calculating standard errors}
 #Calculating std. errors
 y_fitted <- X %*% bhat_c
 y_resid <- Y - y_fitted
@@ -253,17 +247,16 @@ y_resid <- Y - y_fitted
 n <- length(Y)
 p <- ncol(X)
 
+# calculating s^2
 sig_hat <- as.numeric(1/(n-p) * t(y_resid) %*% y_resid)
 
 var_bhat_c <- sig_hat * solve((t(X) %*% X))
 se_bhat_c <- sqrt(diag(var_bhat_c))
-```
 
-```{r Calculating test stats and p-values}
 # Calculating t-values
 t_vals <- bhat_c / se_bhat_c
 
-# Calculating p-vals
+# Calculating p-values
 df <- n-p
 p_vals <- 2 * pt(-abs(t_vals), df)
 
@@ -283,7 +276,7 @@ adj_r_squared <- 1 - ((1-r_squared)*(n-1)/(n-2))
 # F Statistic
 f_stat <- (sst-sse/(1))/(sse/(n-2))
 
-# p-value 
+# p-value of F statistic
 f_p_val <- pf(f_stat, 1, n-2, lower.tail = FALSE) |> signif(4)
 
 
@@ -297,7 +290,7 @@ results1 <- tibble(
 
 results2 <- tibble(
   results = c("Residual Standard Error", "R squared", "Adjusted R squared", "F statistic"),
-  value = c(residual_std_error, r_squared, adj_r_squared, f_stat) |> signif(4),
+  value = c(residual_std_error |> signif(3), scientific(r_squared, 3), scientific(adj_r_squared, 3), f_stat |> signif(4)),
   d_o_f = c(n, "N/A", "N/A", "1 and 148"),
   p_val = c( "N/A", "N/A", "N/A", f_p_val),
 )
@@ -308,12 +301,21 @@ kable(results2, rownames = FALSE, col.names = c("Results", "Value", "Degrees of 
 ```
 
 ### 2. Simultaneous hypothesis test
+A simultaneous hypothesis test will be performed of the effect of energy efficiency on electricity consumption with the following hypotheses. 
+$$ 
+H_0: \mu_{poor} = \mu_{average} = \mu_{good} = \mu_{excellent}
+$$
+$$H_1:$$ at least one $$\mu$$ is different
 
 ```{r Simultaneous hypothesis test}
-# consumption_kw ~ energy_efficiency
-# Test at 5% significance 
-# H0: b_energy = 0
-# H1: b_energy /= 0
+#| code-fold: true 
+#| code-summary: "Click here to display calculations" 
+# Simultaneous hypothesis test for the effect of energy efficiency on electricity consumption
+# Testing at 5% significance 
+# H0: μ_poor = μ_average = μ_good = μ_excellent 
+# H1: at least one μ is different
+
+
 
 Y <- en_dat$consumption_kwh
 n <- length(Y)
@@ -321,104 +323,122 @@ k <- 4 # no. energy efficiency groups
 
 y_bar <- mean(Y)
 
-# Between group sum-sqrs
-
+# Between group sum-sqrs 
+## Poor
 ind_poor <- en_dat$energy_efficiency == "Poor"
 y_poor <- mean(Y[ind_poor])
 n_poor <- sum(ind_poor)
 ss_poor <- n_poor * (y_poor - y_bar)^2
-#ss_poor
 
+## Average
 ind_ave <- en_dat$energy_efficiency == "Average"
 y_ave <- mean(Y[ind_ave])
 n_ave <- sum(ind_ave)
 ss_ave <- n_ave * (y_ave - y_bar)^2
-#ss_ave
 
+## Good
 ind_good <- en_dat$energy_efficiency == "Good"
 y_good <- mean(Y[ind_good])
 n_good <- sum(ind_good)
 ss_good <- n_good * (y_good - y_bar)^2
-#ss_good
 
+## Excellent
 ind_exc <- en_dat$energy_efficiency == "Excellent"
 y_exc <- mean(Y[ind_exc])
 n_exc <- sum(ind_exc)
 ss_exc <- n_exc * (y_exc - y_bar)^2
-#ss_exc
 
-#n_poor + n_ave + n_good + n_exc
 ss_between <- ss_poor + ss_ave + ss_good + ss_exc
-ss_between |> signif(3)
-```
 
-```{r}
 # Within-group sum sqrs
 
 ss_within_poor <- sum((Y[ind_poor] - y_poor)^2)
 ss_within_ave <- sum((Y[ind_ave] - y_ave)^2)
 ss_within_good <- sum((Y[ind_good] - y_good)^2)
 ss_within_exc <- sum((Y[ind_exc] - y_exc)^2)
-ss_within <- ss_within_poor + ss_within_ave + ss_within_good + ss_within_exc
-ss_within |> signif(3)
-```
+ss_within <- ss_within_poor + ss_within_ave + ss_within_good + ss_within_exc 
 
-```{r}
 # Test stat
 df_b <- k-1
 df_w <- n-k
 
-f_stat <- (ss_between/(k-1)) / (ss_within/(n-k))
-f_stat |> signif(5)
+f_stat <- (ss_between/(df_b)) / (ss_within/(df_w))
 
 p_val <- pf(f_stat, df_b, df_w, lower.tail = FALSE)
-p_val |> signif(5)
 
-summary(lm(consumption_kwh~energy_efficiency, data = en_dat))
+hyp_test <- tibble( 
+  ss_between |> signif(3),
+  ((ss_between)/(df_b)) |> signif(3),
+  ss_within |> signif(3), 
+  ((ss_within)/df_w) |> signif(3),
+  f_stat |> signif(5),
+  p_val |> signif(4))
 
 
-# HUGE p-val because ss_within is huge and ss_between very small + group means very close -> basically no variation explained by energy_efficiency
-# DEFINITELY can't reject H0
-
-hyp_test <- tibble()
+kable(hyp_test, rownames = FALSE, col.names = c("SSA", "MSA", "SSE", "MSE", "F-statistic", "p-value"), caption = "Hypothesis test results from first principles")
 
 ```
 
 ## Section 4:
 
 ### 1. Fit Model
-
+A full model was fitted and various results are tabulated below. 
 ```{r Full model}
+#| code-fold: true 
+#| results: "hide"
+#| code-summary: "Click to display code"
+full_model <- lm(consumption_kwh ~ outside_temperature + humidity + wind_speed + household_size + appliance_index + energy_efficiency + solar_installed + day_of_week + holiday + outside_temperature:humidity, en_dat)
 
-b_hat <- lm(consumption_kwh ~ outside_temperature + humidity + wind_speed + household_size + appliance_index + energy_efficiency + solar_installed + day_of_week + holiday + outside_temperature:humidity, data_tidy_energy_use)
+full_model_summary <- summary(full_model)
 
-sum <- summary(b_hat)
-sum
+confidence_ints <- confint(full_model)
+lbs <- confidence_ints[1:18] |> signif(4)
+ubs <- confidence_ints[19:36] |> signif(4)
 
 ```
 
+```{r Displaying results}
+#| echo: false
+fit_results <- tibble(
+  coeffs = c("(Intercept)", "Outside temperature", "Humidity", "Wind speed", "Household size", "Appliance index", "Energy efficiency (Average)", "Energy efficiency (Good)", "Energy efficiency (Excellent)", "Solar installed (Yes)", "Day of week (Tuesday)", "Day of week (Wednesday)", "Day of week (Thursday)", "Day of week (Friday)", "Day of week (Saturday)", "Day of week (Sunday)", "Holiday", "Interaction term (outside temperature against humidity)"),
+  estimates = full_model$coefficients |> signif(4),
+  lb = lbs |> signif(3),
+  ub = ubs |> signif(3),
+  p_vals = scientific(full_model_summary$coefficients[,4], 3)
+)
+
+kable(fit_results, caption = "Hypothesis testing results", rownames = FALSE, col.names = c("Coefficient", "Estimate", "Lower bound", "Upper bound", "p-value"))
+
+```
+
+Hypothesis tests of the effects of various explanatory variables on electricity consumption have been performed and the results are displayed below. 
 ```{r Hypothesis testing}
+#| code-fold: true 
+#| results: "hide"
+#| code-summary: "Click to display code"
+# Outside Temperature 
+red_model_temp <- update(full_model, .~. - outside_temperature, data = en_dat)
+anova(red_model_temp, full_model)
 
-# consumption_kw ~ outside_temperature
-# Test at 5% significance 
+# Humidity
+red_model_hum <- update(full_model, .~. - humidity, data = en_dat)
+anova(red_model_hum, full_model)
 
-p_val_out_temp <- sum$coefficients[2, 4]
-p_val_out_temp
-# p_val_out_temp > 0.05 -> do not reject
+# Energy Efficiency 
+red_model_eff <- update(full_model, .~. - energy_efficiency, data = en_dat)
+anova(red_model_eff, full_model)
 
-# consumption_kw ~ humidity 
-# Test at 5% significance
+# Day of the Week 
+red_model_dow <- update(full_model, .~. - day_of_week, data = en_dat)
+anova(red_model_dow, full_model)
 
-p_val_out_hum <- sum$coefficients[3, 4]
-p_val_out_hum
-# p_val_out_hum > 0.05 -> do not reject
+# Holiday 
+red_model_hol <- update(full_model, .~. - holiday, data = en_dat)
+anova(red_model_hol, full_model)
 
-# size of household?
-#summary(data_tidy_energy_use$consumption_kwh)
-#summary(data_tidy_energy_use$household_size)
-lm_household <- (lm(consumption_kwh~outside_temperature + humidity + wind_speed + appliance_index + energy_efficiency + solar_installed + day_of_week + holiday + outside_temperature:humidity, data_tidy_energy_use))
-anova(lm_household, b_hat)
-
+# Solar Installed
+red_model_sol <- update(full_model, .~. - solar_installed, data = en_dat)
+anova(red_model_sol, full_model)
 ```
 
 ### Interpretation
