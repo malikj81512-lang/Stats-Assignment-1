@@ -1,12 +1,14 @@
 ---
 title: "STA2005S Assignment 1"
-author: "Malik Jamie (JMXMAL001) and Amara Patel (PTLAMA005)"
+author: "Malik Jamie (JMXMAL003) and Amara Patel (PTLAMA005)"
 date: "10 September 2025"
 format: pdf
-
 ---
+
 \newpage
+
 # Part One
+
 ## Section 1:
 
 1.  Household consumption of electricity is a major stressor on the South African power grid. The aim of this statistical analysis is to determine whether there are statistically significant effects of various variables including temperature, humidity, wind, household size, appliance intensity, energy efficiency rating, whether the household has solar power, the day of the week and whether the day is a public holiday on the daily household electricity consumption. This is to hopefully draw meaningful conclusions about what the major influences on household electricity consumption are and to prompt efficient policy-making.
@@ -200,7 +202,7 @@ results
 
 ```
 
-### 2.  Simultaneous hypothesis test
+### 2. Simultaneous hypothesis test
 
 ```{r Simultaneous hypothesis test}
 # consumption_kw ~ energy_efficiency
@@ -279,7 +281,7 @@ p_val |> signif(5)
 
 ## Section 4:
 
-### 1.  Fit Model
+### 1. Fit Model
 
 ```{r}
 
