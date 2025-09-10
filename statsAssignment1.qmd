@@ -166,27 +166,6 @@ ggplot(data = data_tidy_energy_use, aes(x = holiday, y = consumption_kwh))+
 
 ```
 
-<<<<<<< HEAD
-=======
-```{r}
-#| fig.cap: "Boxplots of categorical variables: e) Household size"
-#| include: false
-#| eval: false
-#| echo: false
-#Converting household size into correct categorical form
-data_tidy_energy_use <- data_tidy_energy_use %>%
- 
-mutate(
-  household_size = factor(household_size, 
-                   labels = c("1", "2",  "3", "4", "5", "6"))
-)
-
-ggplot(data = data_tidy_energy_use, aes(x = household_size, y = consumption_kwh))+
-  geom_boxplot(fill = "red3") +
-  labs(x = "Size of Household (No. People)", y = "Consumption (kWh)")
-
-```
->>>>>>> 2c078cb362ab80aef1d4a44fd2bd23a01a24939f
 
 ### 4. Categorical Relationships
 
@@ -212,22 +191,6 @@ dow_holiday_table <- table(en_dat$day_of_week, en_dat$holiday)
 
 # Print with kable
 kable(dow_holiday_table, caption = "Day of the Week vs Public Holiday", col.names = c("No", "Yes"))
-
-#plot_data_a <- data_tidy_energy_use %>%
-  #count(solar_installed, energy_efficiency)
-  
-#ggplot(plot_data_a, aes(x = solar_installed, y = n, fill = energy_efficiency))+
-  #geom_col()+
-  #labs(x = "Solar Installed", y = "Frequency", fill = "Energy efficiency")
-
-#plot_data_b <- data_tidy_energy_use %>% 
-  #count(day_of_week, holiday)
-
-
-#ggplot(plot_data_b, aes(x = day_of_week, y = n, fill = holiday))+
-  #geom_col()+
-  #labs(x = "Day of Week", y = "Frequency", fill = "Holiday")+
-  #theme(axis.text = element_text(angle = 90))
 
 ```
 
