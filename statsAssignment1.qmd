@@ -114,6 +114,7 @@ quant_vars <- tibble(
   en_dat$household_size,
   en_dat$appliance_index
     )
+
 pairs(quant_vars, 
       labels = c("Consumption (kWh)", "Outside Temperature", "Humidity", "Wind Speed", "Household Size", "Appliance Index"), col = "blue4")
 
@@ -165,7 +166,6 @@ ggplot(data = data_tidy_energy_use, aes(x = holiday, y = consumption_kwh))+
 
 ```
 
-For analysis purposes, household size has been treated as a categorical variable by grouping numbers of people within the household into 6 levels, 1 person, 2 person, 3 person, 4 person, 5 person, and 6 person households respectively. This is to detect outlying observations that the pairs plot made difficult to analyse. 
 ```{r}
 #| fig.cap: "Boxplots of categorical variables: e) Household size"
 #| include: false
@@ -230,9 +230,9 @@ kable(dow_holiday_table, caption = "Day of the Week vs Public Holiday", col.name
 
 ### 5. Comments
 
-1.  Observed relationships: There appears to be negative relationships between electricity consumption and solar installation with solar installation decreasing average electricity consumption. There also appears to be a negative relationship between consumption and energy efficiency as improved energy efficiency is associated with lower average consumption. The categorical variable boxplot of the day of the week against consumption indicates that median electricity consumption is higher on weekends.
+1.  Observed relationships: There appears to be a negative relationship between electricity consumption and solar installation with solar installation decreasing average electricity consumption. There also appears to be a negative relationship between consumption and energy efficiency as improved energy efficiency is associated with lower average consumption. The categorical variable boxplot of the day of the week against consumption indicates that median electricity consumption is higher on weekends.
 2.  Potential co-linearity of explanatory variables: There is potential co-linearity between outside temperature and humidity, humidity and wind speed, as well as between household size and appliance index.
-3.  Outliers: There are two apparent outlying observations of low consumption on Saturdays as well as an outlying observation of high consumption in a household without solar installed. There are also two outlying observations of low consumption in 1 person households and four outlying observations of high consumption in 5 person households. 
+3.  Outliers: There are two potential outlying observations of low consumption on Saturdays as well as a potential outlying observation of high consumption in a household without solar installed. There are also two possible outlying observations of low consumption in 1 person households and four of high consumption in 5 person households. 
 
 ## Section 3:
 
@@ -314,7 +314,7 @@ kable(results2, rownames = FALSE, col.names = c("Results", "Value", "Degrees of 
 ### 2. Simultaneous hypothesis test
 A simultaneous hypothesis test will be performed of the effect of energy efficiency on electricity consumption with the following hypotheses. 
 
-$H_0: \mu_{poor} = \mu_{average} = \mu_{good} = \mu_{excellent}$
+$$H_0: \mu_{poor} = \mu_{average} = \mu_{good} = \mu_{excellent}$$
 $H_1:$ at least one $\mu_{i}$ is different
 
 ```{r Simultaneous hypothesis test}
@@ -401,7 +401,6 @@ A full model was fitted and various results are tabulated below.
 full_model <- lm(consumption_kwh ~ outside_temperature + humidity + wind_speed + household_size + appliance_index + energy_efficiency + solar_installed + day_of_week + holiday + outside_temperature:humidity, en_dat)
 
 full_model_summary <- summary(full_model)
-full_model_summary
 
 confidence_ints <- confint(full_model)
 lbs <- confidence_ints[1:18] |> signif(4)
@@ -423,7 +422,10 @@ kable(fit_results, caption = "Hypothesis testing results", rownames = FALSE, col
 
 ```
 
-Hypothesis tests of the effects of various explanatory variables on electricity consumption have been performed and the results are displayed below. 
+Hypothesis tests of the effects of various explanatory variables on electricity consumption have been performed and the results are displayed below.
+The hypotheses for these test take the form: 
+$$H_0: \beta_{i} = 0$$
+$$H_1: \beta_{i}\neq0$$
 ```{r Hypothesis testing}
 #| code-fold: true 
 ##| results: "hide"
@@ -454,15 +456,23 @@ solar_inst_test <- anova(red_model_sol, full_model)
 
 nested_anova_results <- tibble(
   c("Outside temperature", "Humidity", "Energy Efficiency", "Day of the Week", "Holiday", "Solar Installed"), 
-  fstats = c(outside_temp_test$F[2], humidity_test$F[2], energy_eff_test$F[2], d_o_w_test$F[2], holiday_test$F[2], solar_inst_test$F[2]),
-  p_values = c(outside_temp_test$`Pr(>F)`[2], humidity_test$`Pr(>F)`[2], energy_eff_test$`Pr(>F)`[2], d_o_w_test$`Pr(>F)`[2], holiday_test$`Pr(>F)`[2], solar_inst_test$`Pr(>F)`[2])
+  fstats = c(outside_temp_test$F[2], humidity_test$F[2], energy_eff_test$F[2], d_o_w_test$F[2], holiday_test$F[2], solar_inst_test$F[2]) |> signif(4),
+  p_values = scientific(c(outside_temp_test$`Pr(>F)`[2], humidity_test$`Pr(>F)`[2], energy_eff_test$`Pr(>F)`[2], d_o_w_test$`Pr(>F)`[2], holiday_test$`Pr(>F)`[2], solar_inst_test$`Pr(>F)`[2]), 3)
 )
 kable(nested_anova_results, col.names = c("Explanatory variable", "F value", "p-value"), caption = "Results of hypothesis tests conducted")
 ```
 
 ### Interpretation
 
-Variables with a coefficient that was statistically significant at the 5% level were: Household Size
+Variables with a coefficient that were statistically significant at the 5% level were: Household Size and Solar Installation.
+
+
+1. Household Size: 
+$\hat{\beta}_{Household Size} = 1.044$. This implies that for a one unit increase in household size, average consumption will increase by 1.044 units, holding all other variables constant. A 95% CI for $\hat{\beta}_{Household Size}$ is (0.718, 1.370) which does not include 0. This suggests that household size has a positive effect. At the 5% significance level, the p-value for the null hypothesis that $H_{0}: \beta_{Household Size}=0$ is $3.35e^{-9} < 0.05$ and thus, the null hypothesis is rejected and the conclusion is drawn that at a 5% significance level, increases in household size (in number of inhabitants) increase average electricity consumption, holding all other variables constant. 
+
+2. Solar Installation: 
+$\hat{\beta}_{SolarInstalled} = -13.742$. This implies that if solar is installed, average consumption will decrease by 13.742 units, holding all other variables constant. A 95% CI for $\hat{\beta}_{SolarInstalled}$ is (-14.6, -12.9) which is relatively narrow and does not include 0. This suggests that household size has a positive effect. At the 5% significance level, the p-value for the null hypothesis that $H_{0}: \beta_{Solar Installed}=0$ is $4.84e^{-62} < 0.05$ and thus, the null hypothesis is rejected and the conclusion is drawn that at a 5% significance level, having solar installed decreases average electricity consumption, holding all other variables constant. 
+
 
 ## Section 5
 
