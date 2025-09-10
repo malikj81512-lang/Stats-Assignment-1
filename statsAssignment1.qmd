@@ -116,6 +116,7 @@ quant_vars <- tibble(
     )
 
 pairs(quant_vars, 
+      labels = c("Consumption (kWh)", "Outside Temperature", "Humidity", "Wind Speed", "Appliance Index"), col = "blue4")
       labels = c("Consumption (kWh)", "Outside Temperature", "Humidity", "Wind Speed", "Household Size", "Appliance Index"), col = "blue4")
 
 ```
@@ -398,11 +399,15 @@ A full model was fitted and various results are tabulated below.
 #| results: "hide"
 #| code-summary: "Click to display code"
 
+en_dat$household_size <- factor(en_dat$household_size,    levels = 1:6,                  labels = c("1", "2", "3", "4", "5", "6"))
+
 full_model <- lm(consumption_kwh ~ outside_temperature + humidity + wind_speed + household_size + appliance_index + energy_efficiency + solar_installed + day_of_week + holiday + outside_temperature:humidity, en_dat)
 
 full_model_summary <- summary(full_model)
 
 confidence_ints <- confint(full_model)
+lbs <- confidence_ints[1:22] |> signif(4)
+ubs <- confidence_ints[23:44] |> signif(4)
 lbs <- confidence_ints[1:18] |> signif(4)
 ubs <- confidence_ints[19:36] |> signif(4)
 
@@ -411,6 +416,7 @@ ubs <- confidence_ints[19:36] |> signif(4)
 ```{r Displaying results}
 #| echo: false
 fit_results <- tibble(
+  coeffs = c("(Intercept)", "Outside temperature", "Humidity", "Wind speed", "Household size (2)", "Household size (3)", "Household size (4)", "Household size (5)", "Household size (6)", "Appliance index", "Energy efficiency (Average)", "Energy efficiency (Good)", "Energy efficiency (Excellent)", "Solar installed (Yes)", "Day of week (Tuesday)", "Day of week (Wednesday)", "Day of week (Thursday)", "Day of week (Friday)", "Day of week (Saturday)", "Day of week (Sunday)", "Holiday", "Interaction term (outside temperature against humidity)"),
   coeffs = c("(Intercept)", "Outside temperature", "Humidity", "Wind speed", "Household size", "Appliance index", "Energy efficiency (Average)", "Energy efficiency (Good)", "Energy efficiency (Excellent)", "Solar installed (Yes)", "Day of week (Tuesday)", "Day of week (Wednesday)", "Day of week (Thursday)", "Day of week (Friday)", "Day of week (Saturday)", "Day of week (Sunday)", "Holiday", "Interaction term (outside temperature against humidity)"),
   estimates = full_model$coefficients |> signif(4),
   lb = lbs |> signif(3),
@@ -428,38 +434,49 @@ $$H_0: \beta_{i} = 0$$
 $$H_1: \beta_{i}\neq0$$
 ```{r Hypothesis testing}
 #| code-fold: true 
+#| results: "hide"
 ##| results: "hide"
 #| code-summary: "Click to display code"
 # Outside Temperature 
 red_model_temp <- update(full_model, .~. - outside_temperature, data = en_dat)
+anova(red_model_temp, full_model)
 outside_temp_test <- anova(red_model_temp, full_model)
 
 # Humidity
 red_model_hum <- update(full_model, .~. - humidity, data = en_dat)
+anova(red_model_hum, full_model)
 humidity_test <- anova(red_model_hum, full_model)
 
 # Energy Efficiency 
 red_model_eff <- update(full_model, .~. - energy_efficiency, data = en_dat)
+anova(red_model_eff, full_model)
 energy_eff_test <- anova(red_model_eff, full_model)
 
 # Day of the Week 
 red_model_dow <- update(full_model, .~. - day_of_week, data = en_dat)
+anova(red_model_dow, full_model)
 d_o_w_test <- anova(red_model_dow, full_model)
 
 # Holiday 
 red_model_hol <- update(full_model, .~. - holiday, data = en_dat)
+anova(red_model_hol, full_model)
 holiday_test <- anova(red_model_hol, full_model)
 
 # Solar Installed
 red_model_sol <- update(full_model, .~. - solar_installed, data = en_dat)
+anova(red_model_sol, full_model)
 solar_inst_test <- anova(red_model_sol, full_model)
 
+<<<<<<< HEAD
+
+=======
 nested_anova_results <- tibble(
   c("Outside temperature", "Humidity", "Energy Efficiency", "Day of the Week", "Holiday", "Solar Installed"), 
   fstats = c(outside_temp_test$F[2], humidity_test$F[2], energy_eff_test$F[2], d_o_w_test$F[2], holiday_test$F[2], solar_inst_test$F[2]) |> signif(4),
   p_values = scientific(c(outside_temp_test$`Pr(>F)`[2], humidity_test$`Pr(>F)`[2], energy_eff_test$`Pr(>F)`[2], d_o_w_test$`Pr(>F)`[2], holiday_test$`Pr(>F)`[2], solar_inst_test$`Pr(>F)`[2]), 3)
 )
 kable(nested_anova_results, col.names = c("Explanatory variable", "F value", "p-value"), caption = "Results of hypothesis tests conducted")
+>>>>>>> 20277f894d4c24cbc3124acaa8d06acf9603cb9f
 ```
 
 ### Interpretation
