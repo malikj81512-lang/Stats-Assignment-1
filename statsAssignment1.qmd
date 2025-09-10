@@ -121,6 +121,7 @@ pairs(quant_vars,
 ```
 
 ### 3. Categorical variable plots
+
 ```{r boxplot of energy efficiency}
 #| fig.cap: "Boxplots of categorical variables: a) Energy Efficiency"
 #| echo: false 
@@ -166,7 +167,6 @@ ggplot(data = data_tidy_energy_use, aes(x = holiday, y = consumption_kwh))+
 
 ```
 
-
 ### 4. Categorical Relationships
 
 ```{r tables}
@@ -198,12 +198,14 @@ kable(dow_holiday_table, caption = "Day of the Week vs Public Holiday", col.name
 
 1.  Observed relationships: There appears to be a negative relationship between electricity consumption and solar installation with solar installation decreasing average electricity consumption. There also appears to be a negative relationship between consumption and energy efficiency as improved energy efficiency is associated with lower average consumption. The categorical variable boxplot of the day of the week against consumption indicates that median electricity consumption is higher on weekends.
 2.  Potential co-linearity of explanatory variables: There is potential co-linearity between outside temperature and humidity, humidity and wind speed, as well as between household size and appliance index.
-3.  Outliers: There are two potential outlying observations of low consumption on Saturdays as well as a potential outlying observation of high consumption in a household without solar installed. There are also two possible outlying observations of low consumption in 1 person households and four of high consumption in 5 person households. 
+3.  Outliers: There are two potential outlying observations of low consumption on Saturdays as well as a potential outlying observation of high consumption in a household without solar installed. There are also two potential outlying observations of low consumption in 1 person households and four of high consumption in 5 person households.
 
 ## Section 3:
 
 ### 1. Model Fitting:
-A linear model will be fit of consumption against outside temperature from first principles. The results are displayed below. 
+
+A linear model will be fit of consumption against outside temperature from first principles. The results are displayed below.
+
 ```{r model fitting}
 #| code-fold: true
 #| code-summary: "Click here to display calculations"
@@ -278,9 +280,11 @@ kable(results2, rownames = FALSE, col.names = c("Results", "Value", "Degrees of 
 ```
 
 ### 2. Simultaneous hypothesis test
-A simultaneous hypothesis test will be performed of the effect of energy efficiency on electricity consumption with the following hypotheses. 
+
+A simultaneous hypothesis test will be performed of the effect of energy efficiency on electricity consumption with the following hypotheses.
 
 $H_0: \mu_{poor} = \mu_{average} = \mu_{good} = \mu_{excellent}$
+
 $H_1:$ at least one $\mu_{i}$ is different
 
 ```{r Simultaneous hypothesis test}
@@ -358,7 +362,9 @@ kable(hyp_test, rownames = FALSE, col.names = c("SSA", "MSA", "SSE", "MSE", "F-s
 ## Section 4:
 
 ### 1. Fit Model
-A full model was fitted and various results are tabulated below. 
+
+A full model was fitted and various results are tabulated below.
+
 ```{r Full model}
 #| code-fold: true 
 #| results: "hide"
@@ -389,10 +395,8 @@ kable(fit_results, caption = "Hypothesis testing results", rownames = FALSE, col
 
 ```
 
-Hypothesis tests of the effects of various explanatory variables on electricity consumption have been performed and the results are displayed below.
-The hypotheses for these test take the form: 
-$$H_0: \beta_{i} = 0$$
-$$H_1: \beta_{i}\neq0$$
+Hypothesis tests of the effects of various explanatory variables on electricity consumption have been performed and the results are displayed below. The hypotheses for these test take the form: $$H_0: \beta_{i} = 0$$ $$H_1: \beta_{i}\neq0$$
+
 ```{r Hypothesis testing}
 #| code-fold: true 
 #| results: "hide"
@@ -441,13 +445,9 @@ kable(nested_anova_results, col.names = c("Explanatory variable", "F value", "p-
 
 Variables with a coefficient that were statistically significant at the 5% level were: Household Size and Solar Installation.
 
+1.  Household Size: $\hat{\beta}_{Household Size} = 1.044$. This implies that for a one unit increase in household size, average consumption will increase by 1.044 units, holding all other variables constant. A 95% CI for $\hat{\beta}_{Household Size}$ is (0.718, 1.370) which does not include 0. This suggests that household size has a positive effect. At the 5% significance level, the p-value for the null hypothesis that $H_{0}: \beta_{Household Size}=0$ is $3.35e^{-9} < 0.05$ and thus, the null hypothesis is rejected and the conclusion is drawn that at a 5% significance level, increases in household size (in number of inhabitants) increase average electricity consumption, holding all other variables constant.
 
-1. Household Size: 
-$\hat{\beta}_{Household Size} = 1.044$. This implies that for a one unit increase in household size, average consumption will increase by 1.044 units, holding all other variables constant. A 95% CI for $\hat{\beta}_{Household Size}$ is (0.718, 1.370) which does not include 0. This suggests that household size has a positive effect. At the 5% significance level, the p-value for the null hypothesis that $H_{0}: \beta_{Household Size}=0$ is $3.35e^{-9} < 0.05$ and thus, the null hypothesis is rejected and the conclusion is drawn that at a 5% significance level, increases in household size (in number of inhabitants) increase average electricity consumption, holding all other variables constant. 
-
-2. Solar Installation: 
-$\hat{\beta}_{SolarInstalled} = -13.742$. This implies that if solar is installed, average consumption will decrease by 13.742 units, holding all other variables constant. A 95% CI for $\hat{\beta}_{SolarInstalled}$ is (-14.6, -12.9) which is relatively narrow and does not include 0. This suggests that household size has a positive effect. At the 5% significance level, the p-value for the null hypothesis that $H_{0}: \beta_{Solar Installed}=0$ is $4.84e^{-62} < 0.05$ and thus, the null hypothesis is rejected and the conclusion is drawn that at a 5% significance level, having solar installed decreases average electricity consumption, holding all other variables constant. 
-
+2.  Solar Installation: $\hat{\beta}_{SolarInstalled} = -13.742$. This implies that if solar is installed, average consumption will decrease by 13.742 units, holding all other variables constant. A 95% CI for $\hat{\beta}_{SolarInstalled}$ is (-14.6, -12.9) which is relatively narrow and does not include 0. This suggests that having solar installed has a negative effect. At the 5% significance level, the p-value for the null hypothesis that $H_{0}: \beta_{Solar Installed}=0$ is $4.84e^{-62} < 0.05$ and thus, the null hypothesis is rejected and the conclusion is drawn that at a 5% significance level, having solar installed decreases average electricity consumption, holding all other variables constant.
 
 ## Section 5
 
@@ -498,6 +498,8 @@ kable(powers, row.names = FALSE, col.names = c("$\\beta_{1}$", "Estimated power"
 
 ```
 
+As the true value of $\beta_{1}$ increased, the probability of the null hypothesis $\beta_{1}=0$ being rejected increased, and hence the proportion of rejections over 1000 simulations increased. Therefore, as the true value of $\beta_{1}$ increased, the estimated power of the test increased significantly. For true $\beta_{1}=10$, the estimated power was 1.000, meaning every test recorded a rejection.
+
 ## Scenario B
 
 ```{r}
@@ -512,7 +514,6 @@ est_power_exp <- numeric(length(ns))
 
 for (j in seq_along(ns)) {
   n <- ns[j]
-  cat("\nn =", n, "\n")
 set.seed(n)
 x_vec <- seq(0, 7, length.out = n)
 
@@ -563,3 +564,5 @@ legend("bottomright", legend = c("Linear", "Exponential"), fill = c("red3", "lig
 
 
 ```
+
+For a small sample size, the estimated power of the mis-specified linear model was quite low, while the estimated power of the correctly specified exponential model was much higher. As sample size increased, the estimated power of both models increased significantly. A sample size of 50 yielded an estimated power of 1.000 for the exponential model, and 0.999 for the linear model, suggesting that, for a large enough sample size, a mis-specified linear model could provide almost equal power as an exponential model for data that actually followed an exponential distribution.
