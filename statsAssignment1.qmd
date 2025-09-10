@@ -116,7 +116,6 @@ quant_vars <- tibble(
     )
 
 pairs(quant_vars, 
-      labels = c("Consumption (kWh)", "Outside Temperature", "Humidity", "Wind Speed", "Appliance Index"), col = "blue4")
       labels = c("Consumption (kWh)", "Outside Temperature", "Humidity", "Wind Speed", "Household Size", "Appliance Index"), col = "blue4")
 
 ```
@@ -167,6 +166,8 @@ ggplot(data = data_tidy_energy_use, aes(x = holiday, y = consumption_kwh))+
 
 ```
 
+<<<<<<< HEAD
+=======
 ```{r}
 #| fig.cap: "Boxplots of categorical variables: e) Household size"
 #| include: false
@@ -185,6 +186,7 @@ ggplot(data = data_tidy_energy_use, aes(x = household_size, y = consumption_kwh)
   labs(x = "Size of Household (No. People)", y = "Consumption (kWh)")
 
 ```
+>>>>>>> 2c078cb362ab80aef1d4a44fd2bd23a01a24939f
 
 ### 4. Categorical Relationships
 
@@ -399,15 +401,12 @@ A full model was fitted and various results are tabulated below.
 #| results: "hide"
 #| code-summary: "Click to display code"
 
-en_dat$household_size <- factor(en_dat$household_size,    levels = 1:6,                  labels = c("1", "2", "3", "4", "5", "6"))
-
 full_model <- lm(consumption_kwh ~ outside_temperature + humidity + wind_speed + household_size + appliance_index + energy_efficiency + solar_installed + day_of_week + holiday + outside_temperature:humidity, en_dat)
 
 full_model_summary <- summary(full_model)
 
 confidence_ints <- confint(full_model)
-lbs <- confidence_ints[1:22] |> signif(4)
-ubs <- confidence_ints[23:44] |> signif(4)
+
 lbs <- confidence_ints[1:18] |> signif(4)
 ubs <- confidence_ints[19:36] |> signif(4)
 
@@ -416,7 +415,6 @@ ubs <- confidence_ints[19:36] |> signif(4)
 ```{r Displaying results}
 #| echo: false
 fit_results <- tibble(
-  coeffs = c("(Intercept)", "Outside temperature", "Humidity", "Wind speed", "Household size (2)", "Household size (3)", "Household size (4)", "Household size (5)", "Household size (6)", "Appliance index", "Energy efficiency (Average)", "Energy efficiency (Good)", "Energy efficiency (Excellent)", "Solar installed (Yes)", "Day of week (Tuesday)", "Day of week (Wednesday)", "Day of week (Thursday)", "Day of week (Friday)", "Day of week (Saturday)", "Day of week (Sunday)", "Holiday", "Interaction term (outside temperature against humidity)"),
   coeffs = c("(Intercept)", "Outside temperature", "Humidity", "Wind speed", "Household size", "Appliance index", "Energy efficiency (Average)", "Energy efficiency (Good)", "Energy efficiency (Excellent)", "Solar installed (Yes)", "Day of week (Tuesday)", "Day of week (Wednesday)", "Day of week (Thursday)", "Day of week (Friday)", "Day of week (Saturday)", "Day of week (Sunday)", "Holiday", "Interaction term (outside temperature against humidity)"),
   estimates = full_model$coefficients |> signif(4),
   lb = lbs |> signif(3),
@@ -473,6 +471,7 @@ nested_anova_results <- tibble(
   p_values = scientific(c(outside_temp_test$`Pr(>F)`[2], humidity_test$`Pr(>F)`[2], energy_eff_test$`Pr(>F)`[2], d_o_w_test$`Pr(>F)`[2], holiday_test$`Pr(>F)`[2], solar_inst_test$`Pr(>F)`[2]), 3)
 )
 kable(nested_anova_results, col.names = c("Explanatory variable", "F value", "p-value"), caption = "Results of hypothesis tests conducted")
+
 ```
 
 ### Interpretation
@@ -488,6 +487,12 @@ $\hat{\beta}_{SolarInstalled} = -13.742$. This implies that if solar is installe
 
 
 ## Section 5
+
+The multiple linear regression suggests that Household Size and Solar Installation had significant effects on energy consumption. Larger households consumed more energy on average, while households with solar installed consumed significantly less energy than those without. The multiple linear regression did not provide evidence for effects on energy consumption due to humidity, outside temperature, energy efficiency, appliance index, day of the week and whether it is a holiday.
+
+For households (consumers), installing solar appears to be the most effective way to reduce energy consumption. Larger households especially should focus on reducing consumption. Since the regression did not suggest an effect on consumption due to energy efficiency or appliance index, incentivising households to be more efficient with their usage or to use more efficient appliances is not recommended, while incentivising households to install solar is recommended.
+
+While this study was fairly conclusive in determing whether the given variables had an effect on energy consumption, there are many opportunities for further research in this area. Some variables which could be tested for an effect on consumption include the season, and whether the area is urban, suburban or rural.
 
 # Part Two
 
