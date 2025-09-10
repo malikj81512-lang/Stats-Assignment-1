@@ -315,7 +315,7 @@ kable(results2, rownames = FALSE, col.names = c("Results", "Value", "Degrees of 
 ### 2. Simultaneous hypothesis test
 A simultaneous hypothesis test will be performed of the effect of energy efficiency on electricity consumption with the following hypotheses. 
 
-$$H_0: \mu_{poor} = \mu_{average} = \mu_{good} = \mu_{excellent}$$
+$H_0: \mu_{poor} = \mu_{average} = \mu_{good} = \mu_{excellent}$
 $H_1:$ at least one $\mu_{i}$ is different
 
 ```{r Simultaneous hypothesis test}
@@ -467,16 +467,12 @@ red_model_sol <- update(full_model, .~. - solar_installed, data = en_dat)
 anova(red_model_sol, full_model)
 solar_inst_test <- anova(red_model_sol, full_model)
 
-<<<<<<< HEAD
-
-=======
 nested_anova_results <- tibble(
   c("Outside temperature", "Humidity", "Energy Efficiency", "Day of the Week", "Holiday", "Solar Installed"), 
   fstats = c(outside_temp_test$F[2], humidity_test$F[2], energy_eff_test$F[2], d_o_w_test$F[2], holiday_test$F[2], solar_inst_test$F[2]) |> signif(4),
   p_values = scientific(c(outside_temp_test$`Pr(>F)`[2], humidity_test$`Pr(>F)`[2], energy_eff_test$`Pr(>F)`[2], d_o_w_test$`Pr(>F)`[2], holiday_test$`Pr(>F)`[2], solar_inst_test$`Pr(>F)`[2]), 3)
 )
 kable(nested_anova_results, col.names = c("Explanatory variable", "F value", "p-value"), caption = "Results of hypothesis tests conducted")
->>>>>>> 20277f894d4c24cbc3124acaa8d06acf9603cb9f
 ```
 
 ### Interpretation
