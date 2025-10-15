@@ -1,0 +1,10 @@
+---
+title: "ED Assignment"
+format: pdf
+editor: visual
+author: Malik Jamie (JMXMAL003) and Amara Patel (PTLAMA005)
+date: 21/10/2025
+---
+```{r}
+
+```

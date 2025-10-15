@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Malik Jamie (JMXMAL003) and Amara Patel (PTLAMA005)">
+<meta name="dcterms.date" content="2025-09-10">
+
+<title>STA2005S Assignment 1</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="statsAssignment1_files/libs/clipboard/clipboard.min.js"></script>
+<script src="statsAssignment1_files/libs/quarto-html/quarto.js"></script>
+<script src="statsAssignment1_files/libs/quarto-html/popper.min.js"></script>
+<script src="statsAssignment1_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="statsAssignment1_files/libs/quarto-html/anchor.min.js"></script>
+<link href="statsAssignment1_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="statsAssignment1_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="statsAssignment1_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="statsAssignment1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="statsAssignment1_files/libs/bootstrap/bootstrap-c0367b04c37547644fece4185067e4a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">STA2005S Assignment 1</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Malik Jamie (JMXMAL003) and Amara Patel (PTLAMA005) </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 10, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="part-one" class="level1">
+<h1>Part One</h1>
+<section id="section-1" class="level2">
+<h2 class="anchored" data-anchor-id="section-1">Section 1:</h2>
+<ol type="1">
+<li><p>Household consumption of electricity is a major stressor on the South African power grid. The aim of this statistical analysis is to determine whether there are statistically significant effects of various variables including temperature, humidity, wind, household size, appliance intensity, energy efficiency rating, whether the household has solar power, the day of the week and whether the day is a public holiday on the daily household electricity consumption and the size of these effects. This is to hopefully draw meaningful conclusions about what the major influences on household electricity consumption are and to prompt efficient policy-making.</p></li>
+<li><p>The analytical approach this assignment will take is that of simple and multiple linear regression to determine relationships between explanatory variables and the response variable as well as various graphical analyses of the data.</p></li>
+<li><p>The nature of this analysis is primarily explanatory as the aim is to draw conclusions about which factors influence consumption, not predict future consumption based off of the effects of these variables.</p></li>
+</ol>
+</section>
+<section id="section-2" class="level2">
+<h2 class="anchored" data-anchor-id="section-2">Section 2:</h2>
+<section id="density-plots" class="level3">
+<h3 class="anchored" data-anchor-id="density-plots">1. Density plots</h3>
+<div class="cell" data-layout-align="center" data-fig.top="0 pt" data-fig.bottom="0 pt">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="statsAssignment1_files/figure-html/Histogram-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Histogram of electricity consumption with overlaid normal curve</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The unstratified histogram does not mimic the shape of the overlaid normal curve which suggests that some households consume less electricity and some households consume more. The histogram appears to be almost bimodal in shape, with two peaks that are spaced quite far apart, suggesting that if stratified under a certain binomial condition, the distribution could more closely resemble the shape of the normal curve.</p>
+<div class="cell" data-layout-align="center" data-fig.top="30 pt" data-fig.bottom="0 pt">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="statsAssignment1_files/figure-html/Histogram%20with%20solar%20installed-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>Histograms of electricity consumption in households with a) solar installed and b) solar not installed</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>When the histogram is stratified with solar installation being true, the histogram follows the normal curve more closely. The distribution is left skewed and shows that solar installation results in lower mean consumption, explaining the first peak of the unstratified histogram. When the histogram is stratified with solar installation being false, the histogram follows the normal density curve more closely than the unstratified histogram. The distribution is right skewed, showing higher mean consumption than when solar is installed and explaining the second peak. Clearly, stratifying the histogram of consumption with solar installation shows that households with solar had a significantly lower energy consumption on average than those without, and explains the shape of the unstratified histogram.</p>
+</section>
+<section id="pairwise-plots" class="level3">
+<h3 class="anchored" data-anchor-id="pairwise-plots">2. Pairwise plots</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="statsAssignment1_files/figure-html/Pairs-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Pairwise plots of quantitative variables (consumption, outside temperature, humidity, wind speed, household size and appliance index) against each other</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="categorical-variable-plots" class="level3">
+<h3 class="anchored" data-anchor-id="categorical-variable-plots">3. Categorical variable plots</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="statsAssignment1_files/figure-html/boxplot%20of%20energy%20efficiency-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Boxplots of categorical variables: a) Energy Efficiency</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="statsAssignment1_files/figure-html/boxplot%20of%20solar%20installed-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Boxplots of categorical variables: b) Solar Installed</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="statsAssignment1_files/figure-html/boxplot%20of%20day%20of%20week-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Boxplots of categorical variables: c) Day of the Week</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="statsAssignment1_files/figure-html/boxplot%20of%20holiday-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Boxplots of categorical variables: d) Public Holiday</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="categorical-relationships" class="level3">
+<h3 class="anchored" data-anchor-id="categorical-relationships">4. Categorical Relationships</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Energy Efficiency vs Solar Installation</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">No</th>
+<th style="text-align: right;">Yes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Poor</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Average</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">31</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Good</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">24</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Excellent</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">9</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Day of the Week vs Public Holiday</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">No</th>
+<th style="text-align: right;">Yes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Monday</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tuesday</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Wednesday</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Thursday</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Friday</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Saturday</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sunday</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="comments" class="level3">
+<h3 class="anchored" data-anchor-id="comments">5. Comments</h3>
+<ol type="1">
+<li>Observed relationships: There appears to be a negative relationship between electricity consumption and solar installation with solar installation decreasing average electricity consumption. There also appears to be a negative relationship between consumption and energy efficiency as improved energy efficiency is associated with lower average consumption. The categorical variable boxplot of the day of the week against consumption indicates that median electricity consumption is higher on weekends.</li>
+<li>Potential co-linearity of explanatory variables: There is potential co-linearity between outside temperature and humidity, humidity and wind speed, as well as between household size and appliance index.</li>
+<li>Outliers: There are two potential outlying observations of low consumption on Saturdays as well as a potential outlying observation of high consumption in a household without solar installed. There are also two possible outlying observations of low consumption in 1 person households and four of high consumption in 5 person households.</li>
+</ol>
+</section>
+</section>
+<section id="section-3" class="level2">
+<h2 class="anchored" data-anchor-id="section-3">Section 3:</h2>
+<section id="model-fitting" class="level3">
+<h3 class="anchored" data-anchor-id="model-fitting">1. Model Fitting:</h3>
+<p>A linear model will be fit of consumption against outside temperature from first principles. The results are displayed below.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click here to display calculations</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fitting linear model of consumption_kwh against outside_temperature from first principles</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Constructing design matrix and Y matrix of observations </span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(en_dat<span class="sc">$</span>consumption_kwh <span class="sc">~</span> en_dat<span class="sc">$</span>outside_temperature)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> en_dat<span class="sc">$</span>consumption_kwh</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># MLE of Beta</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>bhat_c <span class="ot">&lt;-</span> <span class="fu">solve</span>((<span class="fu">t</span>(X) <span class="sc">%*%</span> X)) <span class="sc">%*%</span> <span class="fu">t</span>(X) <span class="sc">%*%</span> Y</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#Calculating std. errors</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>y_fitted <span class="ot">&lt;-</span> X <span class="sc">%*%</span> bhat_c</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>y_resid <span class="ot">&lt;-</span> Y <span class="sc">-</span> y_fitted</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(Y)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ncol</span>(X)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># calculating s^2</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>sig_hat <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="dv">1</span><span class="sc">/</span>(n<span class="sc">-</span>p) <span class="sc">*</span> <span class="fu">t</span>(y_resid) <span class="sc">%*%</span> y_resid)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>var_bhat_c <span class="ot">&lt;-</span> sig_hat <span class="sc">*</span> <span class="fu">solve</span>((<span class="fu">t</span>(X) <span class="sc">%*%</span> X))</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>se_bhat_c <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(var_bhat_c))</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculating t-values</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>t_vals <span class="ot">&lt;-</span> bhat_c <span class="sc">/</span> se_bhat_c</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculating p-values</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> n<span class="sc">-</span>p</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>p_vals <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pt</span>(<span class="sc">-</span><span class="fu">abs</span>(t_vals), df)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Residual Standard Error</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>sse <span class="ot">&lt;-</span> <span class="fu">sum</span>((y_resid)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>mse <span class="ot">&lt;-</span> sse<span class="sc">/</span>(n<span class="dv">-2</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>residual_std_error <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(mse) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">3</span>)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co"># R squared </span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>sst <span class="ot">&lt;-</span> <span class="fu">sum</span>((Y<span class="sc">-</span><span class="fu">mean</span>(Y))<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>r_squared <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (sse<span class="sc">/</span>sst)</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjusted R squared</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>adj_r_squared <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> ((<span class="dv">1</span><span class="sc">-</span>r_squared)<span class="sc">*</span>(n<span class="dv">-1</span>)<span class="sc">/</span>(n<span class="dv">-2</span>))</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="co"># F Statistic</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>f_stat <span class="ot">&lt;-</span> (sst<span class="sc">-</span>sse<span class="sc">/</span>(<span class="dv">1</span>))<span class="sc">/</span>(sse<span class="sc">/</span>(n<span class="dv">-2</span>))</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="co"># p-value of F statistic</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>f_p_val <span class="ot">&lt;-</span> <span class="fu">pf</span>(f_stat, <span class="dv">1</span>, n<span class="dv">-2</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">4</span>)</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="co"># Collecting all results into data frames</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>results1 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">Coefficients =</span> <span class="fu">c</span>(<span class="st">"(Intercept)"</span>, <span class="st">"Outside Temperature"</span>),</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>  <span class="at">Estimate =</span> <span class="fu">as.vector</span>(bhat_c) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">3</span>),</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>  <span class="at">Std_Error =</span> se_bhat_c <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">3</span>),</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>  <span class="at">t_vals =</span> <span class="fu">as.vector</span>(t_vals) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">5</span>),</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>  <span class="at">p_vals =</span> <span class="fu">as.vector</span>(p_vals) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">3</span>))</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>results2 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">results =</span> <span class="fu">c</span>(<span class="st">"Residual Standard Error"</span>, <span class="st">"R squared"</span>, <span class="st">"Adjusted R squared"</span>, <span class="st">"F statistic"</span>),</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(residual_std_error <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">3</span>), <span class="fu">scientific</span>(r_squared, <span class="dv">3</span>), <span class="fu">scientific</span>(adj_r_squared, <span class="dv">3</span>), f_stat <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">4</span>)),</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>  <span class="at">d_o_f =</span> <span class="fu">c</span>(n, <span class="st">"N/A"</span>, <span class="st">"N/A"</span>, <span class="st">"1 and 148"</span>),</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>  <span class="at">p_val =</span> <span class="fu">c</span>( <span class="st">"N/A"</span>, <span class="st">"N/A"</span>, <span class="st">"N/A"</span>, f_p_val),</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="co"># Displaying the results</span></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(results1, <span class="at">caption =</span> <span class="st">"Linear Model of consumption (kWh) against outside temperature from first principles"</span>, <span class="at">rownames =</span> <span class="cn">FALSE</span>, <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Coefficients"</span>, <span class="st">"Estimate"</span>, <span class="st">"Standard Error"</span>, <span class="st">"t values"</span>, <span class="st">"Pr(&gt;|t|)"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Linear Model of consumption (kWh) against outside temperature from first principles</caption>
+<colgroup>
+<col style="width: 27%">
+<col style="width: 12%">
+<col style="width: 20%">
+<col style="width: 12%">
+<col style="width: 26%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Coefficients</th>
+<th style="text-align: right;">Estimate</th>
+<th style="text-align: right;">Standard Error</th>
+<th style="text-align: right;">t values</th>
+<th style="text-align: right;">Pr(&gt;|t|)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">16.0000</td>
+<td style="text-align: right;">2.870</td>
+<td style="text-align: right;">5.58230</td>
+<td style="text-align: right;">1.00e-07</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Outside Temperature</td>
+<td style="text-align: right;">-0.0262</td>
+<td style="text-align: right;">0.158</td>
+<td style="text-align: right;">-0.16565</td>
+<td style="text-align: right;">8.69e-01</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="code-fold">
+<summary>Click here to display calculations</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(results2, <span class="at">rownames =</span> <span class="cn">FALSE</span>, <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Results"</span>, <span class="st">"Value"</span>, <span class="st">"Degrees of Freedom"</span>, <span class="st">"p-value"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Results</th>
+<th style="text-align: left;">Value</th>
+<th style="text-align: left;">Degrees of Freedom</th>
+<th style="text-align: left;">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Residual Standard Error</td>
+<td style="text-align: left;">7.36</td>
+<td style="text-align: left;">150</td>
+<td style="text-align: left;">N/A</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R squared</td>
+<td style="text-align: left;">1.85e-04</td>
+<td style="text-align: left;">N/A</td>
+<td style="text-align: left;">N/A</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Adjusted R squared</td>
+<td style="text-align: left;">-6.57e-03</td>
+<td style="text-align: left;">N/A</td>
+<td style="text-align: left;">N/A</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">F statistic</td>
+<td style="text-align: left;">0.02744</td>
+<td style="text-align: left;">1 and 148</td>
+<td style="text-align: left;">0.8687</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="simultaneous-hypothesis-test" class="level3">
+<h3 class="anchored" data-anchor-id="simultaneous-hypothesis-test">2. Simultaneous hypothesis test</h3>
+<p>A simultaneous hypothesis test will be performed of the effect of energy efficiency on electricity consumption with the following hypotheses.</p>
+<p><span class="math inline">\(H_0: \mu_{poor} = \mu_{average} = \mu_{good} = \mu_{excellent}\)</span> <span class="math inline">\(H_1:\)</span> at least one <span class="math inline">\(\mu_{i}\)</span> is different</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click here to display calculations</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simultaneous hypothesis test for the effect of energy efficiency on electricity consumption</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Testing at 5% significance </span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># H0: μ_poor = μ_average = μ_good = μ_excellent </span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># H1: at least one μ is different</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> en_dat<span class="sc">$</span>consumption_kwh</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(Y)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="co"># no. energy efficiency groups</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>y_bar <span class="ot">&lt;-</span> <span class="fu">mean</span>(Y)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Between group sum-sqrs </span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="do">## Poor</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>ind_poor <span class="ot">&lt;-</span> en_dat<span class="sc">$</span>energy_efficiency <span class="sc">==</span> <span class="st">"Poor"</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>y_poor <span class="ot">&lt;-</span> <span class="fu">mean</span>(Y[ind_poor])</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>n_poor <span class="ot">&lt;-</span> <span class="fu">sum</span>(ind_poor)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>ss_poor <span class="ot">&lt;-</span> n_poor <span class="sc">*</span> (y_poor <span class="sc">-</span> y_bar)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="do">## Average</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>ind_ave <span class="ot">&lt;-</span> en_dat<span class="sc">$</span>energy_efficiency <span class="sc">==</span> <span class="st">"Average"</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>y_ave <span class="ot">&lt;-</span> <span class="fu">mean</span>(Y[ind_ave])</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>n_ave <span class="ot">&lt;-</span> <span class="fu">sum</span>(ind_ave)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>ss_ave <span class="ot">&lt;-</span> n_ave <span class="sc">*</span> (y_ave <span class="sc">-</span> y_bar)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="do">## Good</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>ind_good <span class="ot">&lt;-</span> en_dat<span class="sc">$</span>energy_efficiency <span class="sc">==</span> <span class="st">"Good"</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>y_good <span class="ot">&lt;-</span> <span class="fu">mean</span>(Y[ind_good])</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>n_good <span class="ot">&lt;-</span> <span class="fu">sum</span>(ind_good)</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>ss_good <span class="ot">&lt;-</span> n_good <span class="sc">*</span> (y_good <span class="sc">-</span> y_bar)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="do">## Excellent</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>ind_exc <span class="ot">&lt;-</span> en_dat<span class="sc">$</span>energy_efficiency <span class="sc">==</span> <span class="st">"Excellent"</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>y_exc <span class="ot">&lt;-</span> <span class="fu">mean</span>(Y[ind_exc])</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>n_exc <span class="ot">&lt;-</span> <span class="fu">sum</span>(ind_exc)</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>ss_exc <span class="ot">&lt;-</span> n_exc <span class="sc">*</span> (y_exc <span class="sc">-</span> y_bar)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>ss_between <span class="ot">&lt;-</span> ss_poor <span class="sc">+</span> ss_ave <span class="sc">+</span> ss_good <span class="sc">+</span> ss_exc</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Within-group sum sqrs</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>ss_within_poor <span class="ot">&lt;-</span> <span class="fu">sum</span>((Y[ind_poor] <span class="sc">-</span> y_poor)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>ss_within_ave <span class="ot">&lt;-</span> <span class="fu">sum</span>((Y[ind_ave] <span class="sc">-</span> y_ave)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>ss_within_good <span class="ot">&lt;-</span> <span class="fu">sum</span>((Y[ind_good] <span class="sc">-</span> y_good)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>ss_within_exc <span class="ot">&lt;-</span> <span class="fu">sum</span>((Y[ind_exc] <span class="sc">-</span> y_exc)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>ss_within <span class="ot">&lt;-</span> ss_within_poor <span class="sc">+</span> ss_within_ave <span class="sc">+</span> ss_within_good <span class="sc">+</span> ss_within_exc </span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Test stat</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>df_b <span class="ot">&lt;-</span> k<span class="dv">-1</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>df_w <span class="ot">&lt;-</span> n<span class="sc">-</span>k</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>f_stat <span class="ot">&lt;-</span> (ss_between<span class="sc">/</span>(df_b)) <span class="sc">/</span> (ss_within<span class="sc">/</span>(df_w))</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>p_val <span class="ot">&lt;-</span> <span class="fu">pf</span>(f_stat, df_b, df_w, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>hyp_test <span class="ot">&lt;-</span> <span class="fu">tibble</span>( </span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>  ss_between <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">3</span>),</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>  ((ss_between)<span class="sc">/</span>(df_b)) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">3</span>),</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>  ss_within <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">3</span>), </span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>  ((ss_within)<span class="sc">/</span>df_w) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">3</span>),</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>  f_stat <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">5</span>),</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>  p_val <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">4</span>))</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(hyp_test, <span class="at">rownames =</span> <span class="cn">FALSE</span>, <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"SSA"</span>, <span class="st">"MSA"</span>, <span class="st">"SSE"</span>, <span class="st">"MSE"</span>, <span class="st">"F-statistic"</span>, <span class="st">"p-value"</span>), <span class="at">caption =</span> <span class="st">"Hypothesis test results from first principles"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Hypothesis test results from first principles</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">SSA</th>
+<th style="text-align: right;">MSA</th>
+<th style="text-align: right;">SSE</th>
+<th style="text-align: right;">MSE</th>
+<th style="text-align: right;">F-statistic</th>
+<th style="text-align: right;">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">55.6</td>
+<td style="text-align: right;">18.5</td>
+<td style="text-align: right;">7960</td>
+<td style="text-align: right;">54.6</td>
+<td style="text-align: right;">0.3396</td>
+<td style="text-align: right;">0.7967</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="section-4" class="level2">
+<h2 class="anchored" data-anchor-id="section-4">Section 4:</h2>
+<section id="fit-model" class="level3">
+<h3 class="anchored" data-anchor-id="fit-model">1. Fit Model</h3>
+<p>A full model was fitted and various results are tabulated below.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to display code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>full_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(consumption_kwh <span class="sc">~</span> outside_temperature <span class="sc">+</span> humidity <span class="sc">+</span> wind_speed <span class="sc">+</span> household_size <span class="sc">+</span> appliance_index <span class="sc">+</span> energy_efficiency <span class="sc">+</span> solar_installed <span class="sc">+</span> day_of_week <span class="sc">+</span> holiday <span class="sc">+</span> outside_temperature<span class="sc">:</span>humidity, en_dat)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>full_model_summary <span class="ot">&lt;-</span> <span class="fu">summary</span>(full_model)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>confidence_ints <span class="ot">&lt;-</span> <span class="fu">confint</span>(full_model)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>lbs <span class="ot">&lt;-</span> confidence_ints[<span class="dv">1</span><span class="sc">:</span><span class="dv">18</span>] <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">4</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>ubs <span class="ot">&lt;-</span> confidence_ints[<span class="dv">19</span><span class="sc">:</span><span class="dv">36</span>] <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Hypothesis testing results</caption>
+<colgroup>
+<col style="width: 56%">
+<col style="width: 11%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Coefficient</th>
+<th style="text-align: right;">Estimate</th>
+<th style="text-align: right;">Lower bound</th>
+<th style="text-align: right;">Upper bound</th>
+<th style="text-align: left;">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">15.620000</td>
+<td style="text-align: right;">7.82000</td>
+<td style="text-align: right;">23.4000</td>
+<td style="text-align: left;">1.20e-04</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Outside temperature</td>
+<td style="text-align: right;">0.241800</td>
+<td style="text-align: right;">-0.19300</td>
+<td style="text-align: right;">0.6760</td>
+<td style="text-align: left;">2.73e-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Humidity</td>
+<td style="text-align: right;">0.009802</td>
+<td style="text-align: right;">-0.12900</td>
+<td style="text-align: right;">0.1490</td>
+<td style="text-align: left;">8.89e-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Wind speed</td>
+<td style="text-align: right;">0.141000</td>
+<td style="text-align: right;">-0.13100</td>
+<td style="text-align: right;">0.4130</td>
+<td style="text-align: left;">3.07e-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Household size</td>
+<td style="text-align: right;">1.044000</td>
+<td style="text-align: right;">0.71800</td>
+<td style="text-align: right;">1.3700</td>
+<td style="text-align: left;">3.35e-09</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Appliance index</td>
+<td style="text-align: right;">0.010640</td>
+<td style="text-align: right;">-0.02080</td>
+<td style="text-align: right;">0.0421</td>
+<td style="text-align: left;">5.05e-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Energy efficiency (Average)</td>
+<td style="text-align: right;">-0.189500</td>
+<td style="text-align: right;">-1.33000</td>
+<td style="text-align: right;">0.9500</td>
+<td style="text-align: left;">7.43e-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Energy efficiency (Good)</td>
+<td style="text-align: right;">-0.824100</td>
+<td style="text-align: right;">-1.78000</td>
+<td style="text-align: right;">0.1280</td>
+<td style="text-align: left;">8.93e-02</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Energy efficiency (Excellent)</td>
+<td style="text-align: right;">0.246100</td>
+<td style="text-align: right;">-0.54500</td>
+<td style="text-align: right;">1.0400</td>
+<td style="text-align: left;">5.40e-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Solar installed (Yes)</td>
+<td style="text-align: right;">-13.740000</td>
+<td style="text-align: right;">-14.60000</td>
+<td style="text-align: right;">-12.9000</td>
+<td style="text-align: left;">4.84e-62</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Day of week (Tuesday)</td>
+<td style="text-align: right;">-0.017560</td>
+<td style="text-align: right;">-1.16000</td>
+<td style="text-align: right;">1.1200</td>
+<td style="text-align: left;">9.76e-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Day of week (Wednesday)</td>
+<td style="text-align: right;">1.506000</td>
+<td style="text-align: right;">0.42900</td>
+<td style="text-align: right;">2.5800</td>
+<td style="text-align: left;">6.48e-03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Day of week (Thursday)</td>
+<td style="text-align: right;">-0.648600</td>
+<td style="text-align: right;">-1.87000</td>
+<td style="text-align: right;">0.5750</td>
+<td style="text-align: left;">2.96e-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Day of week (Friday)</td>
+<td style="text-align: right;">-0.363700</td>
+<td style="text-align: right;">-1.62000</td>
+<td style="text-align: right;">0.8980</td>
+<td style="text-align: left;">5.70e-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Day of week (Saturday)</td>
+<td style="text-align: right;">-1.202000</td>
+<td style="text-align: right;">-2.49000</td>
+<td style="text-align: right;">0.0909</td>
+<td style="text-align: left;">6.82e-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Day of week (Sunday)</td>
+<td style="text-align: right;">-0.121800</td>
+<td style="text-align: right;">-1.41000</td>
+<td style="text-align: right;">1.1700</td>
+<td style="text-align: left;">8.52e-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Holiday</td>
+<td style="text-align: right;">-0.257300</td>
+<td style="text-align: right;">-2.55000</td>
+<td style="text-align: right;">2.0300</td>
+<td style="text-align: left;">8.25e-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Interaction term (outside temperature against humidity)</td>
+<td style="text-align: right;">-0.002790</td>
+<td style="text-align: right;">-0.00998</td>
+<td style="text-align: right;">0.0044</td>
+<td style="text-align: left;">4.44e-01</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Hypothesis tests of the effects of various explanatory variables on electricity consumption have been performed and the results are displayed below. The hypotheses for these test take the form: <span class="math display">\[H_0: \beta_{i} = 0\]</span> <span class="math display">\[H_1: \beta_{i}\neq0\]</span></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">##| results: "hide"</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Click to display code"</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Outside Temperature </span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>red_model_temp <span class="ot">&lt;-</span> <span class="fu">update</span>(full_model, .<span class="sc">~</span>. <span class="sc">-</span> outside_temperature, <span class="at">data =</span> en_dat)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(red_model_temp, full_model)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>outside_temp_test <span class="ot">&lt;-</span> <span class="fu">anova</span>(red_model_temp, full_model)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Humidity</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>red_model_hum <span class="ot">&lt;-</span> <span class="fu">update</span>(full_model, .<span class="sc">~</span>. <span class="sc">-</span> humidity, <span class="at">data =</span> en_dat)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(red_model_hum, full_model)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>humidity_test <span class="ot">&lt;-</span> <span class="fu">anova</span>(red_model_hum, full_model)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Energy Efficiency </span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>red_model_eff <span class="ot">&lt;-</span> <span class="fu">update</span>(full_model, .<span class="sc">~</span>. <span class="sc">-</span> energy_efficiency, <span class="at">data =</span> en_dat)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(red_model_eff, full_model)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>energy_eff_test <span class="ot">&lt;-</span> <span class="fu">anova</span>(red_model_eff, full_model)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Day of the Week </span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>red_model_dow <span class="ot">&lt;-</span> <span class="fu">update</span>(full_model, .<span class="sc">~</span>. <span class="sc">-</span> day_of_week, <span class="at">data =</span> en_dat)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(red_model_dow, full_model)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>d_o_w_test <span class="ot">&lt;-</span> <span class="fu">anova</span>(red_model_dow, full_model)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Holiday </span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>red_model_hol <span class="ot">&lt;-</span> <span class="fu">update</span>(full_model, .<span class="sc">~</span>. <span class="sc">-</span> holiday, <span class="at">data =</span> en_dat)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(red_model_hol, full_model)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>holiday_test <span class="ot">&lt;-</span> <span class="fu">anova</span>(red_model_hol, full_model)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Solar Installed</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>red_model_sol <span class="ot">&lt;-</span> <span class="fu">update</span>(full_model, .<span class="sc">~</span>. <span class="sc">-</span> solar_installed, <span class="at">data =</span> en_dat)</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(red_model_sol, full_model)</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>solar_inst_test <span class="ot">&lt;-</span> <span class="fu">anova</span>(red_model_sol, full_model)</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>nested_anova_results <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">"Outside temperature"</span>, <span class="st">"Humidity"</span>, <span class="st">"Energy Efficiency"</span>, <span class="st">"Day of the Week"</span>, <span class="st">"Holiday"</span>, <span class="st">"Solar Installed"</span>), </span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">fstats =</span> <span class="fu">c</span>(outside_temp_test<span class="sc">$</span>F[<span class="dv">2</span>], humidity_test<span class="sc">$</span>F[<span class="dv">2</span>], energy_eff_test<span class="sc">$</span>F[<span class="dv">2</span>], d_o_w_test<span class="sc">$</span>F[<span class="dv">2</span>], holiday_test<span class="sc">$</span>F[<span class="dv">2</span>], solar_inst_test<span class="sc">$</span>F[<span class="dv">2</span>]) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">4</span>),</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">p_values =</span> <span class="fu">scientific</span>(<span class="fu">c</span>(outside_temp_test<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;F)</span><span class="st">`</span>[<span class="dv">2</span>], humidity_test<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;F)</span><span class="st">`</span>[<span class="dv">2</span>], energy_eff_test<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;F)</span><span class="st">`</span>[<span class="dv">2</span>], d_o_w_test<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;F)</span><span class="st">`</span>[<span class="dv">2</span>], holiday_test<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;F)</span><span class="st">`</span>[<span class="dv">2</span>], solar_inst_test<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;F)</span><span class="st">`</span>[<span class="dv">2</span>]), <span class="dv">3</span>)</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(nested_anova_results, <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Explanatory variable"</span>, <span class="st">"F value"</span>, <span class="st">"p-value"</span>), <span class="at">caption =</span> <span class="st">"Results of hypothesis tests conducted"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="interpretation" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation">Interpretation</h3>
+<p>Variables with a coefficient that were statistically significant at the 5% level were: Household Size and Solar Installation.</p>
+<ol type="1">
+<li><p>Household Size: <span class="math inline">\(\hat{\beta}_{Household Size} = 1.044\)</span>. This implies that for a one unit increase in household size, average consumption will increase by 1.044 units, holding all other variables constant. A 95% CI for <span class="math inline">\(\hat{\beta}_{Household Size}\)</span> is (0.718, 1.370) which does not include 0. This suggests that household size has a positive effect. At the 5% significance level, the p-value for the null hypothesis that <span class="math inline">\(H_{0}: \beta_{Household Size}=0\)</span> is <span class="math inline">\(3.35e^{-9} &lt; 0.05\)</span> and thus, the null hypothesis is rejected and the conclusion is drawn that at a 5% significance level, increases in household size (in number of inhabitants) increase average electricity consumption, holding all other variables constant.</p></li>
+<li><p>Solar Installation: <span class="math inline">\(\hat{\beta}_{SolarInstalled} = -13.742\)</span>. This implies that if solar is installed, average consumption will decrease by 13.742 units, holding all other variables constant. A 95% CI for <span class="math inline">\(\hat{\beta}_{SolarInstalled}\)</span> is (-14.6, -12.9) which is relatively narrow and does not include 0. This suggests that household size has a positive effect. At the 5% significance level, the p-value for the null hypothesis that <span class="math inline">\(H_{0}: \beta_{Solar Installed}=0\)</span> is <span class="math inline">\(4.84e^{-62} &lt; 0.05\)</span> and thus, the null hypothesis is rejected and the conclusion is drawn that at a 5% significance level, having solar installed decreases average electricity consumption, holding all other variables constant.</p></li>
+</ol>
+</section>
+</section>
+<section id="section-5" class="level2">
+<h2 class="anchored" data-anchor-id="section-5">Section 5</h2>
+<p>The multiple linear regression suggests that Household Size and Solar Installation had significant effects on energy consumption. Larger households consumed more energy on average, while households with solar installed consumed significantly less energy than those without. The multiple linear regression did not provide evidence for effects on energy consumption due to humidity, outside temperature, energy efficiency, appliance index, day of the week and whether it is a holiday.</p>
+<p>For households (consumers), installing solar appears to be the most effective way to reduce energy consumption. Larger households especially should focus on reducing consumption. Since the regression did not suggest an effect on consumption due to energy efficiency or appliance index, incentivising households to be more efficient with their usage or to use more efficient appliances is not recommended, while incentivising households to install solar is recommended.</p>
+<p>While this study was fairly conclusive in determing whether the given variables had an effect on energy consumption, there are many opportunities for further research in this area. Some variables which could be tested for an effect on consumption include the season, and whether the area is urban, suburban or rural.</p>
+</section>
+</section>
+<section id="part-two" class="level1">
+<h1>Part Two</h1>
+<section id="scenario-a" class="level2">
+<h2 class="anchored" data-anchor-id="scenario-a">Scenario A</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to display code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">25</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>x_vec <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">25</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>n_sim <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>b0 <span class="ot">&lt;-</span> <span class="dv">12</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>sig <span class="ot">&lt;-</span> <span class="fl">2.5</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>bs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">10</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>power_est <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">length</span>(bs))</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="fu">seq_along</span>(bs)) {</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  b1 <span class="ot">&lt;-</span> bs[j]</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  rejections <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_sim)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_sim){</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  err <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">25</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> sig)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> b0 <span class="sc">+</span> b1<span class="sc">*</span>x_vec <span class="sc">+</span> err</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x_vec)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  p_val <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)<span class="sc">$</span>coefficients[<span class="dv">2</span>, <span class="dv">4</span>]</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  rejections[i] <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(p_val <span class="sc">&lt;</span> <span class="fl">0.05</span>)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>power_est[j] <span class="ot">&lt;-</span> <span class="fu">mean</span>(rejections)</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Displaying results </span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>powers <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  bs,</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  power_est</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(powers, <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"$</span><span class="sc">\\</span><span class="st">beta_{1}$"</span>, <span class="st">"Estimated power"</span>), <span class="at">caption =</span> <span class="st">"Estimated power against varying true values of $</span><span class="sc">\\</span><span class="st">beta_{1}$"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Estimated power against varying true values of <span class="math inline">\(\beta_{1}\)</span></caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;"><span class="math inline">\(\beta_{1}\)</span></th>
+<th style="text-align: right;">Estimated power</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.045</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">0.067</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">0.182</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">5.0</td>
+<td style="text-align: right;">0.777</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">10.0</td>
+<td style="text-align: right;">1.000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="scenario-b" class="level2">
+<h2 class="anchored" data-anchor-id="scenario-b">Scenario B</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Click to display code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>b0 <span class="ot">&lt;-</span> <span class="dv">12</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>n_sim <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>sig <span class="ot">&lt;-</span> <span class="fl">2.5</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>ns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">50</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>est_power_lin <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">length</span>(ns))</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>est_power_exp <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">length</span>(ns))</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="fu">seq_along</span>(ns)) {</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> ns[j]</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">n ="</span>, n, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(n)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>x_vec <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">7</span>, <span class="at">length.out =</span> n)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculating with linear model </span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>rejections_lin <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, n_sim)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_sim) {</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  err <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span> , sig)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> b0 <span class="sc">+</span> <span class="fl">0.01</span><span class="sc">*</span><span class="fu">exp</span>(x_vec) <span class="sc">+</span> err</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x_vec)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>p_val <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)<span class="sc">$</span>coefficients[<span class="dv">2</span>, <span class="dv">4</span>]</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  rejections_lin[i] <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(p_val <span class="sc">&lt;</span> <span class="fl">0.05</span>)</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>est_power_lin[j] <span class="ot">&lt;-</span> <span class="fu">mean</span>(rejections_lin)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculating with exponential model</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>rejections_exp <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_sim)</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>exp_x <span class="ot">&lt;-</span> <span class="fu">exp</span>(x_vec)</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_sim) {</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>   err <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span> , sig)</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> b0 <span class="sc">+</span> <span class="fl">0.01</span><span class="sc">*</span><span class="fu">exp</span>(x_vec) <span class="sc">+</span> err</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> exp_x)</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>p_val <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)<span class="sc">$</span>coefficients[<span class="dv">2</span>, <span class="dv">4</span>]</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>  rejections_exp[i] <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(p_val <span class="sc">&lt;</span> <span class="fl">0.05</span>)</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>est_power_exp[j] <span class="ot">&lt;-</span> <span class="fu">mean</span>(rejections_exp)</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+n = 5 
+
+n = 10 
+
+n = 20 
+
+n = 50 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Click to display code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Displaying results </span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>exp_powers <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  ns, </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  est_power_lin, est_power_exp</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(exp_powers, <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Sample size (n)"</span>, <span class="st">"Estimated power of linear model"</span>, <span class="st">"Estimated power of exponential model"</span>), <span class="at">caption =</span> <span class="st">"Estimated power of mis-specified linear model and correctly specified exponential model against varying sample size (n)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Estimated power of mis-specified linear model and correctly specified exponential model against varying sample size (n)</caption>
+<colgroup>
+<col style="width: 18%">
+<col style="width: 37%">
+<col style="width: 43%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Sample size (n)</th>
+<th style="text-align: right;">Estimated power of linear model</th>
+<th style="text-align: right;">Estimated power of exponential model</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0.143</td>
+<td style="text-align: right;">0.692</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.542</td>
+<td style="text-align: right;">0.950</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">0.895</td>
+<td style="text-align: right;">0.999</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">0.999</td>
+<td style="text-align: right;">1.000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsAssignment1_files/figure-html/plot%20for%20scenario%20B-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
