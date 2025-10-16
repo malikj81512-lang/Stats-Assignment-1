@@ -5,6 +5,31 @@ editor: visual
 author: Malik Jamie (JMXMAL003) and Amara Patel (PTLAMA005)
 date: 21/10/2025
 ---
-```{r}
+## Section 1: Design and Randomisation
+
+###planning: 
+factorial experiment:
+factor one: light level (1, 2, 3, 4)
+factor two: heat level (1, 2, 3, 4)
+factor three: variety of chilli (R, F)
+Number of treatments: 32 (light, heat, variety); (11R, 11F, 12R, 12F, 13R, 13F, 14R, 14F, 21R, 21F, 22R, 22F, 23R, 23F, 24R, 24F, 31R, 31F, 32R, 32F, 33R, 33F, 34R, 34F, 41R, 41F, 42R, 42F, 43R, 43F, 44R, 44F)
+
+experimental unit: plots (only one treatment per plot); 32 plots over two greenhouses 
+blocking factor 1: north/south
+blocking factor 2: greenhouse (A, B)
+blocking factor 3: season (1, 2)
+
+design idea:
+overarching block: season 1 and season 2 (randomise the 32 treatments to the 32 plots (16 treatments per greenhouse) blocking with season for greenhouse and side of the greenhouse so possible latin square design/nest the blocks)
+
+
+hypotheses: 
+1: Does light have an effect on the quality of chillies
+  $H_0: \alpha_{light} = 0$
+  $H_1: \alpha_{light} \ne 0$
+
+2: Which light setting has the biggest effect 
+2: Does heat have an effect on the quality of chillies 
+```{r Design and Randomisation}
 
 ```
