@@ -91,7 +91,10 @@ library(dplyr)
 # set seed for reproducibility 
 set.seed(15)
 
-# factors as above 
+# factors as above
+light <- as.factor(c(1, 2, 3, 4))
+heat <- as.factor(c(1, 2, 3, 4))
+variety <- as.factor(c("R", "F"))
 
 # a new design 
 mydesign2 <- tibble(plot = c((1:32), (1:32)),
@@ -116,5 +119,7 @@ mydesign2 <- mydesign2 %>%
          heat = treatments$heat[treatment]) %>%
   select(-temp_id2, -treatment)
 
+# to save as .csv file
+write.csv(mydesign2, file = "design2.csv", row.names = FALSE)
   
 ```
