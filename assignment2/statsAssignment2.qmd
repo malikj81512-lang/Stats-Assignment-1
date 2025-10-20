@@ -81,3 +81,40 @@ mydesign <- mydesign %>%
   select(-temp_id, -treat)
 
 ```
+
+```{r design 2 (what we're actually going with)}
+# loading packages
+library(tibble)
+library(knitr)
+library(dplyr)
+
+# set seed for reproducibility 
+set.seed(15)
+
+# factors as above 
+
+# a new design 
+mydesign2 <- tibble(plot = c((1:32), (1:32)),
+                   season = c(rep(1, 32), rep(2, 32)), 
+                   greenhouse = c(rep("A", 16), rep("B", 16), rep("A", 16), rep("B", 16)),
+                   side = c(rep("n", 8), rep("s", 8), rep("n", 8), rep("s", 8), rep("n", 8), rep("s", 8), rep("n", 8), rep("s", 8))
+)
+
+# getting all treatments 
+treatments <- expand.grid(variety = variety, light = light, heat = heat)
+
+# randomly assigning within season block 
+mydesign2 <- mydesign2 %>% 
+  group_by(season) %>% 
+  mutate(
+    temp_id2 = 1:32, 
+    treatment = sample(1:32)
+  ) %>%
+  ungroup() %>%
+  mutate(variety = treatments$variety[treatment],
+         light = treatments$light[treatment],
+         heat = treatments$heat[treatment]) %>%
+  select(-temp_id2, -treatment)
+
+  
+```
