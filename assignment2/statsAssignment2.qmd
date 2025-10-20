@@ -20,7 +20,7 @@ experimental unit: plots (only one treatment per plot); 32 plots over two greenh
 
 design idea: overarching block: season 1 and season 2 (randomise the 32 treatments to the 32 plots (16 treatments per greenhouse) blocking with season for greenhouse and side of the greenhouse so possible latin square design/nest the blocks)
 
-final design idea: - whole block: season - sub block: greenhouse-side block - randomise for variety across season block - randomise for light and heat across(16 combinations) across the greenhouses in a latin square design to block for location within the greenhouse (n-s, e-w)
+then we can remove one of these two blocking factors above (ie overarching block: season; each treatment of heat and light (16 total) randomised to 32 plots (one in each greenhouse), with one of each type of chilli in each plot; then we block for north/south - in this case, experimental unit would be plants.
 
 hypotheses (i honestly don't know how i should be defining these... possibly using contrasts but not sure. also not sure how i should be setting up the model but i am busy doing more stats and reading to figure it all out): 1: Does light have an effect on the quality of chillies $H_0: \alpha_{light} = 0$ $H_1: \alpha_{light} \ne 0$
 
