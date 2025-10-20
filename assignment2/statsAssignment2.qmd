@@ -123,3 +123,15 @@ mydesign2 <- mydesign2 %>%
 write.csv(mydesign2, file = "design2.csv", row.names = FALSE)
   
 ```
+
+```{r}
+
+design2 <- read.csv("design2.csv")
+#design2
+
+mydata <- get.observations(design2)
+mydata
+model <- lm(obs ~ light + heat + variety + light*heat + light*variety + heat*variety + light*heat*variety + season, data=mydata)
+model
+
+```
