@@ -120,18 +120,26 @@ mydesign2 <- mydesign2 %>%
   select(-temp_id2, -treatment)
 
 # to save as .csv file
-write.csv(mydesign2, file = "design2.csv", row.names = FALSE)
+#write.csv(mydesign2, file = "design2.csv", row.names = FALSE)
+
+mydata <- get.observations(design2)
   
 ```
 
 ```{r}
 
-design2 <- read.csv("design2.csv")
-#design2
+#design2 <- read.csv("design2.csv")
 
-mydata <- get.observations(design2)
-mydata
-model <- lm(obs ~ light + heat + variety + light*heat + light*variety + heat*variety + light*heat*variety + season, data=mydata)
+mydata$light <- factor(mydata$light,
+                       levels = c("1", "2", "3", "4"))
+#mydata$light
+mydata$heat <- factor(mydata$heat,
+                       levels = c("1", "2", "3", "4"))
+#mydata$heat
+
+#if we do this model, we end up with tons of interaction terms (32 different combos)
+
+model <- lm(obs ~ light + heat + variety + light*heat + light*variety +  heat*variety + light*heat*variety + season, data=mydata)
 model
 
 ```
