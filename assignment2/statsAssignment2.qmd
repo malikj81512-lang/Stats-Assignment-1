@@ -14,7 +14,6 @@ These goals will be tackled through an analysis of variance of this exploratory 
 
 ## Design and Randomisation
 
-
 ```{r Design and Randomisation}
 library(dplyr)
 library(knitr)
@@ -73,14 +72,35 @@ write.csv(mydesign2, file = "design2.csv", row.names = FALSE)
 
 ```
 
-```{r}
+```{r Simulating observations}
 
-mydesign <- read.csv("design.csv")
-mydata <- get.observations(mydesign)
+set.seed(27)  
 
 mydesign2 <- read.csv("design2.csv")
-mydesign2
-
+mydesign2$light <- as.factor(mydesign2$light)
+mydesign2$heat <- as.factor(mydesign2$heat)
+#mydesign2
 mydata2 <- get.observations(mydesign2)
+mydata2
+
+```
+
+```{r}
+
+model <- lm (obs ~ season + greenhouse + variety*side + light*heat*variety, data=mydata2)
+#model
+anova(model)
+
+```
+
+```{r}
+
+library(emmeans)
+
+#table(mydata2$light, mydata2$heat)
+
+emmeans(model, ~ light)
+
+emmeans(model, ~ heat)
 
 ```
