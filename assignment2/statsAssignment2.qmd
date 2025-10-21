@@ -14,6 +14,28 @@ These goals will be tackled through an analysis of variance of this exploratory 
 
 ## Design and Randomisation
 
+### Design 
+The experiment takes place over 2 seasons, season 1 and season 2. There are two greenhouses available, greenhouse A and greenhouse B, with 8 north-facing and 8 south-facing plots each. The 32 experimental units were first blocked by the random factors, season and greenhouse, to give four blocks of 16 experimental units each. The treatment factors are side (north, south) and variety (Redhot, Furious), each with two levels which results in a $2^2$ factorial treatment structure with 4 treatments, (n,F), (s,F), (n,R), (s,R). Four 4x4 latin square designs were set up with the four levels of light (1, 2, 3, 4) as a row block and the four levels of heat (1, 2, 3, 4) and to conduct randomisation, a random latin square permutation of the four treatments with each appearing once in every row and column was found for each season-greenhouse combination. 
+
+The a-priori hypotheses that are of interest are: 
+
+1: Does light have an effect on quality?
+$$H_0: \alpha_{i} = 0 \ ,i = 1, 2, 3, 4 \\
+H_1: at~least~one~\alpha_{i} \ne 0 \ , i = 1, 2, 3, 4$$
+
+2: Does heat have an effect on quality? 
+$$H_0: \beta_{j} = 0 \ ,j = 1, 2, 3, 4 \\
+H_1: at~least~one~\beta_{j} \ne 0 \ , j = 1, 2, 3, 4$$
+
+3: Does the effect of light depend on the level of heat? 
+$$H_0: (\alpha\beta)_{ij} = 0 \ ,i,j = 1, 2, 3, 4 \\
+H_1: at~least~one~(\alpha\beta)_{ij} \ne 0 \ , i,j = 1, 2, 3, 4$$
+
+4: Does the effect of light and heat depend on variety?
+$$H_0: (\alpha\beta\gamma)_{ijk} = (\alpha\gamma)_{ik} = (\beta\gamma)_{jk} = 0 \ ,i,j = 1, 2, 3, 4 \ , k = R, F\\
+H_1: at~least~one~(\alpha\beta\gamma)_{ijk} \ne 0 \ , i,j = 1, 2, 3, 4$$
+
+
 
 ```{r Design and Randomisation}
 library(dplyr)
