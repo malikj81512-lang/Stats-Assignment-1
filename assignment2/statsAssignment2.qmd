@@ -201,22 +201,44 @@ anova(model)
 
 # Results
 
-## Does the optimal heat and ligth settings depend on variety?
+```{r}
+confint(model, parm = "season")
+confint(model, parm = "greenhouseB")
+confint(model, parm = "varietyR")
+confint(model, parm = "sides")
+
+```
+
+##. Main effects
+
+From our analysis, there is strong evidence for an effect on quality due to season (p-val < 0.00001). In season 2 of testing, the mean response was 3.230 higher than in season 1, holding all other variables constant, with a 95% confidence interval = (2.284, 4.175). 
+There is evidence for an effect on quality due to greenhouse (p-val = 0.001). For Greenhouse B, the mean response was 2.671 higher than in Greenhouse A (1.600, 3.741), holding all other variables constant. 
+There is no strong evidence for an effect on quality due to variety (p-val = 0.240).
+There is strong evidence for an effect due to side (p-val < 0.00001). On the south side, the mean response was 3.057 lower than on the north side (-4.821, -1.293), holding all other variables constant.
+
+## Does the optimal heat and light settings depend on variety?
 
 ```{r}
 
 library(emmeans)
 
-emmeans(model, ~ light + variety)
+#emmeans(model, ~ variety)
 
-emmeans(model, ~ heat + variety)
+emm_l <- emmeans(model, ~ light*variety)
 
+emm_h <- emmeans(model, ~ heat*variety)
 
-emmeans(model, ~ variety)
+contrast(emm_l, 
+         list(avg_R_minus_avg_F = c(rep(1/4, 4), rep(-1/4, 4))
+              ), by = NULL)
+
+contrast(emm_h, 
+         list(avg_R_minus_avg_F = c(rep(1/4, 4), rep(-1/4, 4))
+              ), by = NULL )
 
 ```
 
-H0: 1/4(muR1 + muR2 + )
+Our F-test analysis provides evidence for an interaction effect between variety and light (p-val < 0.05), as well as between variety and heat (p-val < 0.05). Therefore, we can proceed under the assumption that the optimal heat and light settings do depend on variety.
 
 ## Which light and heat settings produce the highest quality chillies?
 
