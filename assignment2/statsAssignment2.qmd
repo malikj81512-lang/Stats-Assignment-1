@@ -72,6 +72,21 @@ write.csv(mydesign2, file = "design2.csv", row.names = FALSE)
 
 ```
 
+Our model:
+
+$$
+Y_{ijkl} = \mu+ \alpha + \beta + \gamma\ + \delta\ + (*\gamma\delta){ij} + \epsilon_k\ + \theta_l\ + (\epsilon\theta)_{kl} + (\delta\epsilon\theta)_{jkl} + e_{ijkl} 
+$$
+
+
+$$
+\alpha = \text{effect of Season 2 compared to Season 1}\newline \beta = \text{effect of Greenhouse B compared to Greenhouse A}\newline
+\gamma = \text{effect of side compared to other}\newline 
+\delta =\text{effect of variety compared to other}\newline 
+\epsilon_i = \text{effect of i_th light level compared to 1st level, 1<i<=4}\newline 
+\theta_j =\text{effect of j_th heat level compared to 1st level, 1<j<=4}\newline
+$$
+
 ```{r Simulating observations}
 
 set.seed(27)  
@@ -88,19 +103,52 @@ mydata2
 ```{r}
 
 model <- lm (obs ~ season + greenhouse + variety*side + light*heat*variety, data=mydata2)
-#model
+model
 anova(model)
 
 ```
+
+
+# Results
+
+## Does the optimal heat and ligth settings depend on variety?
 
 ```{r}
 
 library(emmeans)
 
-#table(mydata2$light, mydata2$heat)
+emmeans(model, ~ light + variety)
 
-emmeans(model, ~ light)
+emmeans(model, ~ heat + variety)
 
-emmeans(model, ~ heat)
 
 ```
+
+H0: 1/4(muR1 + muR2 + )
+
+## Which light and heat settings produce the highest quality chillies?
+
+From the ANOVA table, there was no evidence for the interaction term between light and heat being significant (p-val = 0.2643), nor the interaction term between light, heat and variety (p-val = 0.218). 
+However, there is evidence for the interaction term between light and variety being significant (p-val = 0.0032), as well as the interaction term between heat and variety (p-val = 0.0297).
+Therefore, to determine the best light and heat settings, we calculated estimated means for heat and light for both varieties, averaging across all levels of other explanatory variables.
+Our results suggest that the settings that produced the highest quality chillies, on average, were different between the two varieties of chilli.
+For variety F, the light setting that produced the highest quality chillies on average, was level 4, with a mean response of 53.6 (52.6, 55.2). The optimal heat setting was level 3 with a mean response of 52.5 (51.3, 53.6).
+For variety R, the optimal light setting was level 4, with a mean response of 54.4 (53.1, 55.7). The optimal heat level 4, with a mean response of 51.1 (49.8, 52.4).
+Since the interactions between light, heat and variety were not significant, for each variety, the light and heat settings that would produce the highest quality chillies on average, were simply the settings that had the highest individual means.
+Therefore, for variety F, the optimal settings were light level 4 and heat level 3.
+For variety R, the optimal settings were light level 4 and heat level 4.
+
+## Does quality depend on variety?
+
+```{r}
+
+library(emmeans)
+
+emmeans(model, ~ variety)
+
+
+```
+0.239746
+Our results suggest that there is no evidence for an effect on quality due to variety. The estimated means were very similar: 49.1 for variety F (48.5, 49.7), 49.3 for variety R (48.6, 49.9). Furthermore, the ANOVA table 
+
+
