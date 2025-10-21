@@ -177,10 +177,11 @@ mydata2
 
 ```
 ## Analysis
-### Our model:
+
+### The model:
 
 $$
-Y_{ijkl} = \mu+ \alpha + \beta + \gamma\ + \delta\ + (*\gamma\delta){ij} + \epsilon_k\ + \theta_l\ + (\epsilon\theta)_{kl} + (\delta\epsilon\theta)_{jkl} + e_{ijkl} 
+Y_{ijkl} = \mu+ \alpha + \beta + \gamma\ + \delta\ + (\gamma\delta)_{ij} + \epsilon_k\ + \theta_l\ + (\epsilon\theta)_{kl} + (\delta\epsilon\theta)_{jkl} + e_{ijkl} 
 $$
 
 
@@ -191,20 +192,26 @@ $$
 \epsilon_i = \text{effect of i_th light level compared to 1st level, 1<i<=4}\newline 
 \theta_j =\text{effect of j_th heat level compared to 1st level, 1<j<=4}\newline
 $$
-
-```{r}
+An anova table was constructed based on this model with corner-point constraints for each 
+```{r, fitting model, anova table}
 
 model <- lm (obs ~ season + greenhouse + variety*side + light*heat*variety, data=mydata2)
 #model
-kable(anova(model))
+kable(anova(model), caption = "ANOVA table")
 
 ```
 
+### Interaction Plots 
+```{r interaction plots, fig.cap= "Interaction Plots"}
+with(na.omit(mydata2), interaction.plot(light, heat, obs))
+with(na.omit(mydata2), interaction.plot(light, variety, obs))
+with(na.omit(mydata2), interaction.plot(heat, variety, obs))
+```
 
 
 ## Results
 
-### Does the optimal heat and ligth settings depend on variety?
+### Do the optimal heat and light. settings depend on variety?
 
 ```{r}
 
