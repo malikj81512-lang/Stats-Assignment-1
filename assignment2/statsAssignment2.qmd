@@ -87,7 +87,7 @@ library(ggplot2)
 set.seed(15)
 
 # treatments 
-treatments2 <- c("n, R", "s, F", "n, F", "s, R")
+treatments2 <- c("n,R", "s,F", "n,F", "s,R")
 
 # create design (again oh my god)
 
@@ -134,12 +134,10 @@ write.csv(mydesign2, file = "design2.csv", row.names = FALSE)
 ```{r}
 
 mydesign <- read.csv("design.csv")
-mydesign
 mydata <- get.observations(mydesign)
 
 mydesign2 <- read.csv("design2.csv")
-mydesign2
-#mydata2 <- get.observations(mydesign2)
+mydata2 <- get.observations(mydesign2)
 
 mydata$light <- factor(mydata$light,
                        levels = c("1", "2", "3", "4"))
