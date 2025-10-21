@@ -12,21 +12,9 @@ The aim of this experiment is to examine the effects of different intensities of
 
 These goals will be tackled through an analysis of variance of this exploratory experiment.
 
-## Section 1: Design and Randomisation
+## Design and Randomisation
 
-experimental unit: plots (only one treatment per plot); 32 plots over two greenhouses blocking factor 1: north/south blocking factor 2: greenhouse (A, B) blocking factor 3: season (1, 2)
 
-design idea: overarching block: season 1 and season 2 (randomise the 32 treatments to the 32 plots (16 treatments per greenhouse) blocking with season for greenhouse and side of the greenhouse so possible latin square design/nest the blocks)
-
-then we can remove one of these two blocking factors above (ie overarching block: season; each treatment of heat and light (16 total) randomised to 32 plots (one in each greenhouse), with one of each type of chilli in each plot; then we block for north/south - in this case, experimental unit would be plants.
-
-hypotheses (i honestly don't know how i should be defining these... possibly using contrasts but not sure. also not sure how i should be setting up the model but i am busy doing more stats and reading to figure it all out): 1: Does light have an effect on the quality of chillies $H_0: \alpha_{light} = 0$ $H_1: \alpha_{light} \ne 0$
-
-nah nah nah
-
-2: Which light setting has the biggest effect 2: Does heat have an effect on the quality of chillies
-
-the code chunk below is basically just setting up a possible design where i've randomised variety over greenhouse-season blocks and then randomised light and heat within each greenhouse. not sure what this means for the analysis of the effects of variety (do experimental units for variety change from plot to greenhouse, w two reps or can we just analyse the 64 individual plots and make conclusions about those while adjusting for the greenhouse-season blocking factor?) i honestly don't know how this project is supposed to be approached and i feel a little bit lost to be honest. i might go to the lab session on tuesday and ask some of the tutors for advice.
 
 
 ```{r design 2 (what we're actually going with)}
@@ -73,7 +61,7 @@ write.csv(mydesign, file = "design.csv", row.names = FALSE)
 ```
 
 
-```{r another model based on what ethan told me}
+```{r Design and Randomisation}
 library(dplyr)
 library(knitr)
 library(tibble)
