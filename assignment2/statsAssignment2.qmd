@@ -29,50 +29,6 @@ nah nah nah
 the code chunk below is basically just setting up a possible design where i've randomised variety over greenhouse-season blocks and then randomised light and heat within each greenhouse. not sure what this means for the analysis of the effects of variety (do experimental units for variety change from plot to greenhouse, w two reps or can we just analyse the 64 individual plots and make conclusions about those while adjusting for the greenhouse-season blocking factor?) i honestly don't know how this project is supposed to be approached and i feel a little bit lost to be honest. i might go to the lab session on tuesday and ask some of the tutors for advice.
 
 
-```{r design 2 (what we're actually going with)}
-# loading packages
-library(EDproject)
-library(tibble)
-library(knitr)
-library(dplyr)
-
-# set seed for reproducibility 
-set.seed(8)
-
-# factors as above
-light <- as.factor(c(1, 2, 3, 4))
-heat <- as.factor(c(1, 2, 3, 4))
-variety <- as.factor(c("R", "F"))
-
-# a new design 
-mydesign <- tibble(plot = c((1:32), (1:32)),
-                   season = c(rep(1, 32), rep(2, 32)), 
-                   greenhouse = c(rep("A", 16), rep("B", 16), rep("A", 16), rep("B", 16)),
-                   side = c(rep("n", 8), rep("s", 8), rep("n", 8), rep("s", 8), rep("n", 8), rep("s", 8), rep("n", 8), rep("s", 8))
-)
-
-# getting all treatments 
-treatments <- expand.grid(variety = variety, light = light, heat = heat)
-
-# randomly assigning within season block 
-mydesign <- mydesign %>% 
-  group_by(season) %>% 
-  mutate(
-    temp_id2 = 1:32, 
-    treatment = sample(1:32)
-  ) %>%
-  ungroup() %>%
-  mutate(variety = treatments$variety[treatment],
-         light = treatments$light[treatment],
-         heat = treatments$heat[treatment]) %>%
-  select(-temp_id2, -treatment)
-
-# to save as .csv file
-write.csv(mydesign, file = "design.csv", row.names = FALSE)
-  
-```
-
-
 ```{r another model based on what ethan told me}
 library(dplyr)
 library(knitr)
@@ -140,30 +96,5 @@ mydesign2 <- read.csv("design2.csv")
 mydesign2
 
 mydata2 <- get.observations(mydesign2)
-
-mydata$light <- factor(mydata$light,
-                       levels = c("1", "2", "3", "4"))
-#mydata$light
-mydata$heat <- factor(mydata$heat,
-                       levels = c("1", "2", "3", "4"))
-#mydata$heat
-
-#if we do this model, we end up with tons of interaction terms (32 different combos)
-#model <- lm(obs ~ light + heat + variety + light*heat  +  light*variety + heat*variety + light*heat*variety + season, data=mydata)
-
-model <- lm(obs ~ light*heat*variety + season, data=mydata)
-
-
-# this is what the anova table looks like... don't think we need to fit reduced and full models since we just use the table and the values from the table in this section of the course (then we end up w exactly the model we are aiming to fit without all the chaotic coefficients which we can just extract from the summary lm to do our contrasts and stuff since i'm pretty sure that's what we need to do)
-
-anova(model)
-
-# could possibly do anova for effect of variety on light:height
-#reduced1 <- lm(obs ~ light*heat + variety, data=mydata)
-#anova(reduced1, model)
-
-#and again for effect of variety on quality in general
-#reduced2 <- reduced <- update(model, .~. -variety, data = mydata)
-#anova(reduced2, model)
 
 ```
