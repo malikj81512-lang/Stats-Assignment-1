@@ -14,8 +14,6 @@ These goals will be tackled through an analysis of variance of this exploratory 
 
 ## Section 1: Design and Randomisation
 
-###planning: factorial experiment: factor one: light level (1, 2, 3, 4) factor two: heat level (1, 2, 3, 4) factor three: variety of chilli (R, F) Number of treatments: 32 (light, heat, variety); (11R, 11F, 12R, 12F, 13R, 13F, 14R, 14F, 21R, 21F, 22R, 22F, 23R, 23F, 24R, 24F, 31R, 31F, 32R, 32F, 33R, 33F, 34R, 34F, 41R, 41F, 42R, 42F, 43R, 43F, 44R, 44F)
-
 experimental unit: plots (only one treatment per plot); 32 plots over two greenhouses blocking factor 1: north/south blocking factor 2: greenhouse (A, B) blocking factor 3: season (1, 2)
 
 design idea: overarching block: season 1 and season 2 (randomise the 32 treatments to the 32 plots (16 treatments per greenhouse) blocking with season for greenhouse and side of the greenhouse so possible latin square design/nest the blocks)
@@ -30,66 +28,16 @@ nah nah nah
 
 the code chunk below is basically just setting up a possible design where i've randomised variety over greenhouse-season blocks and then randomised light and heat within each greenhouse. not sure what this means for the analysis of the effects of variety (do experimental units for variety change from plot to greenhouse, w two reps or can we just analyse the 64 individual plots and make conclusions about those while adjusting for the greenhouse-season blocking factor?) i honestly don't know how this project is supposed to be approached and i feel a little bit lost to be honest. i might go to the lab session on tuesday and ask some of the tutors for advice.
 
-```{r Design and Randomisation}
-# loading packages
-library(tibble)
-library(knitr)
-library(dplyr)
-
-# setting seed for reproducibility 
-set.seed(8)
-
-# factors: 
-light <- as.factor(c(1, 2, 3, 4))
-heat <- as.factor(c(1, 2, 3, 4))
-variety <- as.factor(c("R", "F"))
-
-                     
-# data frame for our design 
-mydesign <- tibble(plot = c((1:32), (1:32)),
-                   season = c(rep(1, 32), rep(2, 32)), 
-                   greenhouse = c(rep("A", 16), rep("B", 16), rep("A", 16), rep("B", 16)),
-                   side = c(rep("n", 8), rep("s", 8), rep("n", 8), rep("s", 8), rep("n", 8), rep("s", 8), rep("n", 8), rep("s", 8))
-                   
-)
-
-# assigning variety to greenhouse within season 
-
-variety_assignment <- mydesign %>% 
-  distinct(season, greenhouse) %>%
-  group_by(season) %>%
-  mutate(variety = sample(variety)) %>%
-  ungroup()
-
-# add variety assignments into design
-
-mydesign <- mydesign %>% left_join(variety_assignment, by = c("season", "greenhouse"))
-
-# randomise light and heat within greenhouse-side block
-
-treats <- expand.grid(light = light, heat = heat)
-
-mydesign <- mydesign %>%
-  group_by(season, greenhouse) %>%
-  mutate(
-    temp_id = 1:16,
-    treat = sample(1:16)
-  ) %>%
-  ungroup() %>%
-  mutate(light = treats$light[treat],
-         heat = treats$heat[treat]) %>%
-  select(-temp_id, -treat)
-
-```
 
 ```{r design 2 (what we're actually going with)}
 # loading packages
+library(EDproject)
 library(tibble)
 library(knitr)
 library(dplyr)
 
 # set seed for reproducibility 
-set.seed(15)
+set.seed(8)
 
 # factors as above
 light <- as.factor(c(1, 2, 3, 4))
@@ -97,7 +45,7 @@ heat <- as.factor(c(1, 2, 3, 4))
 variety <- as.factor(c("R", "F"))
 
 # a new design 
-mydesign2 <- tibble(plot = c((1:32), (1:32)),
+mydesign <- tibble(plot = c((1:32), (1:32)),
                    season = c(rep(1, 32), rep(2, 32)), 
                    greenhouse = c(rep("A", 16), rep("B", 16), rep("A", 16), rep("B", 16)),
                    side = c(rep("n", 8), rep("s", 8), rep("n", 8), rep("s", 8), rep("n", 8), rep("s", 8), rep("n", 8), rep("s", 8))
@@ -107,7 +55,7 @@ mydesign2 <- tibble(plot = c((1:32), (1:32)),
 treatments <- expand.grid(variety = variety, light = light, heat = heat)
 
 # randomly assigning within season block 
-mydesign2 <- mydesign2 %>% 
+mydesign <- mydesign %>% 
   group_by(season) %>% 
   mutate(
     temp_id2 = 1:32, 
@@ -120,15 +68,78 @@ mydesign2 <- mydesign2 %>%
   select(-temp_id2, -treatment)
 
 # to save as .csv file
-#write.csv(mydesign2, file = "design2.csv", row.names = FALSE)
-
-mydata <- get.observations(design2)
+write.csv(mydesign, file = "design.csv", row.names = FALSE)
   
+```
+
+
+```{r another model based on what ethan told me}
+library(dplyr)
+library(knitr)
+library(tibble)
+library(agricolae)
+library(tidyr)
+library(EDproject)
+library(ggplot2)
+
+# model: essentially, side and variety are treated as treatment factors w 2 levels each, resulting in 4 combinations in a factorial experiment. light and heat are treated as blocking factors within each greenhouse-season block. 4, 4x4 lsds are created with rows corresponding to light levels and columns corresponding to heat levels and the four side-variety treatments are assigned in a standard 4x4 lsd. the model ends up being Y = mu + heat + light + season + greenhouse + side + variety + side*variety + heat*light + variety*heat + variety*light + variety*heat*light + error term. end up with 16 replicates per treatment of side-variety
+
+set.seed(15)
+
+# treatments 
+treatments2 <- c("n, R", "s, F", "n, F", "s, R")
+
+# create design (again oh my god)
+
+mydesign2 <- expand.grid(season = 1:2, greenhouse = c("A", "B") ) %>%
+  
+  # new lsd for each season-greenhouse block w individual seed
+  mutate(
+    square_id = 1:n(),
+    latin_seed = 15 + square_id
+  ) %>%
+  rowwise() %>% 
+  mutate(
+    latin_square = list(
+      design.lsd(treatments2, serie = 0, seed = latin_seed)$book)
+  ) %>%
+  ungroup() %>% 
+  
+  # getting latin square into separate elements to be able to put it into the data frame 
+  tidyr::unnest(latin_square) %>%
+  rename(
+    row = row,
+    column = col,
+    treatment = treatments2
+  ) %>%
+  
+  # splitting the treatments into individual factors applied to put into design
+  separate(treatment, into = c("side", "variety"), sep = ",") %>%
+mutate(
+    light = row,    # rows correspond to light levels (1-4)
+    heat = column   # columns correspond to heat levels (1-4)
+  ) %>%
+  
+# adding plot numbers (1-32 for season 1, 2)
+  group_by(season) %>%
+  mutate(plot = 1:n()) %>%
+  ungroup() %>%
+  select(plot, season, greenhouse, side, variety, light, heat) %>%
+  arrange(season, plot) 
+
+write.csv(mydesign2, file = "design2.csv", row.names = FALSE)
+
 ```
 
 ```{r}
 
-#design2 <- read.csv("design2.csv")
+mydesign <- read.csv("design.csv")
+mydesign
+mydata <- get.observations(mydesign)
+
+mydesign2 <- read.csv("design2.csv")
+mydesign2
+#mydata2 <- get.observations(mydesign2)
 
 mydata$light <- factor(mydata$light,
                        levels = c("1", "2", "3", "4"))
@@ -141,14 +152,18 @@ mydata$heat <- factor(mydata$heat,
 #model <- lm(obs ~ light + heat + variety + light*heat  +  light*variety + heat*variety + light*heat*variety + season, data=mydata)
 
 model <- lm(obs ~ light*heat*variety + season, data=mydata)
-model
+
+
+# this is what the anova table looks like... don't think we need to fit reduced and full models since we just use the table and the values from the table in this section of the course (then we end up w exactly the model we are aiming to fit without all the chaotic coefficients which we can just extract from the summary lm to do our contrasts and stuff since i'm pretty sure that's what we need to do)
+
+anova(model)
 
 # could possibly do anova for effect of variety on light:height
-reduced1 <- lm(obs ~ light*heat + variety, data=mydata)
-anova(reduced1, model)
+#reduced1 <- lm(obs ~ light*heat + variety, data=mydata)
+#anova(reduced1, model)
 
 #and again for effect of variety on quality in general
-reduced2 <- reduced <- update(model, .~. -variety, data = mydata)
-anova(reduced2, model)
+#reduced2 <- reduced <- update(model, .~. -variety, data = mydata)
+#anova(reduced2, model)
 
 ```
