@@ -35,8 +35,6 @@ H_1: at~least~one~(\alpha\beta)_{ij} \ne 0 \ , i,j = 1, 2, 3, 4$$
 $$H_0: (\alpha\beta\gamma)_{ijk} = (\alpha\gamma)_{ik} = (\beta\gamma)_{jk} = 0 \ ,i,j = 1, 2, 3, 4 \ , k = R, F\\
 H_1: at~least~one~(\alpha\beta\gamma)_{ijk} \ne 0 \ , i,j = 1, 2, 3, 4$$
 
-
-
 ```{r Design and Randomisation}
 library(dplyr)
 library(knitr)
@@ -95,14 +93,35 @@ write.csv(mydesign2, file = "design2.csv", row.names = FALSE)
 
 ```
 
-```{r}
+```{r Simulating observations}
 
-mydesign <- read.csv("design.csv")
-mydata <- get.observations(mydesign)
+set.seed(27)  
 
 mydesign2 <- read.csv("design2.csv")
-mydesign2
-
+mydesign2$light <- as.factor(mydesign2$light)
+mydesign2$heat <- as.factor(mydesign2$heat)
+#mydesign2
 mydata2 <- get.observations(mydesign2)
+mydata2
+
+```
+
+```{r}
+
+model <- lm (obs ~ season + greenhouse + variety*side + light*heat*variety, data=mydata2)
+#model
+anova(model)
+
+```
+
+```{r}
+
+library(emmeans)
+
+#table(mydata2$light, mydata2$heat)
+
+emmeans(model, ~ light)
+
+emmeans(model, ~ heat)
 
 ```
