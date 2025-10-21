@@ -3,7 +3,7 @@ title: "ED Assignment"
 format: pdf
 editor: visual
 author: Malik Jamie (JMXMAL003) and Amara Patel (PTLAMA005)
-date: 21/10/2025
+date: 2025.10.21
 ---
 
 # Introduction
@@ -12,16 +12,26 @@ The aim of this experiment is to examine the effects of different intensities of
 
 These goals will be tackled through an analysis of variance of this exploratory experiment.
 
-## Design and Randomisation
+# Design and Randomisation
 
-```{r Design and Randomisation}
-library(dplyr)
+### Design
+
+The experiment takes place over 2 seasons, season 1 and season 2. There are two greenhouses available, greenhouse A and greenhouse B, with 8 north-facing and 8 south-facing plots each. The 32 experimental units were first blocked by the random factors, season and greenhouse, to give four blocks of 16 experimental units each. The treatment factors are side (north, south) and variety (Redhot, Furious), each with two levels which results in a $2^2$ factorial treatment structure with 4 treatments, (n,F), (s,F), (n,R), (s,R).
+
+### Randomisation
+
+Four 4x4 latin square designs were set up with the four levels of light (1, 2, 3, 4) as a row block and the four levels of heat (1, 2, 3, 4) and to conduct randomisation, a random latin square permutation of the four treatments with each appearing once in every row and column was found for each season-greenhouse combination.
+
+```{r Design and Randomisation, echo = FALSE}
+
+library(dplyr, quietly = TRUE)
 library(knitr)
 library(tibble)
 library(agricolae)
 library(tidyr)
 library(EDproject)
 library(ggplot2)
+library(tinytex)
 
 # model: essentially, side and variety are treated as treatment factors w 2 levels each, resulting in 4 combinations in a factorial experiment. light and heat are treated as blocking factors within each greenhouse-season block. 4, 4x4 lsds are created with rows corresponding to light levels and columns corresponding to heat levels and the four side-variety treatments are assigned in a standard 4x4 lsd. the model ends up being Y = mu + heat + light + season + greenhouse + side + variety + side*variety + heat*light + variety*heat + variety*light + variety*heat*light + error term. end up with 16 replicates per treatment of side-variety
 
@@ -72,6 +82,7 @@ write.csv(mydesign2, file = "design2.csv", row.names = FALSE)
 
 ```
 
+
 Our model:
 
 $$
@@ -86,6 +97,85 @@ $$
 \epsilon_i = \text{effect of i_th light level compared to 1st level, 1<i<=4}\newline 
 \theta_j =\text{effect of j_th heat level compared to 1st level, 1<j<=4}\newline
 $$
+
+```{r making tables of the latin square designs, echo = FALSE}
+
+set.seed(2)
+treatment_mapping <- data.frame(
+  side = c("n", "s", "n", "s"),
+  variety = c("R", "F", "F", "R")
+) %>%
+  mutate(
+    treatment = paste0(side, variety),
+    code = sample(c("a", "b", "c", "d"))   # Random assignment 
+  ) %>% 
+  arrange(code)
+
+# Create the complete data frame with codes
+design_with_codes <- mydesign2 %>%
+  # First, handle duplicates by taking the first occurrence
+  group_by(season, greenhouse, light, heat) %>%
+  slice(1) %>%
+  ungroup() %>%
+  # Add the treatment code
+  mutate(treatment = paste0(side, variety)) %>%
+  left_join(treatment_mapping %>% select(treatment, code), by = "treatment") %>%
+  # Select and order the columns
+  select(plot, season, greenhouse, side, variety, treatment, code, light, heat) %>%
+  arrange(season, greenhouse, heat)
+
+# making the latin square layouts
+key <- tibble(treatment = treatment_mapping$treatment,
+              code = treatment_mapping$code)
+kable(key)
+lsd1 <- tibble(light_lvl = c(1, 2, 3, 4),
+               design_with_codes$code[1:4],
+               design_with_codes$code[5:8],
+               design_with_codes$code[9:12],
+               design_with_codes$code[13:16]
+)
+kable(lsd1, col.names = c("","1", "2", "3", "4"), caption = "LSD for Greenhouse A, Season 1")
+
+lsd2 <- tibble(light_lvl = c(1, 2, 3, 4),
+               design_with_codes$code[17:20],
+               design_with_codes$code[21:24],
+               design_with_codes$code[25:28],
+               design_with_codes$code[29:32]
+)
+kable(lsd2, col.names = c("","1", "2", "3", "4"), caption = "LSD for Greenhouse B, Season 1")
+
+lsd3 <- tibble(light_lvl = c(1, 2, 3, 4),
+               design_with_codes$code[33:36],
+               design_with_codes$code[37:40],
+               design_with_codes$code[41:44],
+               design_with_codes$code[45:48]
+)
+kable(lsd3, col.names = c("","1", "2", "3", "4"), caption = "LSD for Greenhouse A, Season 2")
+
+lsd4 <- tibble(light_lvl = c(1, 2, 3, 4),
+               design_with_codes$code[49:52],
+               design_with_codes$code[53:56],
+               design_with_codes$code[57:60],
+               design_with_codes$code[61:64]
+)
+kable(lsd4, col.names = c("","1", "2", "3", "4"), caption = "LSD for Greenhouse B, Season 2")
+
+```
+
+The a-priori hypotheses that are of interest are:
+
+1: Does light have an effect on quality? $$H_0: \alpha_{i} = 0 \ ,i = 1, 2, 3, 4$$
+$$H_1: at~least~one~\alpha_{i} \ne 0 \ , i = 1, 2, 3, 4$$
+
+2: Does heat have an effect on quality? $$H_0: \beta_{j} = 0 \ ,j = 1, 2, 3, 4$$
+$$H_1: at~least~one~\beta_{j} \ne 0 \ , j = 1, 2, 3, 4$$
+
+3: Does the effect of light depend on the level of heat? $$H_0: (\alpha\beta)_{ij} = 0 \ ,i,j = 1, 2, 3, 4$$
+$$H_1: at~least~one~(\alpha\beta)_{ij} \ne 0 \ , i,j = 1, 2, 3, 4$$
+
+4: Does the effect of light and heat depend on variety? $$H_0: (\alpha\beta\gamma)_{ijk} = (\alpha\gamma)_{ik} = (\beta\gamma)_{jk} = 0 \ ,i,j = 1, 2, 3, 4 \ , k = R, F$$
+$$H_1: at~least~one~(\alpha\beta\gamma)_{ijk} \ne 0 \ , i,j = 1, 2, 3, 4$$
+
 
 ```{r Simulating observations}
 
@@ -121,6 +211,8 @@ emmeans(model, ~ light + variety)
 
 emmeans(model, ~ heat + variety)
 
+
+emmeans(model, ~ variety)
 
 ```
 
