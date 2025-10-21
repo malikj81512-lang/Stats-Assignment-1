@@ -15,8 +15,6 @@ These goals will be tackled through an analysis of variance of this exploratory 
 ## Design and Randomisation
 
 
-
-
 ```{r design 2 (what we're actually going with)}
 # loading packages
 library(EDproject)
@@ -125,31 +123,8 @@ mydesign <- read.csv("design.csv")
 mydata <- get.observations(mydesign)
 
 mydesign2 <- read.csv("design2.csv")
+mydesign2
+
 mydata2 <- get.observations(mydesign2)
-
-mydata$light <- factor(mydata$light,
-                       levels = c("1", "2", "3", "4"))
-#mydata$light
-mydata$heat <- factor(mydata$heat,
-                       levels = c("1", "2", "3", "4"))
-#mydata$heat
-
-#if we do this model, we end up with tons of interaction terms (32 different combos)
-#model <- lm(obs ~ light + heat + variety + light*heat  +  light*variety + heat*variety + light*heat*variety + season, data=mydata)
-
-model <- lm(obs ~ light*heat*variety + season, data=mydata)
-
-
-# this is what the anova table looks like... don't think we need to fit reduced and full models since we just use the table and the values from the table in this section of the course (then we end up w exactly the model we are aiming to fit without all the chaotic coefficients which we can just extract from the summary lm to do our contrasts and stuff since i'm pretty sure that's what we need to do)
-
-anova(model)
-
-# could possibly do anova for effect of variety on light:height
-#reduced1 <- lm(obs ~ light*heat + variety, data=mydata)
-#anova(reduced1, model)
-
-#and again for effect of variety on quality in general
-#reduced2 <- reduced <- update(model, .~. -variety, data = mydata)
-#anova(reduced2, model)
 
 ```
