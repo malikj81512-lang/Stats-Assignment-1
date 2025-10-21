@@ -20,7 +20,7 @@ The experiment takes place over 2 seasons, season 1 and season 2. There are two 
 
 ### Randomisation
 
-Four 4x4 latin square designs were set up with the four levels of light (1, 2, 3, 4) as a row block and the four levels of heat (1, 2, 3, 4) and to conduct randomisation, a random latin square permutation of the four treatments with each appearing once in every row and column was found for each season-greenhouse combination.
+Four 4x4 latin square designs were set up with the four levels of light (1, 2, 3, 4) as a row block and the four levels of heat (1, 2, 3, 4) as a column block To conduct randomisation, a random latin square permutation of the four treatments with each appearing once in every row and column was found for each season-greenhouse combination using the design.lsd function from the agricolae package. The four treatments were randomly assigned to "a", "b", "c" and "d" for ease of understanding the latin square design layout. 
 
 ```{r Design and Randomisation, echo = FALSE}
 
@@ -82,21 +82,6 @@ write.csv(mydesign2, file = "design2.csv", row.names = FALSE)
 
 ```
 
-
-Our model:
-
-$$
-Y_{ijkl} = \mu+ \alpha + \beta + \gamma\ + \delta\ + (*\gamma\delta){ij} + \epsilon_k\ + \theta_l\ + (\epsilon\theta)_{kl} + (\delta\epsilon\theta)_{jkl} + e_{ijkl} 
-$$
-
-
-$$
-\alpha = \text{effect of Season 2 compared to Season 1}\newline \beta = \text{effect of Greenhouse B compared to Greenhouse A}\newline
-\gamma = \text{effect of side compared to other}\newline 
-\delta =\text{effect of variety compared to other}\newline 
-\epsilon_i = \text{effect of i_th light level compared to 1st level, 1<i<=4}\newline 
-\theta_j =\text{effect of j_th heat level compared to 1st level, 1<j<=4}\newline
-$$
 
 ```{r making tables of the latin square designs, echo = FALSE}
 
@@ -162,22 +147,24 @@ kable(lsd4, col.names = c("","1", "2", "3", "4"), caption = "LSD for Greenhouse 
 
 ```
 
+### Hypotheses 
+
 The a-priori hypotheses that are of interest are:
 
-1: Does light have an effect on quality? $$H_0: \alpha_{i} = 0 \ ,i = 1, 2, 3, 4$$
-$$H_1: at~least~one~\alpha_{i} \ne 0 \ , i = 1, 2, 3, 4$$
+1: Does the main effect of light have an effect on quality?
 
-2: Does heat have an effect on quality? $$H_0: \beta_{j} = 0 \ ,j = 1, 2, 3, 4$$
-$$H_1: at~least~one~\beta_{j} \ne 0 \ , j = 1, 2, 3, 4$$
+2: Does the main effect of heat have an effect on quality?
 
-3: Does the effect of light depend on the level of heat? $$H_0: (\alpha\beta)_{ij} = 0 \ ,i,j = 1, 2, 3, 4$$
-$$H_1: at~least~one~(\alpha\beta)_{ij} \ne 0 \ , i,j = 1, 2, 3, 4$$
+3: Does the interaction effect between light and heat have an effect on quality?
 
-4: Does the effect of light and heat depend on variety? $$H_0: (\alpha\beta\gamma)_{ijk} = (\alpha\gamma)_{ik} = (\beta\gamma)_{jk} = 0 \ ,i,j = 1, 2, 3, 4 \ , k = R, F$$
-$$H_1: at~least~one~(\alpha\beta\gamma)_{ijk} \ne 0 \ , i,j = 1, 2, 3, 4$$
+4: Does the interaction effect between light and variety have an effect on quality? 
 
+5: Does the interaction effect between heat and variety have an effect on quality?
 
-```{r Simulating observations}
+6: Does the main effect of variety have an effect on quality? 
+
+# Analysis and Results
+```{r Simulating observations, echo = FALSE}
 
 set.seed(27)  
 
@@ -189,19 +176,35 @@ mydata2 <- get.observations(mydesign2)
 mydata2
 
 ```
+## Analysis
+### Our model:
+
+$$
+Y_{ijkl} = \mu+ \alpha + \beta + \gamma\ + \delta\ + (*\gamma\delta){ij} + \epsilon_k\ + \theta_l\ + (\epsilon\theta)_{kl} + (\delta\epsilon\theta)_{jkl} + e_{ijkl} 
+$$
+
+
+$$
+\alpha = \text{effect of Season 2 compared to Season 1}\newline \beta = \text{effect of Greenhouse B compared to Greenhouse A}\newline
+\gamma = \text{effect of side compared to other}\newline 
+\delta =\text{effect of variety compared to other}\newline 
+\epsilon_i = \text{effect of i_th light level compared to 1st level, 1<i<=4}\newline 
+\theta_j =\text{effect of j_th heat level compared to 1st level, 1<j<=4}\newline
+$$
 
 ```{r}
 
 model <- lm (obs ~ season + greenhouse + variety*side + light*heat*variety, data=mydata2)
-model
-anova(model)
+#model
+kable(anova(model))
 
 ```
 
 
-# Results
 
-## Does the optimal heat and ligth settings depend on variety?
+## Results
+
+### Does the optimal heat and ligth settings depend on variety?
 
 ```{r}
 
@@ -218,7 +221,7 @@ emmeans(model, ~ variety)
 
 H0: 1/4(muR1 + muR2 + )
 
-## Which light and heat settings produce the highest quality chillies?
+### Which light and heat settings produce the highest quality chillies?
 
 From the ANOVA table, there was no evidence for the interaction term between light and heat being significant (p-val = 0.2643), nor the interaction term between light, heat and variety (p-val = 0.218). 
 However, there is evidence for the interaction term between light and variety being significant (p-val = 0.0032), as well as the interaction term between heat and variety (p-val = 0.0297).
@@ -230,7 +233,7 @@ Since the interactions between light, heat and variety were not significant, for
 Therefore, for variety F, the optimal settings were light level 4 and heat level 3.
 For variety R, the optimal settings were light level 4 and heat level 4.
 
-## Does quality depend on variety?
+### Does quality depend on variety?
 
 ```{r}
 
