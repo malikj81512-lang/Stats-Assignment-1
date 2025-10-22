@@ -175,20 +175,6 @@ The replication across season-greenhouse blocks accounts for the variation due t
 
 Essentially, this design allows for efficient analysis of all the a-priori hypotheses of interest and allows for many sources of variation to be accounted for. 
 
-# Analysis and Results
-```{r Simulating observations, echo = FALSE}
-
-set.seed(27)  
-
-mydesign2 <- read.csv("design2.csv")
-mydesign2$light <- as.factor(mydesign2$light)
-mydesign2$heat <- as.factor(mydesign2$heat)
-#mydesign2
-mydata2 <- get.observations(mydesign2)
-mydata2
-
-```
-## Analysis
 
 ### The model:
 
@@ -220,22 +206,23 @@ $$
 \end{align*}
 $$
 
-```{r, fitting model, anova table, echo = FALSE}
-library(kableExtra)
 
-model <- lm (obs ~ season + greenhouse + variety*side + light*heat*variety, data=mydata2)
-kable(model$coefficients, caption = "Estimates table")
-model <- lm(obs ~ season + greenhouse + variety*side + light*heat*variety, data=mydata2)
-#model
-kable(anova(model), caption = "ANOVA table")
+# Analysis and Results
+```{r Simulating observations, echo = FALSE}
+
+set.seed(27)  
+
+mydesign2 <- read.csv("design2.csv")
+mydesign2$light <- as.factor(mydesign2$light)
+mydesign2$heat <- as.factor(mydesign2$heat)
+#mydesign2
+mydata2 <- get.observations(mydesign2)
+mydata2
 
 ```
 
+## Analysis
 
-
-### Interaction Plots 
-
-=======
 ### Exploratory Data Analysis 
 #### Interaction Plots
 
@@ -261,6 +248,7 @@ On the other hand, the interaction plots between light and variety and heat and 
 #### Boxplots 
 
 ```{r boxplot 1, fig.cap = "Boxplot of light levels", echo = FALSE}
+library(ggplot2)
 with(na.omit(mydata2), ggplot(data = mydata2, aes(x = light, y = obs))) + 
   geom_boxplot(fill = "turquoise") + 
   scale_x_discrete(limits = c("1", "2", "3", "4")) +
@@ -287,20 +275,15 @@ with(na.omit(mydata2), ggplot(data = mydata2, aes(x = variety, y = obs))) +
 
 ## Results
 
-The a-priori hypotheses that are of interest are:
+```{r, fitting model, anova table, echo = FALSE}
 
-1: Does the main effect of light have an effect on quality?
+model <- lm (obs ~ season + greenhouse + variety*side + light*heat*variety, data=mydata2)
+kable(model$coefficients, caption = "Estimates table")
+kable(anova(model), caption = "ANOVA table")
 
-2: Does the main effect of heat have an effect on quality?
+```
 
-3: Does the interaction effect between light and heat have an effect on quality?
-
-4: Does the interaction effect between light and variety have an effect on quality? 
-
-5: Does the interaction effect between heat and variety have an effect on quality?
-
-6: Does the main effect of variety have an effect on quality? 
-
+### Question 1: Does the main effect of light have an effect on quality?
 
 ```{r question 1, echo = FALSE}
 
@@ -313,6 +296,9 @@ model$coefficients[6:8]
 ```
 
 Our analysis provides strong evidence for the main effect of light having an effect on quality (p-val < 0.00001). The mean response with light level 2 was 7.157 higher than with light level 1, with a 95% confidence interval = (3.212, 11.102). The mean response with level 3 was 11.332 higher than with level 1 (7.731, 14.932). The mean response with level 4 was 14.043 higher than with level 1 (10.992, 17.094).
+Visually, the boxplots indicate that light level 4 had the highest mean reponse.
+
+### Question 2: Does the main effect of heat have an effect on quality?
 
 ```{r q2}
 
@@ -325,63 +311,67 @@ model$coefficients[9:11] |> signif(4)
 ```
 
 Our analysis provides strong evidence for the main effect of heat having an effect on quality (p-val < 0.00001). The mean response with heat level 2 was 5.902 higher than with level 1 (2.569, 9.235). The mean response with heat level 3 was 6.809 higher than with level 1 (3.518, 10.099). The mean response with level 4 was 5.690 higher than with level 1 (2.090, 9.291). 
+Visually, the boxplots indicate that heat level 3 had the highest mean response.
 
-
-```{r q3}
-
-```
+### Question 3: Does the interaction effect between light and heat have an effect on quality?
 
 Our analysis does not provide evidence for the interaction between light and heat having an effect on quality (p-val = 0.240).
+
+### Question 4: Does the interaction effect between light and variety have an effect on quality? 
+
+Our analysis provides evidence for the interaction effect between variety and light (p-val < 0.005) having an effect on quality. Therefore, we proceeded with a t-test to test the following hypothesis:
+
+$$
+\text{1/4}(\mu_{1R} + \mu_{2R} + \mu_{3R} + \mu_{4R}) = \text{1/4}(\mu_{1F} + \mu_{2F} + \mu_{3F} + \mu_{4F})
+
+$$
 
 
 ```{r q4}
 
 library(emmeans)
 
-emm_l <- emmeans(model, ~ light*variety)
+emm_l <- emmeans(model, ~ variety*light)
 emm_l
 
-model$coefficients[22:24] |> signif(4)
-
-contrast(emm_l, 
-         method = "del.eff", by = NULL)
+contrast(emm_l, list(avg_R_minus_avg_F = c(rep(1/4, 4), rep(-1/4, 4)) ), by = NULL)
 
 ```
+Our t-test produces a statistically significant result (p-val < 0.0001). Therefore, we have strong evidence that the interaction effect between variety and light has an effect on quality. 
 
-Our analysis provides evidence for the interaction between light and variety having an effect on quality (p-val < 0.005). In order to further test this result, we conducted a t-test involving contrasts.
+### Question 5: Does the interaction effect between heat and variety have an effect on quality?
 
+Our analysis provides evidence for the interaction effect between variety and heat (p-val < 0.05) having an effect on quality. Therefore, we proceeded with a t-test to test the following hypothesis:
 
-##. Main effects
+$$
+\text{1/4}(\mu_{1R} + \mu_{2R} + \mu_{3R} + \mu_{4R}) = \text{1/4}(\mu_{1F} + \mu_{2F} + \mu_{3F} + \mu_{4F})
 
-From our analysis, there is strong evidence for an effect on quality due to season (p-val < 0.00001). In season 2 of testing, the mean response was 3.230 higher than in season 1, holding all other variables constant, with a 95% confidence interval = (2.284, 4.175). 
-There is evidence for an effect on quality due to greenhouse (p-val = 0.001). For Greenhouse B, the mean response was 2.671 higher than in Greenhouse A (1.600, 3.741), holding all other variables constant. 
-There is no strong evidence for an effect on quality due to variety (p-val = 0.240).
-There is strong evidence for an effect due to side (p-val < 0.00001). On the south side, the mean response was 3.057 lower than on the north side (-4.821, -1.293), holding all other variables constant.
+$$
 
-## Does the optimal heat and light settings depend on variety?
+```{r q5}
 
+emm_h <- emmeans(model, ~ variety*heat)
+emm_h
+
+contrast(emm_h, list(avg_R_minus_avg_F = c(rep(1/4, 4), rep(-1/4, 4))), by = NULL )
+
+```
+Our t-test produces a statistically significant result (p-val < 0.0001). Therefore, we have strong evidence that the interaction effect between variety and heat has an effect on quality.
+
+### Question 6: Does the main effect of variety have an effect on quality? 
+
+Our analysis does not provide evidence for the main effect of variety having an effect on quality (p-val = 0.240).
+Visually, the boxplots indicate that mean responses for both varieties were very similar, when averaging across all other variables.
+
+### Further analysis
 
 ```{r}
 
-library(emmeans)
-
-#emmeans(model, ~ variety)
-
-emm_l <- emmeans(model, ~ light*variety)
-emm_l
-
-emm_h <- emmeans(model, ~ heat*variety)
-emm_h
-
-#contrast(emm_l, list(avg_R_minus_avg_F = c(rep(1/4, 4), rep(-1/4, 4)) ), by = NULL)
-contrast(emm_l, interaction=TRUE, by=NULL)
-
-#contrast(emm_h, list(avg_R_minus_avg_F = c(rep(1/4, 4), rep(-1/4, 4))), by = NULL )
-contrast(emm_h, interaction=TRUE, by=NULL)
+emmeans(model, ~ light)
 
 ```
 
-Our F-test analysis provides evidence for an interaction effect between variety and light (p-val < 0.05), as well as between variety and heat (p-val < 0.05). Therefore, we can proceed under the assumption that the optimal heat and light settings do depend on variety.
+
 
 ### Which light and heat settings produce the highest quality chillies?
 
@@ -394,18 +384,5 @@ For variety R, the optimal light setting was level 4, with a mean response of 54
 Since the interactions between light, heat and variety were not significant, for each variety, the light and heat settings that would produce the highest quality chillies on average, were simply the settings that had the highest individual means.
 Therefore, for variety F, the optimal settings were light level 4 and heat level 3.
 For variety R, the optimal settings were light level 4 and heat level 4.
-
-### Does quality depend on variety?
-
-```{r}
-
-library(emmeans)
-
-emmeans(model, ~ variety)
-
-
-```
-0.239746
-Our results suggest that there is no evidence for an effect on quality due to variety. The estimated means were very similar: 49.1 for variety F (48.5, 49.7), 49.3 for variety R (48.6, 49.9). Furthermore, the ANOVA table 
 
 
