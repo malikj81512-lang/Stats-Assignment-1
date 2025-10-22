@@ -24,6 +24,7 @@ Four 4x4 latin square designs were set up with the four levels of light (1, 2, 3
 
 ```{r Design and Randomisation, echo = FALSE}
 
+suppressPackageStartupMessages({
 library(dplyr, quietly = TRUE)
 library(knitr)
 library(tibble)
@@ -31,7 +32,7 @@ library(agricolae)
 library(tidyr)
 library(EDproject)
 library(ggplot2)
-library(tinytex)
+library(tinytex)})
 
 # model: essentially, side and variety are treated as treatment factors w 2 levels each, resulting in 4 combinations in a factorial experiment. light and heat are treated as blocking factors within each greenhouse-season block. 4, 4x4 lsds are created with rows corresponding to light levels and columns corresponding to heat levels and the four side-variety treatments are assigned in a standard 4x4 lsd. the model ends up being Y = mu + heat + light + season + greenhouse + side + variety + side*variety + heat*light + variety*heat + variety*light + variety*heat*light + error term. end up with 16 replicates per treatment of side-variety
 
@@ -112,7 +113,7 @@ design_with_codes <- mydesign2 %>%
 # making the latin square layouts
 key <- tibble(treatment = treatment_mapping$treatment,
               code = treatment_mapping$code)
-kable(key)
+kable(key, caption = "Randomly assigned treatment codes")
 lsd1 <- tibble(light_lvl = c(1, 2, 3, 4),
                design_with_codes$code[1:4],
                design_with_codes$code[5:8],
@@ -163,6 +164,17 @@ The a-priori hypotheses that are of interest are:
 
 6: Does the main effect of variety have an effect on quality? 
 
+### Justification 
+The factorial treatment structure with side and variety (each with two levels) crossed to give four treatment combinations allows for the main effects of variety and side to be tested as well as the interaction effect between side and variety. This allows for the effect of variety on quality to be analysed. 
+
+The four latin squares, with light and heat as blocking factors with four levels each allows for analysis of the variation due to light and heat in a balanced design as there are four treatments that correspond to the four experimental units in each row or column with each treatment only appearing once in each column and row. This is also an efficient use of resources as 4 replicates of side and variety combinations are available per latin square. The latin structure also allows for the effects of light and heat on quality to be analysed thoroughly and easily. 
+
+Additionally, the factorial treatment structure in conjunction with the latin square design allows for the interactions between light and variety, and heat and variety to be analysed. 
+
+The replication across season-greenhouse blocks accounts for the variation due to season and the variation due to greenhouse and ensures sufficient power for the experiment as the 4 blocks result in $4 \times 4 = 16$ replicates per treatment. 
+
+Essentially, this design allows for efficient analysis of all the a-priori hypotheses of interest and allows for many sources of variation to be accounted for. 
+
 # Analysis and Results
 ```{r Simulating observations, echo = FALSE}
 
@@ -181,19 +193,34 @@ mydata2
 ### The model:
 
 $$
-Y_{ijkl} = \mu+ \alpha + \beta + \gamma\ + \delta\ + (\gamma\delta)_{ij} + \epsilon_k\ + \theta_l\ + (\epsilon\theta)_{kl} + (\delta\epsilon\theta)_{jkl} + e_{ijkl} 
+Y_{ijklmn} = \mu+ \alpha_i + \beta_j + \gamma_k + \delta_l + (\gamma\delta)_{kl} + \epsilon_m + \theta_n + (\epsilon\theta)_{mn} + (\delta\epsilon)_{km} + (\delta\theta)_{kn} (\delta\epsilon\theta)_{lmn} + e_{ijklmn} 
 $$
 
+$$
+\begin{aligned}
+\Y_{ijklmn} &= \text{quality score for observation ijklmn}\\
+\alpha_i &= \text{effect of Season 2 compared to Season 1, $i = 1,2$}\\
+\beta_j &= \text{effect of Greenhouse B compared to Greenhouse A, $j = A, B}\\
+\gamma_k &= \text{effect of side north compared to south, $k = s, n$}\\
+\delta_l &= \text{effect of variety F compared to R, $l = R, F$}\\
+\epsilon_m &= \text{effect of $i^{th}$ light level compared to $1^{st}$ level, $1 < i \leq 4$}\\
+\theta_n &= \text{effect of $j^{th}$ heat level compared to $1^{st}$ level, $1 < j \leq 4$}
+\end{aligned}
+$$
 
+An anova table was constructed based on this model with corner-point constraints for each variable as such: 
 $$
-\alpha = \text{effect of Season 2 compared to Season 1}\newline \beta = \text{effect of Greenhouse B compared to Greenhouse A}\newline
-\gamma = \text{effect of side compared to other}\newline 
-\delta =\text{effect of variety compared to other}\newline 
-\epsilon_i = \text{effect of i_th light level compared to 1st level, 1<i<=4}\newline 
-\theta_j =\text{effect of j_th heat level compared to 1st level, 1<j<=4}\newline
+\begin{align*}
+\alpha_1 &= 0 & \text{(Season 1 as reference)} \\
+\beta_A &= 0 & \text{(Greenhouse A as reference)} \\
+\gamma_s &= 0 & \text{(Side north as reference)} \\
+\delta_R &= 0 & \text{(Variety Redhot as reference)} \\
+\epsilon_1 &= 0 & \text{(Light level 1 as reference)} \\
+\theta_1 &= 0 & \text{(Heat level 1 as reference)}
+\end{align*}
 $$
-An anova table was constructed based on this model with corner-point constraints for each 
-```{r, fitting model, anova table}
+
+```{r, fitting model, anova table, echo = FALSE}
 
 model <- lm (obs ~ season + greenhouse + variety*side + light*heat*variety, data=mydata2)
 #model
@@ -202,10 +229,21 @@ kable(anova(model), caption = "ANOVA table")
 ```
 
 ### Interaction Plots 
-```{r interaction plots, fig.cap= "Interaction Plots"}
+```{r interaction plot 1, fig.cap = "Interaction plot of light and heat", echo = FALSE}
 with(na.omit(mydata2), interaction.plot(light, heat, obs))
+```
+
+```{r interaction plot 2, fig.cap = "Interaction plot of light and variety", echo = FALSE}
 with(na.omit(mydata2), interaction.plot(light, variety, obs))
+```
+
+```{r interaction plot 3, fig.cap = "Interaction plot of heat and variety", echo = FALSE}
 with(na.omit(mydata2), interaction.plot(heat, variety, obs))
+```
+
+```{r interaction plot 4, fig.cap = "Interaction plot of variety and side", echo = FALSE}
+with(na.omit(mydata2), interaction.plot(variety, side, obs))
+```
 ```
 
 
