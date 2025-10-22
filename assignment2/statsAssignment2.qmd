@@ -504,4 +504,3 @@ kable(mydata2, caption = "Data")
 ```
 
 # R Code
-
