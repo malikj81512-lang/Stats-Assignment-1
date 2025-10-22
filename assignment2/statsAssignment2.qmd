@@ -238,7 +238,7 @@ kable(anova(model), caption = "ANOVA table")
 =======
 ### Exploratory Data Analysis 
 #### Interaction Plots
->>>>>>> 4281f51fccb0b9e87414401e6a8959a71da1a41e
+
 ```{r interaction plot 1, fig.cap = "Interaction plot of light and heat", echo = FALSE}
 with(na.omit(mydata2), interaction.plot(light, heat, obs))
 ```
