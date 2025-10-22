@@ -260,7 +260,7 @@ On the other hand, the interaction plots between light and variety and heat and 
 
 #### Boxplots 
 
-```{r boxplot 1, fig.cap = "Boxplot of light levels", echo = FALSE}
+```{r boxplot 1, fig.cap = "Boxplot of light levels", echo = FALSE, warning = FALSE}
 library(ggplot2)
 with(na.omit(mydata2), ggplot(data = mydata2, aes(x = light, y = obs))) + 
   geom_boxplot(fill = "turquoise") + 
@@ -269,7 +269,7 @@ with(na.omit(mydata2), ggplot(data = mydata2, aes(x = light, y = obs))) +
 
 ```
 
-```{r boxplot 2, fig.cap = "Boxplot of heat levels", echo = FALSE}
+```{r boxplot 2, fig.cap = "Boxplot of heat levels", echo = FALSE, warning = FALSE}
 with(na.omit(mydata2), ggplot(data = mydata2, aes(x = heat, y = obs))) + 
   geom_boxplot(fill = "purple3") + 
   scale_x_discrete(limits = c("1", "2", "3", "4")) +
@@ -277,7 +277,7 @@ with(na.omit(mydata2), ggplot(data = mydata2, aes(x = heat, y = obs))) +
 
 ```
 
-```{r boxplot 3, fig.cap = "Boxplot of variety", echo = FALSE}
+```{r boxplot 3, fig.cap = "Boxplot of variety", echo = FALSE, warning = FALSE}
 with(na.omit(mydata2), ggplot(data = mydata2, aes(x = variety, y = obs))) + 
   geom_boxplot(fill = "pink2") + 
   #scale_x_discrete(limits = c("F", "R")) +
@@ -286,15 +286,15 @@ with(na.omit(mydata2), ggplot(data = mydata2, aes(x = variety, y = obs))) +
 ```
 
 
-```{r boxplot 4, fig.cap = "Boxplot of season", echo = FALSE}
-with(na.omit(mydata2), ggplot(data = mydata2, aes(x = season, y = obs))) + 
+```{r boxplot 4, fig.cap = "Boxplot of season", echo = FALSE, warning = FALSE}
+with(na.omit(mydata2), ggplot(data = mydata2, aes(x = as.factor(season), y = obs))) + 
   geom_boxplot(fill = "lightblue3") + 
   scale_x_discrete(limits = c("1", "2")) +
   labs(x = "season", y = "quality score")
 
 ```
 
-```{r boxplot 5, fig.cap = "Boxplot of greenhouse", echo = FALSE}
+```{r boxplot 5, fig.cap = "Boxplot of greenhouse", echo = FALSE, warning = FALSE}
 with(na.omit(mydata2), ggplot(data = mydata2, aes(x = greenhouse, y = obs))) + 
   geom_boxplot(fill = "darkgreen") + 
   scale_x_discrete(limits = c("A", "B")) +
@@ -302,7 +302,7 @@ with(na.omit(mydata2), ggplot(data = mydata2, aes(x = greenhouse, y = obs))) +
 
 ```
 
-```{r boxplot 6, fig.cap = "Boxplot of side", echo = FALSE}
+```{r boxplot 6, fig.cap = "Boxplot of side", echo = FALSE, warning = FALSE}
 with(na.omit(mydata2), ggplot(data = mydata2, aes(x = side, y = obs))) + 
   geom_boxplot(fill = "red4") + 
   scale_x_discrete(limits = c("n", "s")) +
@@ -310,7 +310,7 @@ with(na.omit(mydata2), ggplot(data = mydata2, aes(x = side, y = obs))) +
 
 ```
 
-```{r residuals plot 1, fig.cap = "Q-Q plot of residuals", echo = FALSE}
+```{r residuals plot 1, fig.cap = "Q-Q plot of residuals", echo = FALSE, warning = FALSE}
 # 2. Normal Q-Q Plot
 qqnorm(residuals(model), main = "", pch = 16,
        col = rgb(0.2, 0.2, 0.8, 0.6))
@@ -329,75 +329,123 @@ kable(anova(model), caption = "ANOVA table")
 
 ```{r question 1, echo = FALSE}
 
-confint(model, parm = "light2")
-confint(model, parm = "light3")
-confint(model, parm = "light4")
+confints <- rbind(confint(model, parm = "light2") |> signif(4), confint(model, parm = "light3") |> signif(5), confint(model, parm = "light4") |> signif(4))
+
+q2 <- tibble(light_level = c("Level 2", "Level 3", "Level 4"),
+    Estimate = model$coefficients[6:8] |> signif(4),
+   Lower_bound = confints[,1],
+  Upper_bound = confints[,2],
+)
+kable(q2, caption = "95% Confidence Intervals of main effect of light levels in relation to light level 1", col.names = c("Light", "Estimate", "Lower bound", "Upper bound"))
 
 ```
 
 Our analysis provides strong evidence for the main effect of light having an effect on quality (p-val < 0.00001). The mean response with light level 2 was 7.157 higher than with light level 1, with a 95% confidence interval = (3.212, 11.102). The mean response with level 3 was 11.332 higher than with level 1 (7.731, 14.932). The mean response with level 4 was 14.043 higher than with level 1 (10.992, 17.094).
-Visually, the boxplots indicate that light level 4 had the highest mean reponse.
+Visually, the boxplots indicate that light level 3 actually had the highest median response, although level 4 had the highest mean response.
 
 ### Question 2: Does the main effect of heat have an effect on quality?
 
 ```{r q2, echo = FALSE}
 
-confint(model, parm = "heat2") |> signif(4)
-confint(model, parm = "heat3") |> signif(5)
-confint(model, parm = "heat4") |> signif(4)
+confints <- rbind(confint(model, parm = "heat2") |> signif(4), confint(model, parm = "heat3") |> signif(5), confint(model, parm = "heat4") |> signif(4))
 
-model$coefficients[9:11] |> signif(4)
+q2 <- tibble(Heat_level = c("Level 2", "Level 3", "Level 4"),
+    Estimate = model$coefficients[9:11] |> signif(4),
+   Lower_bound = confints[,1],
+  Upper_bound = confints[,2],
+)
+kable(q2, caption = "95% Confidence Intervals of main effect of heat levels in relation to heat level 1", col.names = c("Heat", "Estimate", "Lower bound", "Upper bound"))
 
 ```
 
 Our analysis provides strong evidence for the main effect of heat having an effect on quality (p-val < 0.00001). The mean response with heat level 2 was 5.902 higher than with level 1 (2.569, 9.235). The mean response with heat level 3 was 6.809 higher than with level 1 (3.518, 10.099). The mean response with level 4 was 5.690 higher than with level 1 (2.090, 9.291). 
-Visually, the boxplots indicate that heat level 3 had the highest mean response.
+Visually, the boxplots indicate that heat level 3, as well as having the highest mean response, also had the highest median response.
 
 ### Question 3: Does the interaction effect between light and heat have an effect on quality?
 
-Our analysis does not provide evidence for the interaction between light and heat having an effect on quality (p-val = 0.240).
+Our analysis does not provide sufficient evidence for an interaction between light and heat having an effect on quality (p-val = 0.240).
 
 ### Question 4: Does the interaction effect between light and variety have an effect on quality? 
 
-Our analysis provides evidence for the interaction effect between variety and light (p-val < 0.005) having an effect on quality. Therefore, we proceeded with a t-test to test the following hypothesis:
+Our analysis provides evidence for the interaction effect between variety and light (p-val < 0.005) having an effect on quality. Therefore, we proceeded with a contrast:
 
 $$
-\frac{1}{4}(\mu_{1R} + \mu_{2R} + \mu_{3R} + \mu_{4R}) = \frac{1}{4}(\mu_{1F} + \mu_{2F} + \mu_{3F} + \mu_{4F})
+L_1: \frac{1}{4}(\mu_{1R} + \mu_{2R} + \mu_{3R} + \mu_{4R}) - \frac{1}{4}(\mu_{1F} + \mu_{2F} + \mu_{3F} + \mu_{4F}) 
 $$
+to test:
 
-
+$$
+\begin{aligned}
+L_1 = 0 \\
+L_1 \ne 0 \\
+\end{aligned}
+$$
+using a t-test. 
 ```{r q4, echo = FALSE}
 
 emm_l <- emmeans(model, ~ variety*light)
-emm_l
 
-contrast(emm_l, list(avg_R_minus_avg_F = c(rep(1/4, 4), rep(-1/4, 4)) ), by = NULL)
+emm_l_summary <- as.data.frame(emm_l)
+emm_l_output <- tibble(Light = emm_l_summary$light,
+                      Variety = emm_l_summary$variety,
+                      emmean = emm_l_summary$emmean |> signif(5))
+
+kable(emm_l_output)
+
+contrast1 <- as.data.frame(contrast(emm_l, list(avg_R_minus_avg_F = c(rep(1/4, 4), rep(-1/4, 4)) ), by = NULL))
+
+contrast1_output <- tibble(Estimate = contrast1$estimate,
+                           SE = contrast1$SE,
+                           df = contrast1$df,
+                           t.value = contrast1$t.ratio,
+                           p.value = contrast1$p.value) |> signif(4)
+kable(contrast1_output, col.names = c("Estimate", "SE", "Degrees of Freedom", "t statistic", "p-value"), caption = "")
 
 ```
-Our t-test produces a statistically significant result (p-val < 0.0001). Therefore, we have strong evidence that the interaction effect between variety and light has an effect on quality. 
+Our t-test produces a statistically significant result (p-val < 0.0001). Therefore, there is strong evidence that the interaction effect between variety and light level has an effect on the quality of chillies. 
 
 ### Question 5: Does the interaction effect between heat and variety have an effect on quality?
 
-Our analysis provides evidence for the interaction effect between variety and heat (p-val < 0.05) having an effect on quality. Therefore, we proceeded with a t-test to test the following hypothesis:
+Our analysis provides evidence for the interaction effect between variety and heat (p-val < 0.05) having an effect on quality. Therefore, we proceeded with a contrast:
 
 $$
-\frac{1}{4}(\mu_{1R} + \mu_{2R} + \mu_{3R} + \mu_{4R}) = \frac{1}{4}(\mu_{1F} + \mu_{2F} + \mu_{3F} + \mu_{4F})
+L_2:\frac{1}{4}(\mu_{1R} + \mu_{2R} + \mu_{3R} + \mu_{4R}) - \frac{1}{4}(\mu_{1F} + \mu_{2F} + \mu_{3F} + \mu_{4F})
 $$
 
+to test:
+$$
+\begin{aligned}
+L_2 = 0 \\
+L_2 \ne 0 \\
+\end{aligned}
+$$
+using a t-test. 
 ```{r q5, echo = FALSE}
 
 emm_h <- emmeans(model, ~ variety*heat)
-emm_h
+emm_h_summary <- as.data.frame(emm_h)
+emm_h_output <- tibble(Heat = emm_h_summary$heat,
+                       Variety = emm_h_summary$variety, 
+                       emmean = emm_h_summary$emmean |> signif(5))
 
-contrast(emm_h, list(avg_R_minus_avg_F = c(rep(1/4, 4), rep(-1/4, 4))), by = NULL )
+kable(emm_h_output, caption = "Estimated marginal means for heat and variety combinations")
 
+contrast2 <- as.data.frame(contrast(emm_h, list(avg_R_minus_avg_F = c(rep(1/4, 4), rep(-1/4, 4))), by = NULL ))
+
+contrast2_output <- tibble(Estimate = contrast2$estimate,
+                           SE = contrast2$SE, 
+                           df = contrast2$df,
+                           t.value = contrast2$t.ratio,
+                           p.value = contrast2$p.value |> signif(4))
+
+kable(contrast2_output, col.names = c("Estimate", "SE", "Degrees of Freedom", "t statistic", "p-value"), caption = "")
 ```
 Our t-test produces a statistically significant result (p-val < 0.0001). Therefore, we have strong evidence that the interaction effect between variety and heat has an effect on quality.
 
 ### Question 6: Does the main effect of variety have an effect on quality? 
 
 Our analysis does not provide evidence for the main effect of variety having an effect on quality (p-val = 0.240).
-Visually, the boxplots indicate that mean responses for both varieties were very similar, when averaging across all other variables.
+Visually, the boxplots indicate that the median responses for both varieties were very similar, when averaging across all other variables.
 
 ### Further analysis
 
@@ -408,6 +456,17 @@ emmeans(model, ~ light)
 ```
 
 
+# Conclusion and Recommendations
+
+## Conclusion
+
+Your assignment is to design and analyse an experiment to help the two chilli farmers find the
+best settings for growing chillies and to help to understand how the requirements for the two
+varieties may differ.
+
+The key aim of this assignment was to investigate the effects of different light and heat settings on the quality of chillies, and to determine which other factors influenced these results. 
+We investigated the main effects of light, heat, variety, side, greenhouse and season on chilli growth, as well as various interaction terms between these different factors and treatments.
+Our choice of design was 
 
 ### Which light and heat settings produce the highest quality chillies?
 
