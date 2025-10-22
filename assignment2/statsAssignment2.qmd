@@ -8,19 +8,19 @@ date: 2025.10.21
 
 # Introduction
 
-The aim of this experiment is to examine the effects of different intensities of heat and light on the growth of chilli plants. The goal is to determine whether light and heat affect chilli growth, which settings produce the highest quality chillies and by how much. Furthermore, whether these settings depend on variety as well as whether quality depends on variety will be explored. This is to make recommendations about which heat and light settings are optimal for small-scale farmers to implement, taking into account the cost of additional heat and light.
+The aim of this experiment is to examine the effects of different intensities of heat and light on the growth of chilli plants. The goal is to determine whether light and heat affect chilli growth, which settings produce the highest quality chillies and by how much. Furthermore, whether these settings depend on variety as well as whether quality depends on variety will be explored. This is to make recommendations about which heat and light settings are optimal for small-scale farmers to implement, taking into account the cost of additional heat and light. The effects of various sources of potential variation - season, greenhouse and side of the greenhouse - will also be explored.
 
-These goals will be tackled through an analysis of variance of this exploratory experiment.
+These goals will be tackled through exploratory data analysis, and an analysis of variance of this exploratory experiment.
 
 # Design and Randomisation
 
 ## Design
 
-The experiment takes place over 2 seasons, season 1 and season 2. There are two greenhouses available, greenhouse A and greenhouse B, with 8 north-facing and 8 south-facing plots each. The 32 experimental units were first blocked by the random factors, season and greenhouse, to give four blocks of 16 experimental units each. The treatment factors are side (north, south) and variety (Redhot, Furious), each with two levels which results in a $2^2$ factorial treatment structure with 4 treatments, (n,F), (s,F), (n,R), (s,R).
+The experiment takes place over 2 seasons -- season 1 and season 2. There are two greenhouses available -- greenhouse A and greenhouse B -- with 8 north-facing and 8 south-facing plots each. The 32 experimental units were first blocked by the random factors, season and greenhouse, to give four blocks of 16 experimental units each. The treatment factors are side (north & south) and variety (Redhot & Furious), each with two levels which results in a $2^2$ factorial treatment structure with 4 treatments: (n,F), (s,F), (n,R), (s,R).
 
 ## Randomisation
 
-Four 4x4 latin square designs were set up with the four levels of light (1, 2, 3, 4) as a row block and the four levels of heat (1, 2, 3, 4) as a column block To conduct randomisation, a random latin square permutation of the four treatments with each appearing once in every row and column was found for each season-greenhouse combination using the design.lsd function from the agricolae package. The four treatments were randomly assigned to "a", "b", "c" and "d" for ease of understanding the latin square design layout. 
+Four 4x4 latin square designs were set up with the four levels of light (1, 2, 3, 4) as a row block and the four levels of heat (1, 2, 3, 4) as a column block. To conduct randomisation, a random latin square permutation of the four treatments, with each appearing once in every row and column, was found for each season-greenhouse combination using the design.lsd function from the agricolae package. The four treatments were randomly assigned to "a", "b", "c" and "d" for ease of understanding the latin square design layout. 
 
 ```{r Design and Randomisation, echo = FALSE}
 
@@ -167,29 +167,30 @@ The a-priori hypotheses that are of interest are:
 6: Does the main effect of variety have an effect on quality? 
 
 ## Justification 
-The factorial treatment structure with side and variety (each with two levels) crossed to give four treatment combinations allows for the main effects of variety and side to be tested as well as the interaction effect between side and variety. This allows for the effect of variety on quality to be analysed. 
+The factorial treatment structure with side and variety -- each with two levels crossed to give four treatment combinations -- allows for the main effects of variety and side to be tested as well as the interaction effect between side and variety. This allows for the effect of variety on quality to be analysed. 
 
-The four latin squares, with light and heat as blocking factors with four levels each allows for analysis of the variation due to light and heat in a balanced design as there are four treatments that correspond to the four experimental units in each row or column with each treatment only appearing once in each column and row. This is also an efficient use of resources as 4 replicates of side and variety combinations are available per latin square. The latin structure also allows for the effects of light and heat on quality to be analysed thoroughly and easily. 
+The four latin squares, with light and heat as blocking factors with four levels each, allows for analysis of the variation due to light and heat in a balanced design, as there are four treatments that correspond to the four experimental units in each row or column with each treatment only appearing once in each column and row. This is also an efficient use of resources as 4 replicates of each side and variety combination are available per latin square. The latin structure also allows for the effects of light and heat on quality to be analysed thoroughly and easily. 
 
 Additionally, the factorial treatment structure in conjunction with the latin square design allows for the interactions between light and variety, and heat and variety to be analysed. 
 
-The replication across season-greenhouse blocks accounts for the variation due to season and the variation due to greenhouse and ensures sufficient power for the experiment as the 4 blocks result in $4 \times 4 = 16$ replicates per treatment. 
+The replication across season-greenhouse blocks accounts for the variation due to season and the variation due to greenhouse, as well as ensuring sufficient power for the experiment as the 4 blocks result in $4 \times 4 = 16$ replicates per treatment. 
 
-Essentially, this design allows for efficient analysis of all the a-priori hypotheses of interest and allows for many sources of variation to be accounted for. 
+Essentially, this design allows for efficient analysis of all the a-priori hypotheses of interest and enables many sources of variation to be accounted for. 
 
 
 # Analysis and Results
 ```{r Simulating observations, echo = FALSE}
 
-set.seed(27)  
-
+# setting light and heat to be factors 
 mydesign2 <- read.csv("design2.csv")
 mydesign2$light <- as.factor(mydesign2$light)
 mydesign2$heat <- as.factor(mydesign2$heat)
 mydesign2$season <- as.factor(mydesign2$season)
-#mydesign2
+
+# getting observations 
+set.seed(27)  
 mydata2 <- get.observations(mydesign2)
-mydata2
+
 
 ```
 ## Analysis
@@ -197,18 +198,21 @@ mydata2
 ### The model:
 
 $$
-Y_{ijklmn} = \mu+ \alpha_i + \beta_j + \gamma_k + \delta_l + (\gamma\delta)_{kl} + \epsilon_m + \theta_n + (\epsilon\theta)_{mn} + (\delta\epsilon)_{km} + (\delta\theta)_{kn} (\delta\epsilon\theta)_{lmn} + e_{ijklmn} 
+Y_{ijklmn} = \mu+ \alpha_i + \beta_j + \gamma_k + \delta_l + (\gamma\delta)_{kl} + \epsilon_m + \theta_n + (\epsilon\theta)_{mn} + (\delta\epsilon)_{km} + (\delta\theta)_{kn} + (\delta\epsilon\theta)_{lmn} + e_{ijklmn} 
+$$
+$$
+e_{ijklmn}~ \text{~}\ N(0, \sigma^2)
 $$
 
 $$
 \begin{aligned}
 Y_{ijklmn} &= \text{quality score for observation ijklmn}\\
-\alpha_i &= \text{effect of Season 2 compared to Season 1, $i = 1,2$}\\
-\beta_j &= \text{effect of Greenhouse B compared to Greenhouse A, $j = A, B$}\\
-\gamma_k &= \text{effect of side north compared to south, $k = s, n$}\\
-\delta_l &= \text{effect of variety R compared to F, $l = F, R$}\\
-\epsilon_m &= \text{effect of $i^{th}$ light level compared to $1^{st}$ level, $1 < i \leq 4$}\\
-\theta_n &= \text{effect of $j^{th}$ heat level compared to $1^{st}$ level, $1 < j \leq 4$}
+\alpha_i &= \text{effect of $i^{th}$ season, $i = 1,2$}\\
+\beta_j &= \text{effect of $j^{th}$ greenhouse, $j = A, B$}\\
+\gamma_k &= \text{effect of $k^{th}$ side, $k = s, n$}\\
+\delta_l &= \text{effect of $l^{th}$ variety, $l = F, R$}\\
+\epsilon_m &= \text{effect of $m^{th}$ light level, $1 \leq i \leq 4$}\\
+\theta_n &= \text{effect of $n^{th}$ heat level, $1 \leq j \leq 4$}
 \end{aligned}
 $$
 
@@ -217,7 +221,7 @@ $$
 \begin{aligned}
 \alpha_1 &= 0 & \text{(Season 1 as reference)} \\
 \beta_A &= 0 & \text{(Greenhouse A as reference)} \\
-\gamma_s &= 0 & \text{(Side north as reference)} \\
+\gamma_n &= 0 & \text{(Side north as reference)} \\
 \delta_F &= 0 & \text{(Variety Furious as reference)} \\
 \epsilon_1 &= 0 & \text{(Light level 1 as reference)} \\
 \theta_1 &= 0 & \text{(Heat level 1 as reference)}
@@ -310,17 +314,12 @@ with(na.omit(mydata2), ggplot(data = mydata2, aes(x = side, y = obs))) +
 
 ```
 
-```{r residuals plot 1, fig.cap = "Q-Q plot of residuals", echo = FALSE, warning = FALSE}
-# 2. Normal Q-Q Plot
-qqnorm(residuals(model), main = "", pch = 16,
-       col = rgb(0.2, 0.2, 0.8, 0.6))
-qqline(residuals(model), col = "red4", lwd = 2)
-```
+The boxplots show that, apart from the main hypotheses we are investigating: the effects of light, heat, variety and their interactions, there is a difference in median response from season 1 to season 2, as well as a difference in median response from the north side and south side of the two greenhouses.
 
 ## Results
 
 ```{r anova table, echo = FALSE}
-kable(model$coefficients, caption = "Estimates table")
+
 kable(anova(model), caption = "ANOVA table")
 
 ```
@@ -363,7 +362,7 @@ Visually, the boxplots indicate that heat level 3, as well as having the highest
 
 ### Question 3: Does the interaction effect between light and heat have an effect on quality?
 
-Our analysis does not provide sufficient evidence for an interaction between light and heat having an effect on quality (p-val = 0.240).
+Our analysis does not provide sufficient evidence for an interaction between light and heat having an effect on quality (p-val = 0.265).
 
 ### Question 4: Does the interaction effect between light and variety have an effect on quality? 
 
@@ -383,7 +382,7 @@ $$
 using a t-test. 
 ```{r q4, echo = FALSE}
 
-emm_l <- emmeans(model, ~ variety*light)
+suppressMessages({emm_l <- emmeans(model, ~ variety*light, weights = "proportional")})
 
 emm_l_summary <- as.data.frame(emm_l)
 emm_l_output <- tibble(Light = emm_l_summary$light,
@@ -399,7 +398,7 @@ contrast1_output <- tibble(Estimate = contrast1$estimate,
                            df = contrast1$df,
                            t.value = contrast1$t.ratio,
                            p.value = contrast1$p.value) |> signif(4)
-kable(contrast1_output, col.names = c("Estimate", "SE", "Degrees of Freedom", "t statistic", "p-value"), caption = "")
+kable(contrast1_output, col.names = c("Estimate", "SE", "Degrees of Freedom", "t statistic", "p-value"), caption = "Result of t-test for contrast $L_1$")
 
 ```
 Our t-test produces a statistically significant result (p-val < 0.0001). Therefore, there is strong evidence that the interaction effect between variety and light level has an effect on the quality of chillies. 
@@ -422,7 +421,7 @@ $$
 using a t-test. 
 ```{r q5, echo = FALSE}
 
-emm_h <- emmeans(model, ~ variety*heat)
+suppressMessages({emm_h <- emmeans(model, ~ variety*heat, weights = "proportional")})
 emm_h_summary <- as.data.frame(emm_h)
 emm_h_output <- tibble(Heat = emm_h_summary$heat,
                        Variety = emm_h_summary$variety, 
@@ -438,7 +437,7 @@ contrast2_output <- tibble(Estimate = contrast2$estimate,
                            t.value = contrast2$t.ratio,
                            p.value = contrast2$p.value |> signif(4))
 
-kable(contrast2_output, col.names = c("Estimate", "SE", "Degrees of Freedom", "t statistic", "p-value"), caption = "")
+kable(contrast2_output, col.names = c("Estimate", "SE", "Degrees of Freedom", "t statistic", "p-value"), caption = "Result of t-test for contrast $L_2$")
 ```
 Our t-test produces a statistically significant result (p-val < 0.0001). Therefore, we have strong evidence that the interaction effect between variety and heat has an effect on quality.
 
@@ -446,15 +445,6 @@ Our t-test produces a statistically significant result (p-val < 0.0001). Therefo
 
 Our analysis does not provide evidence for the main effect of variety having an effect on quality (p-val = 0.240).
 Visually, the boxplots indicate that the median responses for both varieties were very similar, when averaging across all other variables.
-
-### Further analysis
-
-```{r further analysis, echo = FALSE}
-
-emmeans(model, ~ light)
-
-```
-
 
 # Conclusion and Recommendations
 
@@ -466,7 +456,15 @@ varieties may differ.
 
 The key aim of this assignment was to investigate the effects of different light and heat settings on the quality of chillies, and to determine which other factors influenced these results. 
 We investigated the main effects of light, heat, variety, side, greenhouse and season on chilli growth, as well as various interaction terms between these different factors and treatments.
-Our choice of design was 
+Our choice of design was a $2^2$ factorial treatment structure with 4 treatments, one for each variety-side combination, separated into 4 different latin square designs using greenhouse and season as initial blocking factors, and light and heat as row and column factors within each latin square.
+
+Our results showed strong evidence for the main effects of heat and light having an effect on the quality of chilli growth. We found that light level 4 produced the highest mean response, however level 3 produced the highest median response. 
+Our tests showed that heat level 3 resulted in the highest average and median response.
+Our results that the interaction between heat and light was not significant, allowing us to conclude that the heat and light settings that produce the highest quality chillies are simply those which individually produce the best response.
+
+Given that additional lighting and heating is expensive, and 
+
+
 
 ### Which light and heat settings produce the highest quality chillies?
 
@@ -476,7 +474,7 @@ Therefore, to determine the best light and heat settings, we calculated estimate
 Our results suggest that the settings that produced the highest quality chillies, on average, were different between the two varieties of chilli.
 For variety F, the light setting that produced the highest quality chillies on average, was level 4, with a mean response of 53.6 (52.6, 55.2). The optimal heat setting was level 3 with a mean response of 52.5 (51.3, 53.6).
 For variety R, the optimal light setting was level 4, with a mean response of 54.4 (53.1, 55.7). The optimal heat level 4, with a mean response of 51.1 (49.8, 52.4).
-Since the interactions between light, heat and variety were not significant, for each variety, the light and heat settings that would produce the highest quality chillies on average, were simply the settings that had the highest individual means.
+Since the interactions between light, heat and variety were not significant, for each variety, the c
 Therefore, for variety F, the optimal settings were light level 4 and heat level 3.
 For variety R, the optimal settings were light level 4 and heat level 4.
 
