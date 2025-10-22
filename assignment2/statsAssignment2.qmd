@@ -221,14 +221,18 @@ $$
 $$
 
 ```{r, fitting model, anova table, echo = FALSE}
+library(kableExtra)
 
 model <- lm (obs ~ season + greenhouse + variety*side + light*heat*variety, data=mydata2)
-#model
+kable(model$coefficients, caption = "Estimates table")
 kable(anova(model), caption = "ANOVA table")
 
 ```
 
+
+
 ### Interaction Plots 
+
 ```{r interaction plot 1, fig.cap = "Interaction plot of light and heat", echo = FALSE}
 with(na.omit(mydata2), interaction.plot(light, heat, obs))
 ```
@@ -244,18 +248,73 @@ with(na.omit(mydata2), interaction.plot(heat, variety, obs))
 ```{r interaction plot 4, fig.cap = "Interaction plot of variety and side", echo = FALSE}
 with(na.omit(mydata2), interaction.plot(variety, side, obs))
 ```
-```
 
 
 ## Results
 
-```{r}
-confint(model, parm = "season")
-confint(model, parm = "greenhouseB")
-confint(model, parm = "varietyR")
-confint(model, parm = "sides")
+The a-priori hypotheses that are of interest are:
+
+1: Does the main effect of light have an effect on quality?
+
+2: Does the main effect of heat have an effect on quality?
+
+3: Does the interaction effect between light and heat have an effect on quality?
+
+4: Does the interaction effect between light and variety have an effect on quality? 
+
+5: Does the interaction effect between heat and variety have an effect on quality?
+
+6: Does the main effect of variety have an effect on quality? 
+
+
+```{r question 1, echo = FALSE}
+
+confint(model, parm = "light2")
+confint(model, parm = "light3")
+confint(model, parm = "light4")
+
+model$coefficients[6:8]
 
 ```
+
+Our analysis provides strong evidence for the main effect of light having an effect on quality (p-val < 0.00001). The mean response with light level 2 was 7.157 higher than with light level 1, with a 95% confidence interval = (3.212, 11.102). The mean response with level 3 was 11.332 higher than with level 1 (7.731, 14.932). The mean response with level 4 was 14.043 higher than with level 1 (10.992, 17.094).
+
+```{r q2}
+
+confint(model, parm = "heat2") |> signif(4)
+confint(model, parm = "heat3") |> signif(5)
+confint(model, parm = "heat4") |> signif(4)
+
+model$coefficients[9:11] |> signif(4)
+
+```
+
+Our analysis provides strong evidence for the main effect of heat having an effect on quality (p-val < 0.00001). The mean response with heat level 2 was 5.902 higher than with level 1 (2.569, 9.235). The mean response with heat level 3 was 6.809 higher than with level 1 (3.518, 10.099). The mean response with level 4 was 5.690 higher than with level 1 (2.090, 9.291). 
+
+
+```{r q3}
+
+```
+
+Our analysis does not provide evidence for the interaction between light and heat having an effect on quality (p-val = 0.240).
+
+
+```{r q4}
+
+library(emmeans)
+
+emm_l <- emmeans(model, ~ light*variety)
+emm_l
+
+model$coefficients[22:24] |> signif(4)
+
+contrast(emm_l, 
+         method = "del.eff", by = NULL)
+
+```
+
+Our analysis provides evidence for the interaction between light and variety having an effect on quality (p-val < 0.005). In order to further test this result, we conducted a t-test involving contrasts.
+
 
 ##. Main effects
 
@@ -274,16 +333,16 @@ library(emmeans)
 #emmeans(model, ~ variety)
 
 emm_l <- emmeans(model, ~ light*variety)
+emm_l
 
 emm_h <- emmeans(model, ~ heat*variety)
+emm_h
 
-contrast(emm_l, 
-         list(avg_R_minus_avg_F = c(rep(1/4, 4), rep(-1/4, 4))
-              ), by = NULL)
+#contrast(emm_l, list(avg_R_minus_avg_F = c(rep(1/4, 4), rep(-1/4, 4)) ), by = NULL)
+contrast(emm_l, interaction=TRUE, by=NULL)
 
-contrast(emm_h, 
-         list(avg_R_minus_avg_F = c(rep(1/4, 4), rep(-1/4, 4))
-              ), by = NULL )
+#contrast(emm_h, list(avg_R_minus_avg_F = c(rep(1/4, 4), rep(-1/4, 4))), by = NULL )
+contrast(emm_h, interaction=TRUE, by=NULL)
 
 ```
 
