@@ -201,7 +201,7 @@ $$
 Y_{ijklmn} = \mu+ \alpha_i + \beta_j + \gamma_k + \delta_l + (\gamma\delta)_{kl} + \epsilon_m + \theta_n + (\epsilon\theta)_{mn} + (\delta\epsilon)_{km} + (\delta\theta)_{kn} + (\delta\epsilon\theta)_{lmn} + e_{ijklmn} 
 $$
 $$
-e_{ijklmn}~ \text{~}\ N(0, \sigma^2)
+e_{ijklmn}~ \text{are distributed} ~N(0, \sigma^2)
 $$
 
 $$
@@ -239,7 +239,7 @@ hist(mydata2$obs, xlab = "Quality score", freq = FALSE, main = "")
 
 ```
 
-The histogram of quality score suggests slightly left-skewed data. 
+The histogram of quality score suggests slightly left-skewed data. Additionally, when examining the data, two observations are missing due to unforeseen circumstances. Our analysis will be adjusted to account for these missing observations by using least squares estimates with the observations removed and the degrees of freedom reduced. 
 
 #### Interaction Plots
 
@@ -339,7 +339,7 @@ kable(q2, caption = "95% Confidence Intervals of main effect of light levels in 
 
 ```
 
-Our analysis provides strong evidence for the main effect of light having an effect on quality (p-val < 0.00001). The mean response with light level 2 was 7.157 higher than with light level 1, with a 95% confidence interval = (3.212, 11.102). The mean response with level 3 was 11.332 higher than with level 1 (7.731, 14.932). The mean response with level 4 was 14.043 higher than with level 1 (10.992, 17.094).
+The F-test we conducted provides strong evidence for the main effect of light having an effect on quality (p-val < 0.00001). The mean response with light level 2 was 7.157 higher than with light level 1, with a 95% confidence interval = (3.212, 11.102). The mean response with level 3 was 11.332 higher than with level 1 (7.731, 14.932). The mean response with level 4 was 14.043 higher than with level 1 (10.992, 17.094).
 Visually, the boxplots indicate that light level 3 actually had the highest median response, although level 4 had the highest mean response.
 
 ### Question 2: Does the main effect of heat have an effect on quality?
@@ -357,16 +357,16 @@ kable(q2, caption = "95% Confidence Intervals of main effect of heat levels in r
 
 ```
 
-Our analysis provides strong evidence for the main effect of heat having an effect on quality (p-val < 0.00001). The mean response with heat level 2 was 5.902 higher than with level 1 (2.569, 9.235). The mean response with heat level 3 was 6.809 higher than with level 1 (3.518, 10.099). The mean response with level 4 was 5.690 higher than with level 1 (2.090, 9.291). 
+The F-test provides strong evidence for the main effect of heat having an effect on quality (p-val < 0.00001). The mean response with heat level 2 was 5.902 higher than with level 1 (2.569, 9.235). The mean response with heat level 3 was 6.809 higher than with level 1 (3.518, 10.099). The mean response with level 4 was 5.690 higher than with level 1 (2.090, 9.291). 
 Visually, the boxplots indicate that heat level 3, as well as having the highest mean response, also had the highest median response.
 
 ### Question 3: Does the interaction effect between light and heat have an effect on quality?
 
-Our analysis does not provide sufficient evidence for an interaction between light and heat having an effect on quality (p-val = 0.265).
+The F-test does not provide sufficient evidence for an interaction between light and heat having an effect on quality (p-val = 0.265).
 
 ### Question 4: Does the interaction effect between light and variety have an effect on quality? 
 
-Our analysis provides evidence for the interaction effect between variety and light (p-val < 0.005) having an effect on quality. Therefore, we proceeded with a contrast:
+The F-test provides evidence for the interaction effect between variety and light (p-val < 0.005) having an effect on quality. Therefore, we proceeded with a contrast:
 
 $$
 L_1: \frac{1}{4}(\mu_{1R} + \mu_{2R} + \mu_{3R} + \mu_{4R}) - \frac{1}{4}(\mu_{1F} + \mu_{2F} + \mu_{3F} + \mu_{4F}) 
@@ -401,6 +401,10 @@ contrast1_output <- tibble(Estimate = contrast1$estimate,
 kable(contrast1_output, col.names = c("Estimate", "SE", "Degrees of Freedom", "t statistic", "p-value"), caption = "Result of t-test for contrast $L_1$")
 
 ```
+
+For variety F, our results show that, averaged across all other variables, light level 4 produced the highest mean response (53.795), followed by level 3 (51.906).
+For variety R, our results show that, averaged across all other variables, light level 4 produced the highest mean response (54.325), followed by level 3 (53.216).
+
 Our t-test produces a statistically significant result (p-val < 0.0001). Therefore, there is strong evidence that the interaction effect between variety and light level has an effect on the quality of chillies. 
 
 ### Question 5: Does the interaction effect between heat and variety have an effect on quality?
@@ -439,43 +443,58 @@ contrast2_output <- tibble(Estimate = contrast2$estimate,
 
 kable(contrast2_output, col.names = c("Estimate", "SE", "Degrees of Freedom", "t statistic", "p-value"), caption = "Result of t-test for contrast $L_2$")
 ```
+
+For variety F, our results show that, averaged across all other variables, heat level 3 produced the highest mean response (52.250), followed by level 4 (49.830).
+For variety R, our results show that, averaged across all other variables, heat level 4 produced the highest mean response (50.920), followed by level 3 (50.077).
+
 Our t-test produces a statistically significant result (p-val < 0.0001). Therefore, we have strong evidence that the interaction effect between variety and heat has an effect on quality.
 
 ### Question 6: Does the main effect of variety have an effect on quality? 
 
-Our analysis does not provide evidence for the main effect of variety having an effect on quality (p-val = 0.240).
+The F-test we conducted does not provide evidence for the main effect of variety having an effect on quality (p-val = 0.240).
 Visually, the boxplots indicate that the median responses for both varieties were very similar, when averaging across all other variables.
+
+### Further Observations 
+
+The F-test we conducted provides strong evidence for side having an effect on quality (p-val < 0.00001), as well as season having an effect on quality (p-val p-val < 0.00001).
 
 # Conclusion and Recommendations
 
 ## Conclusion
 
-Your assignment is to design and analyse an experiment to help the two chilli farmers find the
-best settings for growing chillies and to help to understand how the requirements for the two
-varieties may differ.
+The key aim of this assignment was to investigate the effects of different light and heat settings on the quality of chillies, and to determine which other factors influenced these results. We investigated the main effects of light, heat, variety, side, greenhouse and season on chilli quality, as well as various interaction terms between these different factors and treatments.
 
-The key aim of this assignment was to investigate the effects of different light and heat settings on the quality of chillies, and to determine which other factors influenced these results. 
-We investigated the main effects of light, heat, variety, side, greenhouse and season on chilli growth, as well as various interaction terms between these different factors and treatments.
 Our choice of design was a $2^2$ factorial treatment structure with 4 treatments, one for each variety-side combination, separated into 4 different latin square designs using greenhouse and season as initial blocking factors, and light and heat as row and column factors within each latin square.
 
-Our results showed strong evidence for the main effects of heat and light having an effect on the quality of chilli growth. We found that light level 4 produced the highest mean response, however level 3 produced the highest median response. 
-Our tests showed that heat level 3 resulted in the highest average and median response.
-Our results that the interaction between heat and light was not significant, allowing us to conclude that the heat and light settings that produce the highest quality chillies are simply those which individually produce the best response.
+Our results show strong evidence for different levels of lighting and heating having an effect on the quality of chillies. We found there was insufficient evidence for an interaction effect between heat and light levels, suggesting that the optimal settings for heat and light were simply the heat level and light level that individually produced the highest quality chillies. Additionally, while we did find that there were some differences in how the two varieties of chilli -- Redhot and Furious -- responded to the changes in heating and lighting, these differences were not particularly significant.
 
-Given that additional lighting and heating is expensive, and 
+Low lighting produced extremely poor quality chillies, while increased lighting produced a better chilli quality score, with high to very high light levels yielding the best scores. We found the effect of heat to be less significant than light. Low heat produced relatively poor quality chillies, but increasing heat did not have anywhere near as large an effect as increasing light. Medium, high and very high heat levels appeared to have similar effects on quality.
 
+Our analysis also suggests that chilli quality was significantly better on the north side of both greenhouses than on the south side.
 
+In the context of Ms Hopeful and Mr Growing's differing yields, their methods of growing differed by heat, light and variety. Our results suggest that the key driver of this difference in quality was that Ms Hopeful used supplementary lighting (likely similar to our level 3 or 4 in testing), while Mr Growing used only standard lighting (likely similar to our level 1 or 2). 
 
-### Which light and heat settings produce the highest quality chillies?
+Ms Hopeful also used supplementary heating, while Mr Growing did not. Our results show that this likely had an effect on their differing yields, but that it was not as large as the effect of the supplementary lighting.
 
-From the ANOVA table, there was no evidence for the interaction term between light and heat being significant (p-val = 0.2643), nor the interaction term between light, heat and variety (p-val = 0.218). 
-However, there is evidence for the interaction term between light and variety being significant (p-val = 0.0032), as well as the interaction term between heat and variety (p-val = 0.0297).
-Therefore, to determine the best light and heat settings, we calculated estimated means for heat and light for both varieties, averaging across all levels of other explanatory variables.
-Our results suggest that the settings that produced the highest quality chillies, on average, were different between the two varieties of chilli.
-For variety F, the light setting that produced the highest quality chillies on average, was level 4, with a mean response of 53.6 (52.6, 55.2). The optimal heat setting was level 3 with a mean response of 52.5 (51.3, 53.6).
-For variety R, the optimal light setting was level 4, with a mean response of 54.4 (53.1, 55.7). The optimal heat level 4, with a mean response of 51.1 (49.8, 52.4).
-Since the interactions between light, heat and variety were not significant, for each variety, the c
-Therefore, for variety F, the optimal settings were light level 4 and heat level 3.
-For variety R, the optimal settings were light level 4 and heat level 4.
+Mr Growing grew Redhot chillies, which our results suggest are actually even more suited to high heat and light levels than the Furious variety which Ms Hopeful grew.
+However, even if they grew the same variety of chilli, our results suggest that Ms Hopeful's yield would still be significantly higher than Mr Growing's. Therefore, we do not consider the difference in variety to be a key driver in the difference in chilli quality.
+
+## Recommendations
+
+Our analysis leads us to believe that supplementary lighting is highly recommended. Higher light levels seem to yield higher quality scores in both varieties of chilli. Some level of supplementary heating is also recommended, as it can produce an increase in chilli quality. However, there seems to be a cut-off point, as increasing heat past a certain point seems to have no significant impact or could even reduce quality.
+
+We can not make any recommendation on the variety of chilli to grow, as their quality when averaging across all other factors appeared to be very similar. However, it seems that Redhot chillies are more sensitive to increased lighting than the Furious variety. 
+
+Additional light and heat is costly. Since our results show evidence for a greater effect of additional lighting on chilli quality, it is more effective to allocate resources to maximise lighting instead of heat. A cost-effective combination of light and heat that would yield high quality chillies may not be the optimal levels of light level 4 and heat level 3, but instead light level 4 and heat level 2 for example. In general, some combination of medium to high heating and high to very high lighting is recommended for optimal chilli quality.
+
+A cost-effective way of maximising chilli quality seems to be to grow chilli plants on the north side of the greenhouse.
+
+# References 
+
+RStudio Team (2025). Rstudio: Integrated Development Environment for R (Version 2025.09.1+401) [Computer software]. Posit Sofware, PBC. http://www.posit.co/
+
+OpenAI. (2025). ChatGPT (Oct 21 version) [Large language model]. https://chat.openai.com/chat
+
+Erni, B., Juritz, J., & Little, F. (2025, September). Design and analysis of experiments [Course notes]. University of Cape Town. https://amathuba.uct.ac.za
 
 
