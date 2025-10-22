@@ -14,11 +14,11 @@ These goals will be tackled through an analysis of variance of this exploratory 
 
 # Design and Randomisation
 
-### Design
+## Design
 
 The experiment takes place over 2 seasons, season 1 and season 2. There are two greenhouses available, greenhouse A and greenhouse B, with 8 north-facing and 8 south-facing plots each. The 32 experimental units were first blocked by the random factors, season and greenhouse, to give four blocks of 16 experimental units each. The treatment factors are side (north, south) and variety (Redhot, Furious), each with two levels which results in a $2^2$ factorial treatment structure with 4 treatments, (n,F), (s,F), (n,R), (s,R).
 
-### Randomisation
+## Randomisation
 
 Four 4x4 latin square designs were set up with the four levels of light (1, 2, 3, 4) as a row block and the four levels of heat (1, 2, 3, 4) as a column block To conduct randomisation, a random latin square permutation of the four treatments with each appearing once in every row and column was found for each season-greenhouse combination using the design.lsd function from the agricolae package. The four treatments were randomly assigned to "a", "b", "c" and "d" for ease of understanding the latin square design layout. 
 
@@ -148,7 +148,7 @@ kable(lsd4, col.names = c("","1", "2", "3", "4"), caption = "LSD for Greenhouse 
 
 ```
 
-### Hypotheses 
+## Hypotheses 
 
 The a-priori hypotheses that are of interest are:
 
@@ -164,7 +164,7 @@ The a-priori hypotheses that are of interest are:
 
 6: Does the main effect of variety have an effect on quality? 
 
-### Justification 
+## Justification 
 The factorial treatment structure with side and variety (each with two levels) crossed to give four treatment combinations allows for the main effects of variety and side to be tested as well as the interaction effect between side and variety. This allows for the effect of variety on quality to be analysed. 
 
 The four latin squares, with light and heat as blocking factors with four levels each allows for analysis of the variation due to light and heat in a balanced design as there are four treatments that correspond to the four experimental units in each row or column with each treatment only appearing once in each column and row. This is also an efficient use of resources as 4 replicates of side and variety combinations are available per latin square. The latin structure also allows for the effects of light and heat on quality to be analysed thoroughly and easily. 
@@ -183,6 +183,7 @@ set.seed(27)
 mydesign2 <- read.csv("design2.csv")
 mydesign2$light <- as.factor(mydesign2$light)
 mydesign2$heat <- as.factor(mydesign2$heat)
+mydesign2$season <- as.factor(mydesign$season)
 #mydesign2
 mydata2 <- get.observations(mydesign2)
 mydata2
@@ -221,22 +222,22 @@ $$
 $$
 
 ```{r, fitting model, anova table, echo = FALSE}
-library(kableExtra)
 
 model <- lm (obs ~ season + greenhouse + variety*side + light*heat*variety, data=mydata2)
 kable(model$coefficients, caption = "Estimates table")
-model <- lm(obs ~ season + greenhouse + variety*side + light*heat*variety, data=mydata2)
-#model
+
 kable(anova(model), caption = "ANOVA table")
 
 ```
 
 
-
-### Interaction Plots 
-
-=======
 ### Exploratory Data Analysis 
+```{r histogram, fig.cap = "Histogram of quality score, echo = FALSE}
+hist(mydata2$obs, xlab = "Quality score", freq = FALSE, main = "")
+
+```
+
+The histogram of quality score suggests slightly left-skewed data. 
 #### Interaction Plots
 
 ```{r interaction plot 1, fig.cap = "Interaction plot of light and heat", echo = FALSE}
@@ -284,6 +285,37 @@ with(na.omit(mydata2), ggplot(data = mydata2, aes(x = variety, y = obs))) +
 
 ```
 
+
+```{r boxplot 1, fig.cap = "Boxplot of season", echo = FALSE}
+with(na.omit(mydata2), ggplot(data = mydata2, aes(x = season, y = obs))) + 
+  geom_boxplot(fill = "lightblue3") + 
+  scale_x_discrete(limits = c("1", "2")) +
+  labs(x = "season", y = "quality score")
+
+```
+
+```{r boxplot 1, fig.cap = "Boxplot of greenhouse", echo = FALSE}
+with(na.omit(mydata2), ggplot(data = mydata2, aes(x = greenhouse, y = obs))) + 
+  geom_boxplot(fill = "darkgreen") + 
+  scale_x_discrete(limits = c("A", "B")) +
+  labs(x = "greenhouse", y = "quality score")
+
+```
+
+```{r boxplot 1, fig.cap = "Boxplot of side", echo = FALSE}
+with(na.omit(mydata2), ggplot(data = mydata2, aes(x = side, y = obs))) + 
+  geom_boxplot(fill = "red4") + 
+  scale_x_discrete(limits = c("n", "s")) +
+  labs(x = "side", y = "quality score")
+
+```
+
+```{r residuals plot 1, fig.cap = "Q-Q plot of residuals", echo = FALSE}
+# 2. Normal Q-Q Plot
+qqnorm(residuals(model), main = "", pch = 16,
+       col = rgb(0.2, 0.2, 0.8, 0.6))
+qqline(residuals(model), col = "red4", lwd = 2)
+```
 
 ## Results
 
