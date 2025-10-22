@@ -232,7 +232,7 @@ kable(anova(model), caption = "ANOVA table")
 
 
 ### Exploratory Data Analysis 
-```{r histogram, fig.cap = "Histogram of quality score, echo = FALSE}
+```{r histogram, fig.cap = "Histogram of quality score", echo = FALSE}
 hist(mydata2$obs, xlab = "Quality score", freq = FALSE, main = "")
 
 ```
