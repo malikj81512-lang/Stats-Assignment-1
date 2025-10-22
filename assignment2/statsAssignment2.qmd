@@ -3,8 +3,13 @@ title: "ED Assignment"
 format: pdf
 editor: visual
 author: Malik Jamie (JMXMAL003) and Amara Patel (PTLAMA005)
-date: 2025.10.21
+date: 2025.10.22
 ---
+
+# Plagiarism Statement 
+I, Malik Jamie, declare that I have not plagiarised in this assignment.
+
+I, Amara Patel, declare that I have not plagiarised in this assignment. 
 
 # Introduction
 
@@ -498,9 +503,282 @@ OpenAI. (2025). ChatGPT (Oct 21 version) [Large language model]. https://chat.op
 Erni, B., Juritz, J., & Little, F. (2025, September). Design and analysis of experiments [Course notes]. University of Cape Town. https://amathuba.uct.ac.za
 
 # Design and Data
-```{r design and data}
+```{r design and data, echo = FALSE}
 kable(mydesign2, caption = "Design")
 kable(mydata2, caption = "Data")
 ```
 
 # R Code
+```{r All the code, eval = FALSE}
+
+suppressPackageStartupMessages({
+library(dplyr, quietly = TRUE)
+library(knitr)
+library(tibble)
+library(agricolae)
+library(tidyr)
+library(EDproject)
+library(ggplot2)
+library(tinytex)
+library(emmeans)}
+)
+
+set.seed(15)
+
+# treatments 
+treatments2 <- c("n,R", "s,F", "n,F", "s,R")
+
+# create design 
+
+mydesign2 <- expand.grid(season = 1:2, greenhouse = c("A", "B") ) %>%
+  
+  # new lsd for each season-greenhouse block w individual seed
+  mutate(
+    square_id = 1:n(),
+    latin_seed = 15 + square_id
+  ) %>%
+  rowwise() %>% 
+  mutate(
+    latin_square = list(
+      design.lsd(treatments2, serie = 0, seed = latin_seed)$book)
+  ) %>%
+  ungroup() %>% 
+  
+  # getting latin square into separate elements to 
+  #be able to put it into the data frame 
+  tidyr::unnest(latin_square) %>%
+  rename(
+    row = row,
+    column = col,
+    treatment = treatments2
+  ) %>%
+  
+  # splitting the treatments into individual factors applied 
+  #to put into design
+  separate(treatment, into = c("side", "variety"), sep = ",") %>%
+mutate(
+    light = row,    # rows correspond to light levels (1-4)
+    heat = column   # columns correspond to heat levels (1-4)
+  ) %>%
+  
+# adding plot numbers (1-32 for season 1, 2)
+  group_by(season) %>%
+  mutate(plot = 1:n()) %>%
+  ungroup() %>%
+  select(plot, season, greenhouse, side, variety, light, heat) %>%
+  arrange(season, plot) 
+
+write.csv(mydesign2, file = "design2.csv", row.names = FALSE)
+
+# randomising
+
+set.seed(2)
+treatment_mapping <- data.frame(
+  side = c("n", "s", "n", "s"),
+  variety = c("R", "F", "F", "R")
+) %>%
+  mutate(
+    treatment = paste0(side, variety),
+    code = sample(c("a", "b", "c", "d"))   # Random assignment 
+  ) %>% 
+  arrange(code)
+
+# Create the complete data frame with codes
+design_with_codes <- mydesign2 %>%
+  # First, handle duplicates by taking the first occurrence
+  group_by(season, greenhouse, light, heat) %>%
+  slice(1) %>%
+  ungroup() %>%
+  # Add the treatment code
+  mutate(treatment = paste0(side, variety)) %>%
+  left_join(treatment_mapping %>% select(treatment, code), 
+            by = "treatment") %>%
+  # Select and order the columns
+  select(plot, season, greenhouse, side, variety, 
+         treatment, code, light, heat) %>%
+  arrange(season, greenhouse, heat)
+
+# making the latin square layouts
+key <- tibble(treatment = treatment_mapping$treatment,
+              code = treatment_mapping$code)
+kable(key, caption = "Randomly assigned treatment codes")
+lsd1 <- tibble(light_lvl = c(1, 2, 3, 4),
+               design_with_codes$code[1:4],
+               design_with_codes$code[5:8],
+               design_with_codes$code[9:12],
+               design_with_codes$code[13:16]
+)
+kable(lsd1, col.names = c("","1", "2", "3", "4"), 
+      caption = "LSD for Greenhouse A, Season 1")
+
+lsd2 <- tibble(light_lvl = c(1, 2, 3, 4),
+               design_with_codes$code[17:20],
+               design_with_codes$code[21:24],
+               design_with_codes$code[25:28],
+               design_with_codes$code[29:32]
+)
+kable(lsd2, col.names = c("","1", "2", "3", "4"), 
+      caption = "LSD for Greenhouse B, Season 1")
+
+lsd3 <- tibble(light_lvl = c(1, 2, 3, 4),
+               design_with_codes$code[33:36],
+               design_with_codes$code[37:40],
+               design_with_codes$code[41:44],
+               design_with_codes$code[45:48]
+)
+kable(lsd3, col.names = c("","1", "2", "3", "4"), 
+      caption = "LSD for Greenhouse A, Season 2")
+
+lsd4 <- tibble(light_lvl = c(1, 2, 3, 4),
+               design_with_codes$code[49:52],
+               design_with_codes$code[53:56],
+               design_with_codes$code[57:60],
+               design_with_codes$code[61:64]
+)
+kable(lsd4, 
+      col.names = c("","1", "2", "3", "4"), 
+      caption = "LSD for Greenhouse B, Season 2")
+
+
+
+# simulating observations
+## setting light and heat to be factors 
+mydesign2 <- read.csv("design2.csv")
+mydesign2$light <- as.factor(mydesign2$light)
+mydesign2$heat <- as.factor(mydesign2$heat)
+mydesign2$season <- as.factor(mydesign2$season)
+
+## getting observations 
+set.seed(27)  
+mydata2 <- get.observations(mydesign2)
+
+# fit model 
+model <- lm (obs ~ season + greenhouse + variety*side + light*heat*variety, 
+             data=mydata2)
+
+# histogram of quality 
+hist(mydata2$obs, xlab = "Quality score", freq = FALSE, main = "")
+
+# interaction plots 
+with(na.omit(mydata2), interaction.plot(light, heat, obs))
+with(na.omit(mydata2), interaction.plot(light, variety, obs))
+with(na.omit(mydata2), interaction.plot(heat, variety, obs))
+with(na.omit(mydata2), interaction.plot(variety, side, obs))
+
+
+# boxplots
+with(na.omit(mydata2), ggplot(data = mydata2, aes(x = light, y = obs))) + 
+  geom_boxplot(fill = "turquoise") + 
+  scale_x_discrete(limits = c("1", "2", "3", "4")) +
+  labs(x = "light", y = "quality score")
+
+with(na.omit(mydata2), ggplot(data = mydata2, aes(x = heat, y = obs))) + 
+  geom_boxplot(fill = "purple3") + 
+  scale_x_discrete(limits = c("1", "2", "3", "4")) +
+  labs(x = "heat", y = "quality score")
+
+with(na.omit(mydata2), ggplot(data = mydata2, aes(x = variety, y = obs))) + 
+  geom_boxplot(fill = "pink2") + 
+  #scale_x_discrete(limits = c("F", "R")) +
+  labs(x = "variety", y = "quality score")
+
+with(na.omit(mydata2), ggplot(data = mydata2, aes(x = as.factor(season),
+                                                  y = obs))) + 
+  geom_boxplot(fill = "lightblue3") + 
+  scale_x_discrete(limits = c("1", "2")) +
+  labs(x = "season", y = "quality score")
+
+with(na.omit(mydata2), ggplot(data = mydata2, aes(x = greenhouse, y = obs))) + 
+  geom_boxplot(fill = "darkgreen") + 
+  scale_x_discrete(limits = c("A", "B")) +
+  labs(x = "greenhouse", y = "quality score")
+
+
+with(na.omit(mydata2), ggplot(data = mydata2, aes(x = side, y = obs))) + 
+  geom_boxplot(fill = "red4") + 
+  scale_x_discrete(limits = c("n", "s")) +
+  labs(x = "side", y = "quality score")
+
+# anova table
+
+kable(anova(model), caption = "ANOVA table")
+
+# hypotheses
+# question 1
+
+confints <- rbind(confint(model, parm = "light2") |> signif(4),
+                  confint(model, parm = "light3") |> signif(5), 
+                  confint(model, parm = "light4") |> signif(4))
+
+q2 <- tibble(light_level = c("Level 2", "Level 3", "Level 4"),
+    Estimate = model$coefficients[6:8] |> signif(4),
+   Lower_bound = confints[,1],
+  Upper_bound = confints[,2],
+)
+kable(q2, 
+      caption = "95% Confidence Intervals of main effect of light levels in relation to light level 1", 
+      col.names = c("Light", "Estimate", "Lower bound", "Upper bound"))
+
+# question 2
+confints <- rbind(confint(model, parm = "heat2") |> signif(4),
+                  confint(model, parm = "heat3") |> signif(5), 
+                  confint(model, parm = "heat4") |> signif(4))
+
+q2 <- tibble(Heat_level = c("Level 2", "Level 3", "Level 4"),
+    Estimate = model$coefficients[9:11] |> signif(4),
+   Lower_bound = confints[,1],
+  Upper_bound = confints[,2],
+)
+kable(q2, 
+      caption = "95% Confidence Intervals of main effect of heat levels in relation to heat level 1", 
+      col.names = c("Heat", "Estimate", "Lower bound", "Upper bound"))
+
+# question 4
+
+suppressMessages({emm_l <- emmeans(model, ~ variety*light,
+                                   weights = "proportional")})
+
+emm_l_summary <- as.data.frame(emm_l)
+emm_l_output <- tibble(Light = emm_l_summary$light,
+                      Variety = emm_l_summary$variety,
+                      emmean = emm_l_summary$emmean |> signif(5))
+
+kable(emm_l_output)
+
+contrast1 <- as.data.frame(contrast(
+  emm_l, 
+  list(avg_R_minus_avg_F = c(rep(1/4, 4), rep(-1/4, 4)) ), by = NULL))
+
+contrast1_output <- tibble(Estimate = contrast1$estimate,
+                           SE = contrast1$SE,
+                           df = contrast1$df,
+                           t.value = contrast1$t.ratio,
+                           p.value = contrast1$p.value) |> signif(4)
+kable(contrast1_output, 
+      col.names = c("Estimate", "SE", "Degrees of Freedom", "t statistic", "p-value"), 
+      caption = "Result of t-test for contrast $L_1$")
+
+# question 5
+
+suppressMessages({emm_h <- emmeans(model, ~ variety*heat, weights = "proportional")})
+emm_h_summary <- as.data.frame(emm_h)
+emm_h_output <- tibble(Heat = emm_h_summary$heat,
+                       Variety = emm_h_summary$variety, 
+                       emmean = emm_h_summary$emmean |> signif(5))
+
+kable(emm_h_output, caption = "Estimated marginal means for heat and variety combinations")
+
+contrast2 <- as.data.frame(contrast(emm_h,
+                                    list(avg_R_minus_avg_F = c(rep(1/4, 4), rep(-1/4, 4))),
+                                    by = NULL))
+
+contrast2_output <- tibble(Estimate = contrast2$estimate,
+                           SE = contrast2$SE, 
+                           df = contrast2$df,
+                           t.value = contrast2$t.ratio,
+                           p.value = contrast2$p.value |> signif(4))
+
+kable(contrast2_output, 
+      col.names = c("Estimate", "SE", "Degrees of Freedom", "t statistic", "p-value"), 
+      caption = "Result of t-test for contrast $L_2$")
+```
