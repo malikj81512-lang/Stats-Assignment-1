@@ -202,7 +202,7 @@ $$
 \alpha_i &= \text{effect of Season 2 compared to Season 1, $i = 1,2$}\\
 \beta_j &= \text{effect of Greenhouse B compared to Greenhouse A, $j = A, B}\\
 \gamma_k &= \text{effect of side north compared to south, $k = s, n$}\\
-\delta_l &= \text{effect of variety F compared to R, $l = R, F$}\\
+\delta_l &= \text{effect of variety R compared to F, $l = F, R$}\\
 \epsilon_m &= \text{effect of $i^{th}$ light level compared to $1^{st}$ level, $1 < i \leq 4$}\\
 \theta_n &= \text{effect of $j^{th}$ heat level compared to $1^{st}$ level, $1 < j \leq 4$}
 \end{aligned}
@@ -214,7 +214,7 @@ $$
 \alpha_1 &= 0 & \text{(Season 1 as reference)} \\
 \beta_A &= 0 & \text{(Greenhouse A as reference)} \\
 \gamma_s &= 0 & \text{(Side north as reference)} \\
-\delta_R &= 0 & \text{(Variety Redhot as reference)} \\
+\delta_R &= 0 & \text{(Variety Furious as reference)} \\
 \epsilon_1 &= 0 & \text{(Light level 1 as reference)} \\
 \theta_1 &= 0 & \text{(Heat level 1 as reference)}
 \end{align*}
@@ -222,13 +222,14 @@ $$
 
 ```{r, fitting model, anova table, echo = FALSE}
 
-model <- lm (obs ~ season + greenhouse + variety*side + light*heat*variety, data=mydata2)
+model <- lm(obs ~ season + greenhouse + variety*side + light*heat*variety, data=mydata2)
 #model
 kable(anova(model), caption = "ANOVA table")
 
 ```
 
-### Interaction Plots 
+### Exploratory Data Analysis 
+#### Interaction Plots
 ```{r interaction plot 1, fig.cap = "Interaction plot of light and heat", echo = FALSE}
 with(na.omit(mydata2), interaction.plot(light, heat, obs))
 ```
@@ -244,6 +245,34 @@ with(na.omit(mydata2), interaction.plot(heat, variety, obs))
 ```{r interaction plot 4, fig.cap = "Interaction plot of variety and side", echo = FALSE}
 with(na.omit(mydata2), interaction.plot(variety, side, obs))
 ```
+
+The interaction plot between light and heat suggests that there is minimal interaction between the four levels of each. The interaction plot between variety and side also suggests that there is minimal interaction between side and variety. 
+On the other hand, the interaction plots between light and variety and heat and variety suggest some interaction effect. 
+
+#### Boxplots 
+
+```{r boxplot 1, fig.cap = "Boxplot of light levels", echo = FALSE}
+with(na.omit(mydata2), ggplot(data = mydata2, aes(x = light, y = obs))) + 
+  geom_boxplot(fill = "turquoise") + 
+  scale_x_discrete(limits = c("1", "2", "3", "4")) +
+  labs(x = "light", y = "quality score")
+
+```
+
+```{r boxplot 2, fig.cap = "Boxplot of heat levels", echo = FALSE}
+with(na.omit(mydata2), ggplot(data = mydata2, aes(x = heat, y = obs))) + 
+  geom_boxplot(fill = "purple3") + 
+  scale_x_discrete(limits = c("1", "2", "3", "4")) +
+  labs(x = "heat", y = "quality score")
+
+```
+
+```{r boxplot 1, fig.cap = "Boxplot of variety", echo = FALSE}
+with(na.omit(mydata2), ggplot(data = mydata2, aes(x = variety, y = obs))) + 
+  geom_boxplot(fill = "pink2") + 
+  #scale_x_discrete(limits = c("F", "R")) +
+  labs(x = "variety", y = "quality score")
+
 ```
 
 
