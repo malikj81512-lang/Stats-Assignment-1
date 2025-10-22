@@ -32,7 +32,9 @@ library(agricolae)
 library(tidyr)
 library(EDproject)
 library(ggplot2)
-library(tinytex)})
+library(tinytex)
+library(emmeans)}
+)
 
 # model: essentially, side and variety are treated as treatment factors w 2 levels each, resulting in 4 combinations in a factorial experiment. light and heat are treated as blocking factors within each greenhouse-season block. 4, 4x4 lsds are created with rows corresponding to light levels and columns corresponding to heat levels and the four side-variety treatments are assigned in a standard 4x4 lsd. the model ends up being Y = mu + heat + light + season + greenhouse + side + variety + side*variety + heat*light + variety*heat + variety*light + variety*heat*light + error term. end up with 16 replicates per treatment of side-variety
 
@@ -216,18 +218,14 @@ $$
 \alpha_1 &= 0 & \text{(Season 1 as reference)} \\
 \beta_A &= 0 & \text{(Greenhouse A as reference)} \\
 \gamma_s &= 0 & \text{(Side north as reference)} \\
-\delta_R &= 0 & \text{(Variety Furious as reference)} \\
+\delta_F &= 0 & \text{(Variety Furious as reference)} \\
 \epsilon_1 &= 0 & \text{(Light level 1 as reference)} \\
 \theta_1 &= 0 & \text{(Heat level 1 as reference)}
 \end{aligned}
 $$
 
-```{r, fitting model, anova table, echo = FALSE}
-
+```{r fit model for later, echo = FALSE}
 model <- lm (obs ~ season + greenhouse + variety*side + light*heat*variety, data=mydata2)
-kable(model$coefficients, caption = "Estimates table")
-
-kable(anova(model), caption = "ANOVA table")
 ```
 
 
@@ -238,6 +236,7 @@ hist(mydata2$obs, xlab = "Quality score", freq = FALSE, main = "")
 ```
 
 The histogram of quality score suggests slightly left-skewed data. 
+
 #### Interaction Plots
 
 ```{r interaction plot 1, fig.cap = "Interaction plot of light and heat", echo = FALSE}
@@ -320,9 +319,7 @@ qqline(residuals(model), col = "red4", lwd = 2)
 
 ## Results
 
-```{r, fitting model & anova table, echo = FALSE}
-
-model <- lm (obs ~ season + greenhouse + variety*side + light*heat*variety, data=mydata2)
+```{r anova table, echo = FALSE}
 kable(model$coefficients, caption = "Estimates table")
 kable(anova(model), caption = "ANOVA table")
 
@@ -336,8 +333,6 @@ confint(model, parm = "light2")
 confint(model, parm = "light3")
 confint(model, parm = "light4")
 
-model$coefficients[6:8]
-
 ```
 
 Our analysis provides strong evidence for the main effect of light having an effect on quality (p-val < 0.00001). The mean response with light level 2 was 7.157 higher than with light level 1, with a 95% confidence interval = (3.212, 11.102). The mean response with level 3 was 11.332 higher than with level 1 (7.731, 14.932). The mean response with level 4 was 14.043 higher than with level 1 (10.992, 17.094).
@@ -345,7 +340,7 @@ Visually, the boxplots indicate that light level 4 had the highest mean reponse.
 
 ### Question 2: Does the main effect of heat have an effect on quality?
 
-```{r q2}
+```{r q2, echo = FALSE}
 
 confint(model, parm = "heat2") |> signif(4)
 confint(model, parm = "heat3") |> signif(5)
@@ -367,14 +362,11 @@ Our analysis does not provide evidence for the interaction between light and hea
 Our analysis provides evidence for the interaction effect between variety and light (p-val < 0.005) having an effect on quality. Therefore, we proceeded with a t-test to test the following hypothesis:
 
 $$
-\text{1/4}(\mu_{1R} + \mu_{2R} + \mu_{3R} + \mu_{4R}) = \text{1/4}(\mu_{1F} + \mu_{2F} + \mu_{3F} + \mu_{4F})
-
+\frac{1}{4}(\mu_{1R} + \mu_{2R} + \mu_{3R} + \mu_{4R}) = \frac{1}{4}(\mu_{1F} + \mu_{2F} + \mu_{3F} + \mu_{4F})
 $$
 
 
-```{r q4}
-
-library(emmeans)
+```{r q4, echo = FALSE}
 
 emm_l <- emmeans(model, ~ variety*light)
 emm_l
@@ -389,11 +381,10 @@ Our t-test produces a statistically significant result (p-val < 0.0001). Therefo
 Our analysis provides evidence for the interaction effect between variety and heat (p-val < 0.05) having an effect on quality. Therefore, we proceeded with a t-test to test the following hypothesis:
 
 $$
-\text{1/4}(\mu_{1R} + \mu_{2R} + \mu_{3R} + \mu_{4R}) = \text{1/4}(\mu_{1F} + \mu_{2F} + \mu_{3F} + \mu_{4F})
-
+\frac{1}{4}(\mu_{1R} + \mu_{2R} + \mu_{3R} + \mu_{4R}) = \frac{1}{4}(\mu_{1F} + \mu_{2F} + \mu_{3F} + \mu_{4F})
 $$
 
-```{r q5}
+```{r q5, echo = FALSE}
 
 emm_h <- emmeans(model, ~ variety*heat)
 emm_h
@@ -410,7 +401,7 @@ Visually, the boxplots indicate that mean responses for both varieties were very
 
 ### Further analysis
 
-```{r}
+```{r further analysis, echo = FALSE}
 
 emmeans(model, ~ light)
 
