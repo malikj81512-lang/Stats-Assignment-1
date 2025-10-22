@@ -184,7 +184,7 @@ set.seed(27)
 mydesign2 <- read.csv("design2.csv")
 mydesign2$light <- as.factor(mydesign2$light)
 mydesign2$heat <- as.factor(mydesign2$heat)
-mydesign2$season <- as.factor(mydesign$season)
+mydesign2$season <- as.factor(mydesign2$season)
 #mydesign2
 mydata2 <- get.observations(mydesign2)
 mydata2
@@ -200,9 +200,9 @@ $$
 
 $$
 \begin{aligned}
-\Y_{ijklmn} &= \text{quality score for observation ijklmn}\\
+Y_{ijklmn} &= \text{quality score for observation ijklmn}\\
 \alpha_i &= \text{effect of Season 2 compared to Season 1, $i = 1,2$}\\
-\beta_j &= \text{effect of Greenhouse B compared to Greenhouse A, $j = A, B}\\
+\beta_j &= \text{effect of Greenhouse B compared to Greenhouse A, $j = A, B$}\\
 \gamma_k &= \text{effect of side north compared to south, $k = s, n$}\\
 \delta_l &= \text{effect of variety R compared to F, $l = F, R$}\\
 \epsilon_m &= \text{effect of $i^{th}$ light level compared to $1^{st}$ level, $1 < i \leq 4$}\\
@@ -212,14 +212,14 @@ $$
 
 An anova table was constructed based on this model with corner-point constraints for each variable as such: 
 $$
-\begin{align*}
+\begin{aligned}
 \alpha_1 &= 0 & \text{(Season 1 as reference)} \\
 \beta_A &= 0 & \text{(Greenhouse A as reference)} \\
 \gamma_s &= 0 & \text{(Side north as reference)} \\
 \delta_R &= 0 & \text{(Variety Furious as reference)} \\
 \epsilon_1 &= 0 & \text{(Light level 1 as reference)} \\
 \theta_1 &= 0 & \text{(Heat level 1 as reference)}
-\end{align*}
+\end{aligned}
 $$
 
 ```{r, fitting model, anova table, echo = FALSE}
@@ -278,7 +278,7 @@ with(na.omit(mydata2), ggplot(data = mydata2, aes(x = heat, y = obs))) +
 
 ```
 
-```{r boxplot 1, fig.cap = "Boxplot of variety", echo = FALSE}
+```{r boxplot 3, fig.cap = "Boxplot of variety", echo = FALSE}
 with(na.omit(mydata2), ggplot(data = mydata2, aes(x = variety, y = obs))) + 
   geom_boxplot(fill = "pink2") + 
   #scale_x_discrete(limits = c("F", "R")) +
@@ -287,7 +287,7 @@ with(na.omit(mydata2), ggplot(data = mydata2, aes(x = variety, y = obs))) +
 ```
 
 
-```{r boxplot 1, fig.cap = "Boxplot of season", echo = FALSE}
+```{r boxplot 4, fig.cap = "Boxplot of season", echo = FALSE}
 with(na.omit(mydata2), ggplot(data = mydata2, aes(x = season, y = obs))) + 
   geom_boxplot(fill = "lightblue3") + 
   scale_x_discrete(limits = c("1", "2")) +
@@ -295,7 +295,7 @@ with(na.omit(mydata2), ggplot(data = mydata2, aes(x = season, y = obs))) +
 
 ```
 
-```{r boxplot 1, fig.cap = "Boxplot of greenhouse", echo = FALSE}
+```{r boxplot 5, fig.cap = "Boxplot of greenhouse", echo = FALSE}
 with(na.omit(mydata2), ggplot(data = mydata2, aes(x = greenhouse, y = obs))) + 
   geom_boxplot(fill = "darkgreen") + 
   scale_x_discrete(limits = c("A", "B")) +
@@ -303,7 +303,7 @@ with(na.omit(mydata2), ggplot(data = mydata2, aes(x = greenhouse, y = obs))) +
 
 ```
 
-```{r boxplot 1, fig.cap = "Boxplot of side", echo = FALSE}
+```{r boxplot 6, fig.cap = "Boxplot of side", echo = FALSE}
 with(na.omit(mydata2), ggplot(data = mydata2, aes(x = side, y = obs))) + 
   geom_boxplot(fill = "red4") + 
   scale_x_discrete(limits = c("n", "s")) +
@@ -320,7 +320,7 @@ qqline(residuals(model), col = "red4", lwd = 2)
 
 ## Results
 
-```{r, fitting model, anova table, echo = FALSE}
+```{r, fitting model & anova table, echo = FALSE}
 
 model <- lm (obs ~ season + greenhouse + variety*side + light*heat*variety, data=mydata2)
 kable(model$coefficients, caption = "Estimates table")
