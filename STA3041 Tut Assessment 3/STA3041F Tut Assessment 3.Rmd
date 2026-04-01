@@ -1,0 +1,104 @@
+---
+title: "STA3041F 2026 Tutorial Assessment 3"
+author: "Amara Patel (PTLAMA005) and Malik Jamie (JMXMAL003)"
+date: '2026-03-27'
+output: pdf_document
+header-includes:
+  - \usepackage{pdfpages}
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+```{r, fig.align='center',fig.width=5,fig.height=5, echo=FALSE, fig.cap='Figure caption here.'}
+rm(list = ls())
+dat = read.table("BatRun Data 2.txt", h = TRUE)
+# head(dat) check the data if you like. 
+
+# Plot the count trajectory and place tick marks for the arrivals:
+
+```
+
+## Question 2
+\begin{equation*}
+\begin{aligned}
+\mbox{mvf}(v;\boldsymbol\beta) &= \int \lambda(u;\boldsymbol\beta)du\\
+ &=\\
+ &=\\
+ &=\\
+ &=\\ 
+ &=K(\beta_2)\times\Phi\bigg(v;?,?\bigg)\\
+\end{aligned}
+\end{equation*}
+
+## Question 3
+
+```{r}
+
+
+mvf_1    = function(v,pars)
+{
+		beta = pars
+	  return()
+}
+min_likelihood_1 = function(pars)
+{
+	  beta  = pars
+	  value =  
+	  return(-value)
+}
+
+mvf_2    = function(v,pars)
+{
+	  beta  = 
+	  K     = 
+	  return()
+}
+
+min_likelihood_2 = function(pars)
+{
+	  beta  = 
+	  value =  
+	  return(-value)
+}
+
+```
+
+## Question 4
+
+```{r}
+res_opt_1 = nlm()
+res_opt_2 = nlm()
+M1  = c()#beta hat here, #AIC here
+M2  = c()#beta hat here, #AIC here
+tab = cbind(M1,M2)
+rownames(tab) = c('beta[1]','beta[2]','AIC')
+colnames(tab) = c('Model 1','Model 2')
+tab
+```
+
+## Question 5
+```{r fig.align='center',fig.width=5,fig.height=5}
+
+tt = 
+E1 = 
+E2 = 
+
+```
+
+
+
+## Question 6
+
+```{r}
+forecast = 
+forecast
+```
+\newpage
+\includepdf[pages=1]{Department of Statistical Sciences - Plagiarism Declaration.pdf}
+
+
