@@ -23,9 +23,6 @@ dat = read.table("BatRun Data 2.txt", h = TRUE)
 plot(dat$Pos~dat$Sn, type='s', xlab = "Time in minutes from 03:30 hour mark", ylab = "Count", main = "Count Trajectory of BATRUN Race")
 rug(dat$Sn, side=1, col="pink")
 
-# the tick marks aren't working even though i used his hint so help pls
-#points(rep(0,length(dat$Sn))~dat$Sn, pch = "|", col = "pink")
-#segments(dat$Sn, 0, dat$Sn, 0.5, col= "pink", lwd = 3)
 ```
 
 ## Question 2
@@ -98,6 +95,8 @@ min_likelihood_2 = function(pars)
 #tt = 
 #E1 = 
 #E2 = 
+
+plot(dat$Pos~dat$Sn, type='s', xlab = "Time in minutes from 03:30 hour mark", ylab = "Count", main = "Count Trajectory of BATRUN Race")
 
 ```
 
