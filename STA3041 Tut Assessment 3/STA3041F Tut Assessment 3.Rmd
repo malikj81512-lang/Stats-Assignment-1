@@ -14,7 +14,7 @@ library(stats)
 
 ## Question 1
 
-```{r q1, fig.align='center',fig.width=5,fig.height=5, echo=FALSE, fig.cap='Figure caption here.'}
+```{r q1, fig.align='center',fig.width=5,fig.height=5, fig.cap='Figure caption here.'}
 rm(list = ls())
 dat = read.table("BatRun Data 2.txt", h = TRUE)
 
@@ -31,8 +31,9 @@ points(rep(0,length(dat$Sn))~dat$Sn, pch = "|", col = "pink")
 \begin{equation*}
 \begin{aligned}
 \mbox{mvf}(v;\boldsymbol\beta) &= \int \lambda(u;\boldsymbol\beta)du\\
- &=\\
- &=\\
+ &= \int_0^t \exp\left(-\beta_1^2\beta_2 + 2\beta_1\beta_2u - \beta_2u^2 \right)du\\
+ &=\int_0^t \exp\left(-\beta_2 (u - \beta_1)^2 \right) du \\
+ &\text{let s} = \sqrt{2\beta_2}(u-\beta_1) \text{ then:}\\
  &=\\
  &=\\ 
  &=K(\beta_2)\times\Phi\bigg(v;?,?\bigg)\\
