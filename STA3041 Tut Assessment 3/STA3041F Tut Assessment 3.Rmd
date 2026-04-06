@@ -36,7 +36,7 @@ rug(dat$Sn, side=1, col="pink")
  &= \int_{\sqrt{2\beta_2}(-\beta_1)}^{\sqrt{2\beta_2}(v-\beta_1)} \exp\left( -\frac{s^2}{2} \right) \frac{1}{\sqrt{2\beta_2}} ds \\
  &= \sqrt{\frac{\pi}{\beta_2}} \int_{\sqrt{2\beta_2}(-\beta_1)}^{\sqrt{2\beta_2}(v-\beta_1)} \frac{1}{\sqrt{2\pi}} \exp\left( -\frac{s^2}{2} \right) ds \\
  &= \sqrt{\frac{\pi}{\beta_2}} \left[ \Phi\Big(\sqrt{2\beta_2}(v-\beta_1)\Big) - \Phi\Big(\sqrt{2\beta_2}(-\beta_1)\Big) \right] \\
- &= K(\beta_2) \times \Phi\left(v; \beta_1, \frac{1}{\sqrt{2\beta_2}}\right) 
+&= K(\beta_2) \times \Phi\left(u; \beta_1, \frac{1}{\sqrt{2\beta_2}}\right) \text{ where } K(\beta_2) = \sqrt{\frac{\pi}{\beta_2}}
 \end{aligned}
 \end{equation*}
 
@@ -86,7 +86,7 @@ min_likelihood_2 = function(pars)
 ## Question 4
 
 ```{r q4}
-#res_opt_1 = nlm()
+#res_opt_1 = nlm(min_likelihood_1, rep(0,50))
 #res_opt_2 = nlm()
 #M1  = c()#beta hat here, #AIC here
 #M2  = c()#beta hat here, #AIC here
