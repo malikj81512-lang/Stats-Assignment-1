@@ -18,11 +18,13 @@ library(stats)
 rm(list = ls())
 dat = read.table("BatRun Data 2.txt", h = TRUE)
 
+#dat$Sn
 # Plot the count trajectory and place tick marks for the arrivals
-plot(dat$Sn~dat$Pos, type='s', xlab = "Time in minutes from 03:30 hour mark", ylab = "Count", main = "Count Trajectory of BATRUN Race")
+plot(dat$Pos~dat$Sn, type='s', xlab = "Time in minutes from 03:30 hour mark", ylab = "Count", main = "Count Trajectory of BATRUN Race")
+rug(dat$Sn, side=1, col="pink")
 
 # the tick marks aren't working even though i used his hint so help pls
-points(rep(0,length(dat$Sn))~dat$Sn, pch = "|", col = "pink")
+#points(rep(0,length(dat$Sn))~dat$Sn, pch = "|", col = "pink")
 #segments(dat$Sn, 0, dat$Sn, 0.5, col= "pink", lwd = 3)
 ```
 
@@ -102,4 +104,3 @@ min_likelihood_2 = function(pars)
 #forecast = 
 #forecast
 ```
-
