@@ -32,13 +32,11 @@ rug(dat$Sn, side=1, col="pink")
 
 \begin{equation*}
 \begin{aligned}
-\mbox{mvf}(v;\boldsymbol\beta) &= \int \lambda(u;\boldsymbol\beta)du\\
- &= \int_0^t \exp\left(-\beta_1^2\beta_2 + 2\beta_1\beta_2u - \beta_2u^2 \right)du\\
- &=\int_0^t \exp\left(-\beta_2 (u - \beta_1)^2 \right) du \\
- &\text{let s} = \sqrt{2\beta_2}(u-\beta_1) \text{ then:}\\
- &=\\
- &=\\ 
- &=K(\beta_2)\times\Phi\bigg(v;?,?\bigg)\\
+\mbox{mvf}(v;\boldsymbol\beta) &= \int_0^v \lambda(u;\boldsymbol\beta)du\\
+ &= \int_0^v \exp\left(-\beta_1^2\beta_2 + 2\beta_1\beta_2u - \beta_2u^2 \right)du\\
+ &=\int_0^v \exp\left(-\beta_2 (u - \beta_1)^2 \right) du \\
+ &\text{let } s = \sqrt{2\beta_2}(u-\beta_1), \text{ then } du = \frac{1}{\sqrt{2\beta_2}} ds \\
+&= \frac{1}{\sqrt{2\beta_2}} \int_{\sqrt{2\beta_2}(0-\beta_1)}^{\sqrt{2\beta_2}(v-\beta_1)} \exp\left( -\frac{s^2}{2} \right) ds \\
 \end{aligned}
 \end{equation*}
 
@@ -50,9 +48,10 @@ rug(dat$Sn, side=1, col="pink")
 mvf_1    = function(v,pars)
 {
 		beta = pars
-		mvf <- ((1/(beta[2])) * exp(beta[1])) * (exp(beta[2]*t) - 1)
+		mvf = ((1/(beta[2])) * exp(beta[1])) * (exp(beta[2]*t) - 1)
 	  return(mvf)
 }
+
 min_likelihood_1 = function(pars)
 {
 	  beta  = pars
