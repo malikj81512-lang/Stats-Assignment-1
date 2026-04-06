@@ -36,7 +36,10 @@ rug(dat$Sn, side=1, col="pink")
  &= \int_0^v \exp\left(-\beta_1^2\beta_2 + 2\beta_1\beta_2u - \beta_2u^2 \right)du\\
  &=\int_0^v \exp\left(-\beta_2 (u - \beta_1)^2 \right) du \\
  &\text{let } s = \sqrt{2\beta_2}(u-\beta_1), \text{ then } du = \frac{1}{\sqrt{2\beta_2}} ds \\
-&= \frac{1}{\sqrt{2\beta_2}} \int_{\sqrt{2\beta_2}(0-\beta_1)}^{\sqrt{2\beta_2}(v-\beta_1)} \exp\left( -\frac{s^2}{2} \right) ds \\
+ &= \int_{\sqrt{2\beta_2}(-\beta_1)}^{\sqrt{2\beta_2}(v-\beta_1)} \exp\left( -\frac{s^2}{2} \right) \frac{1}{\sqrt{2\beta_2}} ds \\
+ &= \sqrt{\frac{\pi}{\beta_2}} \int_{\sqrt{2\beta_2}(-\beta_1)}^{\sqrt{2\beta_2}(v-\beta_1)} \frac{1}{\sqrt{2\pi}} \exp\left( -\frac{s^2}{2} \right) ds \\
+ &= \sqrt{\frac{\pi}{\beta_2}} \left[ \Phi\Big(\sqrt{2\beta_2}(v-\beta_1)\Big) - \Phi\Big(\sqrt{2\beta_2}(-\beta_1)\Big) \right] \\
+ &= K(\beta_2) \times \Phi\left(v; \beta_1, \frac{1}{\sqrt{2\beta_2}}\right) 
 \end{aligned}
 \end{equation*}
 
@@ -48,7 +51,7 @@ rug(dat$Sn, side=1, col="pink")
 mvf_1    = function(v,pars)
 {
 		beta = pars
-		mvf <- ((1/(beta[2])) * exp(beta[1])) * (exp(beta[2]*v) - 1)
+		mvf = ((1/(beta[2])) * exp(beta[1])) * (exp(beta[2]*t) - 1)
 	  return(mvf)
 }
 
