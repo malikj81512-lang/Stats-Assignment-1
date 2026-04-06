@@ -55,15 +55,23 @@ mvf_1    = function(v,pars)
 min_likelihood_1 = function(pars)
 {
 	  beta  = pars
-	  value =  
+	  s <- dat$Sn
+	  intensity = exp(beta[1]+beta[2]*s)
+	  value =  sum(ln(intensity)) - mvf_1(max(s), beta)
 	  return(-value)
 }
 
 mvf_2    = function(v,pars)
 {
-	  beta  = 
-	  K     = 
-	  return()
+    rho = pars
+	  beta = c(exp(rho[1]), exp(rho[2]))
+	  K     =  sqrt(pi/beta[2])
+# limits 
+	  upper = (v-beta[1]) * sqrt(2*beta[2])
+	  lower = -beta[1] * sqrt(2*beta[2])
+	  mvf = K * (pnorm(upper) - pnorm(lower))
+	  
+	  return(mvf)
 }
 
 min_likelihood_2 = function(pars)
