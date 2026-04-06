@@ -7,23 +7,27 @@ header-includes:
   - \usepackage{pdfpages}
 ---
 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(stats)
 ```
 
 ## Question 1
 
-```{r, fig.align='center',fig.width=5,fig.height=5, echo=FALSE, fig.cap='Figure caption here.'}
+```{r q1, fig.align='center',fig.width=5,fig.height=5, echo=FALSE, fig.cap='Figure caption here.'}
 rm(list = ls())
 dat = read.table("BatRun Data 2.txt", h = TRUE)
-# head(dat) check the data if you like. 
 
-# Plot the count trajectory and place tick marks for the arrivals:
+# Plot the count trajectory and place tick marks for the arrivals
+plot(dat$Sn~dat$Pos, type='s', xlab = "Time in minutes from 03:30 hour mark", ylab = "Count", main = "Count Trajectory of BATRUN Race")
 
+# the tick marks aren't working even though i used his hint so help pls
+points(rep(0,length(dat$Sn))~dat$Sn, pch = "|", col = "pink")
+#segments(dat$Sn, 0, dat$Sn, 0.5, col= "pink", lwd = 3)
 ```
 
 ## Question 2
+
 \begin{equation*}
 \begin{aligned}
 \mbox{mvf}(v;\boldsymbol\beta) &= \int \lambda(u;\boldsymbol\beta)du\\
@@ -37,13 +41,14 @@ dat = read.table("BatRun Data 2.txt", h = TRUE)
 
 ## Question 3
 
-```{r}
+```{r q3}
 
-
+# fixed n mode (ie n=50, not looking at a fixed window)
 mvf_1    = function(v,pars)
 {
 		beta = pars
-	  return()
+		mvf <- ((1/(beta[2])) * exp(beta[1])) * (exp(beta[2]*t) - 1)
+	  return(mvf)
 }
 min_likelihood_1 = function(pars)
 {
@@ -70,35 +75,31 @@ min_likelihood_2 = function(pars)
 
 ## Question 4
 
-```{r}
-res_opt_1 = nlm()
-res_opt_2 = nlm()
-M1  = c()#beta hat here, #AIC here
-M2  = c()#beta hat here, #AIC here
-tab = cbind(M1,M2)
-rownames(tab) = c('beta[1]','beta[2]','AIC')
-colnames(tab) = c('Model 1','Model 2')
-tab
+```{r q4}
+#res_opt_1 = nlm()
+#res_opt_2 = nlm()
+#M1  = c()#beta hat here, #AIC here
+#M2  = c()#beta hat here, #AIC here
+#tab = cbind(M1,M2)
+#rownames(tab) = c('beta[1]','beta[2]','AIC')
+#colnames(tab) = c('Model 1','Model 2')
+#tab
 ```
 
 ## Question 5
-```{r fig.align='center',fig.width=5,fig.height=5}
 
-tt = 
-E1 = 
-E2 = 
+```{r q5, fig.align='center',fig.width=5,fig.height=5}
+
+#tt = 
+#E1 = 
+#E2 = 
 
 ```
-
-
 
 ## Question 6
 
-```{r}
-forecast = 
-forecast
+```{r q6}
+#forecast = 
+#forecast
 ```
-\newpage
-\includepdf[pages=1]{Department of Statistical Sciences - Plagiarism Declaration.pdf}
-
 
