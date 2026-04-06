@@ -80,7 +80,7 @@ min_likelihood_2 = function(pars)
 	 s <- dat$Sn
   beta  = c(exp(rho[1]), exp(rho[2]))
   intensity = exp(-beta[1]^2*beta[2] +2*beta[1]*s -beta[2]*s^2)
-	  value =  sum(log(intensity)) - mvf_2(max(s),)
+	  value =  sum(log(intensity)) - mvf_2(max(s), pars)
 	  return(-value)
 }
 
