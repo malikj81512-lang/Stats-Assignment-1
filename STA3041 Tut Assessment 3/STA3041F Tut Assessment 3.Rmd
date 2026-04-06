@@ -48,7 +48,7 @@ points(rep(0,length(dat$Sn))~dat$Sn, pch = "|", col = "pink")
 mvf_1    = function(v,pars)
 {
 		beta = pars
-		mvf <- ((1/(beta[2])) * exp(beta[1])) * (exp(beta[2]*t) - 1)
+		mvf <- ((1/(beta[2])) * exp(beta[1])) * (exp(beta[2]*v) - 1)
 	  return(mvf)
 }
 min_likelihood_1 = function(pars)
