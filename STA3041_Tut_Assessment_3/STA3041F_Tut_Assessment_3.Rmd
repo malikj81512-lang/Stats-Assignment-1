@@ -74,6 +74,7 @@ mvf_2    = function(v,pars)
 
 min_likelihood_2 = function(pars)
 {
+
   beta = pars
 	s <- dat$Sn
   log_intensity = -(beta[1]^2*beta[2]) + (2*beta[1]*beta[2]*s) -(beta[2]*s^2)
