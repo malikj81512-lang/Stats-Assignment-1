@@ -1,0 +1,144 @@
+---
+title: "STA3041F 2026 Tutorial Assessment 3"
+author: "Amara Patel (PTLAMA005) and Malik Jamie (JMXMAL003)"
+date: '2026-03-27'
+output: pdf_document
+header-includes:
+  - \usepackage{pdfpages}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(stats)
+```
+
+## Question 1
+
+```{r q1, fig.align='center',fig.width=5,fig.height=5, fig.cap='Figure caption here.'}
+rm(list = ls())
+dat = read.table("BatRun Data 2.txt", h = TRUE)
+
+# Plot the count trajectory and place tick marks for the arrivals
+plot(dat$Pos~dat$Sn, type='s', xlab = "Time in minutes from 03:30 hour mark", ylab = "Count", main = "Count Trajectory of BATRUN Race")
+rug(dat$Sn, side=1, col="pink")
+
+```
+
+## Question 2
+
+\begin{equation*}
+\begin{aligned}
+\mbox{mvf}(v;\boldsymbol\beta) &= \int_0^v \lambda(u;\boldsymbol\beta)du\\
+ &= \int_0^v \exp\left(-\beta_1^2\beta_2 + 2\beta_1\beta_2u - \beta_2u^2 \right)du\\
+ &=\int_0^v \exp\left(-\beta_2 (u - \beta_1)^2 \right) du \\
+ &\text{let } s = \sqrt{2\beta_2}(u-\beta_1), \text{ then } du = \frac{1}{\sqrt{2\beta_2}} ds \\
+ &= \int_{\sqrt{2\beta_2}(-\beta_1)}^{\sqrt{2\beta_2}(v-\beta_1)} \exp\left( -\frac{s^2}{2} \right) \frac{1}{\sqrt{2\beta_2}} ds \\
+ &= \sqrt{\frac{\pi}{\beta_2}} \int_{\sqrt{2\beta_2}(-\beta_1)}^{\sqrt{2\beta_2}(v-\beta_1)} \frac{1}{\sqrt{2\pi}} \exp\left( -\frac{s^2}{2} \right) ds \\
+ &= \sqrt{\frac{\pi}{\beta_2}} \left[ \Phi\Big(\sqrt{2\beta_2}(v-\beta_1)\Big) - \Phi\Big(\sqrt{2\beta_2}(-\beta_1)\Big) \right] \\
+&= K(\beta_2) \times \Phi\left(u; \beta_1, \frac{1}{\sqrt{2\beta_2}}\right) \text{ where } K(\beta_2) = \sqrt{\frac{\pi}{\beta_2}}
+\end{aligned}
+\end{equation*}
+
+## Question 3
+
+```{r q3}
+
+# for fixed n (n=50)
+mvf_1    = function(v,pars)
+{
+		beta = pars
+		mvf = ((1/(beta[2])) * exp(beta[1])) * (exp(beta[2]*v) - 1)
+	  return(mvf)
+}
+
+min_likelihood_1 = function(pars)
+{
+	  beta  = pars
+	  s <- dat$Sn
+	  log_intensity = beta[1]+beta[2]*s
+	  value =  sum(log_intensity) - mvf_1(max(s), beta)
+	  return(-value)
+}
+
+mvf_2    = function(v,pars)
+{
+    beta = pars
+	  K     =  sqrt(pi/beta[2])
+# limits 
+	  upper = (v-beta[1]) * sqrt(2*beta[2])
+	  lower = -beta[1] * sqrt(2*beta[2])
+	  mvf = K * (pnorm(upper) - pnorm(lower))
+	  
+	  return(mvf)
+}
+
+min_likelihood_2 = function(pars)
+{
+
+  beta = pars
+	s <- dat$Sn
+  log_intensity = -(beta[1]^2*beta[2]) + (2*beta[1]*beta[2]*s) -(beta[2]*s^2)
+	  value =  sum(log_intensity) - mvf_2(max(s),pars)
+	  return(-value)
+}
+
+```
+
+## Question 4
+
+```{r q4, warning=FALSE}
+set.seed(147)
+p <- c(mean(dat$Sn), runif(1))
+
+res_opt_1 = nlm(min_likelihood_1, p)
+res_opt_2 = nlm(min_likelihood_2, p)
+
+AIC_1 = 2*2 + 2*res_opt_1$minimum
+AIC_2 = 2*2 + 2*res_opt_2$minimum
+  
+M1  = c(res_opt_1$estimate, AIC_1)
+M2  = c(res_opt_2$estimate, AIC_2)
+tab = cbind(M1,M2)
+rownames(tab) = c('beta[1]','beta[2]','AIC')
+colnames(tab) = c('Model 1','Model 2')
+tab
+```
+
+## Question 5
+
+```{r q5, fig.align='center',fig.width=5,fig.height=5, warning=FALSE}
+
+set.seed(147)
+p <- c(mean(dat$Sn), runif(1))
+t_seq <- seq(0, max(dat$Sn), length.out=50) #to smoothe out mean trajectory
+
+res_opt_1 = nlm(min_likelihood_1, p)
+res_opt_2 = nlm(min_likelihood_2, p)
+
+mle_1 = res_opt_1$estimate
+mle_2 = res_opt_2$estimate
+
+#tt = 
+E1 = mvf_1(t_seq, mle_1)
+E2 = mvf_2(t_seq, mle_2)
+
+plot(dat$Pos~dat$Sn, type='s', xlab = "Time in minutes from 03:30 hour mark", ylab = "Count", main = "Count Trajectory of BATRUN Race")
+lines(t_seq, E1, col="light blue")
+lines(t_seq, E2, col="red3")
+
+```
+Based on the model statistics calculated in Question 4, Model 1 yielded an extremely high AIC (2.531127e+33), suggesting that it fits very poorly to the observed data. Model 2 yielded a much lower AIC (157.7273), which is far more appropriate given the observed data and indicates a fairly good trade-off between model complexity and goodness-of-fit.
+Furthermore, Model 2 yielded a large negative estimate for $\beta_2 = -4.929 \times 10^{1}$. Since Beta 2 represents the growth rate of the rate of arrivals, this estimate suggests that the arrival rate drops off dramatically for t>0. However, the plot of the observed data shows that the arrival rate of runners actually increased as t got larger. This again demonstrates the poor fit that Model 1 provides for the data.
+In contrast, Model 2 yielded a positive estimate for $\beta_2 = 2.287\times 10^{-4}$, which appears to be appropriate for the observed data.
+For Question 5, we were actually unable to overlay the mean trajectory for Model 1, due to how poor it fit the observed data.
+The mean trajectory for Model 2 fits the observed trajectory very well, suggesting that Model 2 is a good fit for the observed data.
+For the above reasons, we would strongly prefer using Model 2 to make predictions for this data.
+
+
+## Question 6
+
+```{r q6}
+forecast = mvf_2(60, mle_2) - mvf_1(0, mle_2)
+forecast
+```
+Model 2 predicts that between 10 and 11 runners will finish between 03:30:00 and 04:30:00 for the 2026 edition of the BATRUN. 11 runners finished between these times in the 2025 edition of the BATRUN, so this predicted value appears sensible.
