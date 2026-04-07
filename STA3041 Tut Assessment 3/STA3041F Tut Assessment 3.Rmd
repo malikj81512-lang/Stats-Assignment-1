@@ -48,7 +48,7 @@ rug(dat$Sn, side=1, col="pink")
 mvf_1    = function(v,pars)
 {
 		beta = pars
-		mvf = ((1/(beta[2])) * exp(beta[1])) * (exp(beta[2]*t) - 1)
+		mvf = ((1/(beta[2])) * exp(beta[1])) * (exp(beta[2]*v) - 1)
 	  return(mvf)
 }
 
@@ -89,10 +89,13 @@ min_likelihood_2 = function(pars)
 ## Question 4
 
 ```{r q4}
-#res_opt_1 = nlm(min_likelihood_1, rep(0,50))
-#res_opt_2 = nlm()
-#M1  = c()#beta hat here, #AIC here
-#M2  = c()#beta hat here, #AIC here
+res_opt_1 = nlm(min_likelihood_1, c(0.01,0.01))
+res_opt_2 = nlm(min_likelihood_2,c(0,-5))
+
+M1  = res_opt_1$estimate #beta hat here, #AIC here
+M1
+M2  =  res_opt_2$estimate
+M2 #beta hat here, #AIC here
 #tab = cbind(M1,M2)
 #rownames(tab) = c('beta[1]','beta[2]','AIC')
 #colnames(tab) = c('Model 1','Model 2')
