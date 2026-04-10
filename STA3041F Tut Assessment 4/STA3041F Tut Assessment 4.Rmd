@@ -1,0 +1,73 @@
+---
+title: "STA3041F 2026 Tutorial Assessment 4"
+author: "Amara Patel (PTLAMA005) and Malik Jamie (JMXMAL003)"
+date: '2026-04-10'
+output: pdf_document
+header-includes:
+  - \usepackage{pdfpages}
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,fig.align='center',fig.width=5,fig.height=5)
+```
+
+## Question 1
+
+
+### (a)
+Write something here.
+
+### (b)
+```{r }
+sim = function()
+{
+	 Z = 1
+	 k = 1
+   while(Z!=0)
+   {
+	  X_states = 
+	prob_X   = 
+	  prob_X   = 
+	  Z        = 
+	  k        = k + 1
+   }
+	 if(Z==0)
+	 {
+	 	 return(k-1) 
+	 }else{return(NA)}
+}
+```
+
+### (c)
+\begin{equation*}
+\begin{aligned}
+Eqn here.
+\end{aligned}
+\end{equation*}
+
+### (d)
+
+
+```{r }
+Gx = function(s,m)
+{
+
+}
+
+Gm = function(s,m)
+{
+	
+}
+
+```
+
+
+
+
+
+
+\newpage
+\includepdf[pages=1]{Department of Statistical Sciences - Plagiarism Declaration.pdf}
+
+
