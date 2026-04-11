@@ -42,30 +42,67 @@ sim = function() # making a function
 set.seed(8)
 sims <- replicate(10000, sim())
 
-hist(sims, xlab = "first passage time to extinction", main = "Histogram of first passage time to extinction", breaks = seq(min(sims)-0.5, max(sims)+0.5, by=1), freq = FALSE, col = "pink2")
+hist(sims, xlab = "first passage time to extinction", main = "Histogram of first passage time to extinction", breaks = seq(min(sims)-0.5, max(sims)+0.5, by=1), freq = FALSE, col = "cyan4")
 ```
 
 ### (c)
-\begin{equation*}
-\begin{aligned}
-Eqn here.
-\end{aligned}
-\end{equation*}
+
+For a time-inhomogeneous branching process, the generating function of changes depending on the generation m, and so to derive the generating function, the generation specific generating functions must be composed sequentially up to the (m-1). Evaluating from the outside in, the expression for the PGF of $Z_m$ is:$$G_m(s) = G_X(G_X(\dots G_X(s, m-1) \dots, 2), 1)$$
 
 ### (d)
 
 
-```{r }
+```{r q4}
 Gx = function(s,m)
 {
+  # probabilities
+  p0 <- 3*(1+0.03*(1+sin((k*pi)/5)))^m
+  p1 <- 2
+  p2 <- 4
+  p3 <- 1
+  # normalise probabilities 
+  p0 <- p0/sum(c(p0, p1, p2, p3))
+  p1 <- p1/sum(c(p0, p1, p2, p3))
+  p2 <- p2/sum(c(p0, p1, p2, p3))
+  p3 <- p3/sum(c(p0, p1, p2, p3))
+  
+  # calculate Gx = E(s^X)
+  Gx <- p0 + p1 * s + p2 * s^2 + p3 *s^3 
+  return(Gx)
 
 }
 
 Gm = function(s,m)
-{
-	
+{ 
+  if (m==1) {
+    return(s)
+  }
+  Gm <- s
+  # compose functions from inside out so iterate from m-1 to 1 
+  for(k in m-1:1) {
+  Gm <- Gx(Gm, k)
+}
+	return(Gm)
 }
 
+# find distribution of first passage (use G_m(0)-G_m-1(0))
+
+## the histogram again
+set.seed(8)
+sims <- replicate(10000, sim())
+
+hist(sims, xlab = "first passage time to extinction", main = "Histogram of first passage time to extinction", breaks = seq(min(sims)-0.5, max(sims)+0.5, by=1), freq = FALSE, col = "lightpink")
+
+## find the true probabilities to superimpose 
+max_k <- max(sims, na.rm = TRUE)
+true_times <- 1:max_k
+true_probs <- numeric(max_k)
+
+for (k in true_times){
+  true_probs[k] <- Gm(0, k+1) - Gm(0, k)
+}
+
+lines(true_times, true_probs, type = "p", pch = 16, col = "purple4")
 ```
 
 
@@ -73,7 +110,6 @@ Gm = function(s,m)
 
 
 
-\newpage
-\includepdf[pages=1]{Department of Statistical Sciences - Plagiarism Declaration.pdf}
+
 
 
