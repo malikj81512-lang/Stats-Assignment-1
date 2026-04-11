@@ -16,27 +16,33 @@ knitr::opts_chunk$set(echo = TRUE,fig.align='center',fig.width=5,fig.height=5)
 
 
 ### (a)
-Write something here.
+The probability of 0 offspring in a generation is directly dependent on time (i.e. the generation m). In this time dependence, the un-normalised probability (before dividing by the total of all the entries to get actual probabilities that sum to 1) always stays above or equal to 3 and oscillates since it's dependent on a sine function. Since the expression (1 + 0.03(1+sin(m*pi/5))) is always greater than one and raised to the power of m, as m increases, the probability is going to increase too, even though it will oscillate between 1 and 1.06. This means that as m gets larger, the probability of having 0 children will also get exponentially larger which, after normalising, will result in the probabilities of having 1, 2 or 3 children tend to 0 since they are not exponentially increasing with time. This means that intuitively, the branching process will almost certainly go extinct as m increases causing the probability of having 0 children to get exponentially bigger, despite the generation dependent oscillation factor. 
 
 ### (b)
 ```{r }
-sim = function()
+sim = function() # making a function
 {
-	 Z = 1
-	 k = 1
+	 Z = 1 # setting beginning population size
+	 k = 1 # setting generation to start 
    while(Z!=0)
    {
-	  X_states = 
-	prob_X   = 
-	  prob_X   = 
-	  Z        = 
-	  k        = k + 1
+	  X_states = c(0, 1, 2, 3) # number of children
+	prob_X   = c(3*(1+0.03*(1+sin((k*pi)/5)))^k, 2, 4, 1) # unnormalised probabilities 
+	  prob_X   = prob_X/sum(prob_X) # normalise
+	  Z        = sum(sample(X_states, Z, replace = TRUE, prob = prob_X)) # sample to get population at kth generation 
+	  k        = k + 1 # iterate 
    }
-	 if(Z==0)
+	 if(Z==0) # extinction event 
 	 {
-	 	 return(k-1) 
+	 	 return(k-1) # time before extinction event occurs
 	 }else{return(NA)}
 }
+
+# simulation to get empirical distribution of first passage 
+set.seed(8)
+sims <- replicate(10000, sim())
+
+hist(sims, xlab = "first passage time to extinction", main = "Histogram of first passage time to extinction", breaks = seq(min(sims)-0.5, max(sims)+0.5, by=1), freq = FALSE, col = "pink2")
 ```
 
 ### (c)
